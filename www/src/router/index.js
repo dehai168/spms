@@ -57,7 +57,32 @@ export const constantRoutes = [
     ]
   },
   // TODO  添加页面路由
-  
+  {
+    path: '/specialindustries/hotel',
+    component: Layout,
+    meta: { title: '旅馆业', icon: 'el-icon-school' },
+    children: [
+      {
+        path: 'base',
+        name: 'base',
+        component: () => import('@/views/hotelBase/index'),
+        meta: { title: '旅馆信息', icon: 'el-icon-school' }
+      },
+      {
+        path: 'domestic',
+        name: 'domestic',
+        component: () => import('@/views/domesticTraveler/index'),
+        meta: { title: '境内旅客', icon: 'el-icon-school' }
+      },
+      {
+        path: 'overseas',
+        name: 'overseas',
+        component: () => import('@/views/overseasTraveler/index'),
+        meta: { title: '境内旅客', icon: 'el-icon-school' }
+      }
+
+    ]
+  },
   // TODO  添加页面路由
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
