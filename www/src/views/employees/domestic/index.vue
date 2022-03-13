@@ -16,7 +16,7 @@
 		</el-form>
 		<div class="ktv-body">
 			<el-button @click="dialogVisible = true">新增</el-button>
-			<el-table :data="tableData">
+			<el-table :data="tableData" border>
 				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
 					<template slot-scope="scope">
@@ -157,22 +157,17 @@ export default {
 			pagesizes: defaultSettings.pageSizes,
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
-			tableData: [{
-				agency: 'hahahhaaaahaahhahaha',
-				industry: '',
-				logout: '',
-				enterpriseCode: '',
-				legalPerson: '',
-				checkStatus: '',
-				licenseStatus: '',
-				companyName: '',
-				businessType: '',
-				signboardName: '',
-				unifiedSocialCreditCode: '',
-				businessStatus: '',
-				inputTime: '',
-				licenseIssueDate: ''
-			}],
+			tableData: new Array(10).fill({
+				agency: '测试数据',
+				enterpriseCode: '测试数据',
+				companyName: '测试数据',
+				signboardName: '测试数据',
+				legalPerson: '测试数据',
+				unifiedSocialCreditCode: '测试数据',
+				民族: '测试数据',
+				录入时间: '测试数据',
+				在职状态: '测试数据',
+			}),
 			columns: [
 				{ prop: 'agency', label: '行业类别', },
 				{ prop: 'enterpriseCode', label: '企业名称' },
@@ -180,9 +175,9 @@ export default {
 				{ prop: 'signboardName', label: '姓名', },
 				{ prop: 'legalPerson', label: '证件号码' },
 				{ prop: 'unifiedSocialCreditCode', label: '性别', },
-				{ prop: 'phone', label: '民族', },
-				{ prop: 'phone', label: '录入时间', },
-				{ prop: 'phone', label: '在职状态', },
+				{ prop: '民族', label: '民族', },
+				{ prop: '录入时间', label: '录入时间', },
+				{ prop: '在职状态', label: '在职状态', },
 
 			],
 			dialogVisible: false,
@@ -231,7 +226,7 @@ export default {
 				'居住信息': [
 					{ key: 'companyName', label: '现住址行政区划', type: 'input' },
 					{ key: 'unifiedSocialCreditCode', label: '居住证号码', type: 'input' },
-					{ key: 'companyName', label: '现住址', type: 'input' },		
+					{ key: 'companyName', label: '现住址', type: 'input' },
 				],
 				'管理信息': [
 					{ key: '单位负责人', label: '行业类别', type: 'input' },
@@ -311,7 +306,6 @@ export default {
 	}
 
 	.ktv-body {
-		padding: 0 5%;
 	}
 }
 .el-descriptions {

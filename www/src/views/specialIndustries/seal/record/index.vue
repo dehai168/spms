@@ -16,7 +16,7 @@
 		</el-form>
 		<div class="seal-list-body">
 			<!-- <el-button @click="dialogFormVisible = true">新增</el-button> -->
-			<el-table :data="tableData">
+			<el-table :data="tableData" border>
 				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
 				<el-table-column prop="operate" label="操作" fixed="right">
 					<template slot-scope="scope">
@@ -187,14 +187,17 @@ export default {
 					type: 'datePicker'
 				}
 			],
-			tableData: [{
-				useUnit: '',
-				makeUnit: '',
-				recordStatus: '',
-				orderNo: '',
-				applyDate: '',
-				recordDate: '',
-			}],
+			tableData: new Array(10).fill({
+				agency: '测试数据',
+				enterpriseCode: '测试数据',
+				companyName: '测试数据',
+				signboardName: '测试数据',
+				legalPerson: '测试数据',
+				unifiedSocialCreditCode: '测试数据',
+				phone: '测试数据',
+				checkStatus: '测试数据',
+				businessType: '测试数据',
+			}),
 			columns: [
 				{ prop: 'agency', label: '印章订单编号', },
 				{ prop: 'enterpriseCode', label: '使用单位名称', },
@@ -264,7 +267,6 @@ export default {
 	}
 
 	.seal-list-body {
-		padding: 0 5%;
 	}
 }
 </style>

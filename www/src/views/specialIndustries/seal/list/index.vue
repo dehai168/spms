@@ -16,7 +16,7 @@
 		</el-form>
 		<div class="seal-list-body">
 			<el-button @click="dialogVisible = true">新增</el-button>
-			<el-table :data="tableData">
+			<el-table :data="tableData" border>
 				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
 					<template slot-scope="scope">
@@ -204,22 +204,23 @@ export default {
 					type: 'datePicker'
 				}
 			],
-			tableData: [{
-				agency: 'hahahhaaaahaahhahaha',
-				industry: '',
-				logout: '',
-				enterpriseCode: '',
-				legalPerson: '',
-				checkStatus: '',
-				licenseStatus: '',
-				companyName: '',
-				businessType: '',
-				signboardName: '',
-				unifiedSocialCreditCode: '',
-				businessStatus: '',
-				inputTime: '',
-				licenseIssueDate: ''
-			}],
+			tableData: new Array(10).fill({
+				agency: 'xxxxxxx',
+				enterpriseCode: 'xxxxxxx',
+				companyName: 'xxxxxxx',
+				signboardName: 'xxxxxxx',
+				legalPerson: 'xxxxxxx',
+				unifiedSocialCreditCode: 'xxxxxxx',
+				phone: 'xxxxxxx',
+				checkStatus: 'xxxxxxx',
+				businessType: 'xxxxxxx',
+				businessStatus: 'xxxxxxx',
+				logout: 'xxxxxxx',
+				licenseStatus: 'xxxxxxx',
+				licenseIssueDate: 'xxxxxxx',
+				inputTime: 'xxxxxxx',
+				origin: 'xxxxxxx',
+			}),
 			columns: [
 				{ prop: 'agency', label: '管辖单位', width: 180 },
 				{ prop: 'enterpriseCode', label: '企业编码', width: 80 },
@@ -432,7 +433,6 @@ export default {
 	}
 
 	.seal-list-body {
-		padding: 0 5%;
 	}
 }
 </style>

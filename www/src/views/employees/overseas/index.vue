@@ -16,7 +16,7 @@
 		</el-form>
 		<div class="ktv-body">
 			<el-button @click="dialogVisible = true">新增</el-button>
-			<el-table :data="tableData">
+			<el-table :data="tableData" border>
 				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
 					<template slot-scope="scope">
@@ -161,33 +161,29 @@ export default {
 			pagesizes: defaultSettings.pageSizes,
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
-			tableData: [{
-				agency: 'hahahhaaaahaahhahaha',
-				industry: '',
-				logout: '',
-				enterpriseCode: '',
-				legalPerson: '',
-				checkStatus: '',
-				licenseStatus: '',
-				companyName: '',
-				businessType: '',
-				signboardName: '',
-				unifiedSocialCreditCode: '',
-				businessStatus: '',
-				inputTime: '',
-				licenseIssueDate: ''
-			}],
+			tableData: new Array(10).fill({
+				行业类别: '测试数据',
+				企业名称: '测试数据',
+				人员编号: '测试数据',
+				英文姓: '测试数据',
+				英文名: '测试数据',
+				证件号码: '测试数据',
+				性别: '测试数据',
+				国籍: '测试数据',
+				录入时间: '测试数据',
+				在职状态: '测试数据',
+			}),
 			columns: [
-				{ prop: 'agency', label: '行业类别', },
-				{ prop: 'enterpriseCode', label: '企业名称' },
-				{ prop: 'companyName', label: '人员编号', },
-				{ prop: 'signboardName', label: '英文姓', },
-				{ prop: 'signboardName', label: '英文名', },
-				{ prop: 'legalPerson', label: '证件号码' },
-				{ prop: 'unifiedSocialCreditCode', label: '性别', },
-				{ prop: 'unifiedSocialCreditCode', label: '国籍', },
-				{ prop: 'phone', label: '录入时间', },
-				{ prop: 'phone', label: '在职状态', },
+				{ prop: '行业类别', label: '行业类别', },
+				{ prop: '企业名称', label: '企业名称' },
+				{ prop: '人员编号', label: '人员编号', },
+				{ prop: '英文姓', label: '英文姓', },
+				{ prop: '英文名', label: '英文名', },
+				{ prop: '证件号码', label: '证件号码' },
+				{ prop: '性别', label: '性别', },
+				{ prop: '国籍', label: '国籍', },
+				{ prop: '录入时间', label: '录入时间', },
+				{ prop: '在职状态', label: '在职状态', },
 
 			],
 			dialogVisible: false,
@@ -316,7 +312,6 @@ export default {
 	}
 
 	.ktv-body {
-		padding: 0 5%;
 	}
 }
 .el-descriptions {

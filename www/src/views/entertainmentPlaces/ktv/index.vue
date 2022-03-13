@@ -16,7 +16,7 @@
 		</el-form>
 		<div class="ktv-body">
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
-			<el-table :data="tableData">
+			<el-table :data="tableData" border>
 				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
 					<template slot-scope="scope">
@@ -248,22 +248,15 @@ export default {
 			pagesizes: defaultSettings.pageSizes,
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
-			tableData: [{
-				agency: 'hahahhaaaahaahhahaha',
-				industry: '',
-				logout: '',
-				enterpriseCode: '',
-				legalPerson: '',
-				checkStatus: '',
-				licenseStatus: '',
-				companyName: '',
-				businessType: '',
-				signboardName: '',
-				unifiedSocialCreditCode: '',
-				businessStatus: '',
-				inputTime: '',
-				licenseIssueDate: ''
-			}],
+			tableData: new Array(10).fill({
+				agency: '测试数据',
+				enterpriseCode: '测试数据',
+				companyName: '测试数据',
+				signboardName: '测试数据',
+				legalPerson: '测试数据',
+				unifiedSocialCreditCode: '测试数据',
+				phone: '测试数据',
+			}),
 			columns: [
 				{ prop: 'agency', label: '治安管理机构', },
 				{ prop: 'enterpriseCode', label: '场所备案编号' },
@@ -320,7 +313,6 @@ export default {
 	}
 
 	.ktv-body {
-		padding: 0 5%;
 	}
 }
 .el-descriptions {
