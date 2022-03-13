@@ -101,8 +101,24 @@
         :model="addEditForm"
         label-width="120px"
         :inline="true"
+        label-suffix=":"
         :disabled="flag == 'detail'"
       >
+        <div style="display:flex;justify-content:space-around;">
+          <el-form-item label="申报方式" required>
+            <el-radio-group v-model="addEditForm.xxx">
+              <el-radio label="1">告知承诺制</el-radio>
+              <el-radio label="2">一般审批制</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="工商类型" required>
+            <el-radio-group v-model="addEditForm.xxx">
+              <el-radio label="1">个体工商户</el-radio>
+              <el-radio label="2">工商企业</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </div>
+
         <my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
           <el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
             <el-select
@@ -548,8 +564,6 @@ export default {
       this.formClear('add', true)
     },
     handleSubmit() {
-      console.log(this.addEditForm)
-
       this.submitDisabled = true // 防止重复提交
       if (this.flag === 'add') {
         create(this.addEditForm)
