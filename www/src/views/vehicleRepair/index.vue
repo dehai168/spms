@@ -1,6 +1,6 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 188px">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 96px">
       <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="110px">
         <el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
           <el-select
@@ -53,7 +53,7 @@
           v-bind="column"
           :show-overflow-tooltip="true"
         />
-        <el-table-column prop="operate" label="操作" width="200" fixed="right">
+        <el-table-column prop="operate" label="操作" width="200">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -99,7 +99,7 @@
       <el-form
         ref="addEditForm"
         :model="addEditForm"
-        label-width="120px"
+        label-width="130px"
         :inline="true"
         :disabled="flag == 'detail'"
       >
@@ -108,7 +108,7 @@
             <el-select
               v-if="formItem.type == 'select'"
               v-model="addEditForm[formItem.key]"
-              style="width:150px"
+              :style="{ width: formItem.width || '200px' }"
               placeholder="请选择"
             >
               <el-option
@@ -121,7 +121,7 @@
             <el-input
               v-else-if="formItem.type == 'input'"
               v-model="addEditForm[formItem.key]"
-              style="width:150px"
+              :style="{ width: formItem.width || '200px' }"
             />
             <el-input
               v-else-if="formItem.type == 'textarea'"
@@ -164,10 +164,9 @@
 
 <script>
 import defaultSettings from '@/settings'
-import { items, item, create, update, remove, batchremove, importexcel, exportexcel, exist, templeteUrl, uploadUrl, download } from '@/api/hotelBase'
+import { items, item, create, update, batchremove } from '@/api/vehicleRepair'
 import { formatDate } from '@/utils/index'
 import MyCard from './MyCard.vue';
-import Cookies from 'js-cookie'
 export default {
   components: {
     MyCard
@@ -208,68 +207,11 @@ export default {
             { label: 'aaaa', value: 3 }
           ]
         },
-        {
-          key: 'industry',
-          label: '行业分类',
-          type: 'select',
-          options: [
-            { label: '旅馆业', value: 1 },
-            { label: '留宿洗浴业', value: 2 }
-          ]
-        },
-        {
-          key: 'logout',
-          label: '注销状态',
-          type: 'select',
-          options: [
-            { label: '未注销', value: 1 },
-            { label: '已注销', value: 2 }
-          ]
-        },
         { key: 'enterpriseCode', label: '企业编码', type: 'input' },
-        { key: 'legalPerson', label: '法人姓名', type: 'input' },
-        {
-          key: 'checkStatus',
-          label: '核查状态',
-          type: 'select',
-          options: [
-            { label: '变更待核查', value: 1 },
-            { label: '关停', value: 2 },
-            { label: '已保存安保信息', value: 3 },
-            { label: '待核查', value: 4 },
-            { label: '核查通过', value: 5 },
-            { label: '核查失败', value: 6 },
-            { label: '变更核查成功', value: 7 },
-            { label: '变更保存', value: 8 },
-            { label: '撤销许可', value: 9 },
-            { label: '已保存基本信息', value: 10 },
-            { label: '已保存电子材料', value: 11 },
-            { label: '变更核查失败', value: 12 },
-            { label: '限期整改', value: 13 }
-          ]
-        },
-        {
-          key: 'licenseStatus',
-          label: '许可证状态',
-          type: 'select',
-          options: [
-            { label: '未发放', value: 1 },
-            { label: '已发放', value: 2 },
-            { label: '已吊销', value: 3 }
-          ]
-        },
-        { key: 'companyName', label: '企业名称', type: 'input' },
-        {
-          key: 'businessType',
-          label: '工商类型',
-          type: 'select',
-          options: [
-            { label: '个体工商户', value: 1 },
-            { label: '工商企业', value: 2 }
-          ]
-        },
-        { key: 'signboardName', label: '招牌名称', type: 'input' },
         { key: 'unifiedSocialCreditCode', label: '社会信用代码', type: 'input' },
+        { key: 'legalPerson', label: '法人姓名', type: 'input' },
+        { key: 'companyName', label: '企业名称', type: 'input' },
+        { key: 'inputTime', label: '录入时间', type: 'datePicker' },
         {
           key: 'businessStatus',
           label: '营业状态',
@@ -281,25 +223,17 @@ export default {
             { label: '其他', value: 4 }
           ]
         },
-        { key: 'inputTime', label: '录入时间', type: 'datePicker' },
-        { key: 'licenseIssueDate', label: '许可证发证日期', type: 'datePicker' }
       ],
       columns: [
-        { prop: 'agency', label: '管辖单位', width: 180 },
-        { prop: 'enterpriseCode', label: '企业编码', width: 80 },
-        { prop: 'companyName', label: '企业名称', width: 100 },
-        { prop: 'signboardName', label: '招牌名称', width: 180 },
-        { prop: 'legalPerson', label: '法人姓名', width: 80 },
-        { prop: 'unifiedSocialCreditCode', label: '社会信用代码', width: 100 },
-        { prop: 'phone', label: '联系电话', width: 100 },
-        { prop: 'checkStatus', label: '核查状态', width: 80 },
-        { prop: 'businessType', label: '行业类别', width: 80 },
-        { prop: 'businessStatus', label: '营业状态', width: 80 },
-        { prop: 'logout', label: '注销状态', width: 80 },
-        { prop: 'licenseStatus', label: '许可证状态', width: 80 },
-        { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
-        { prop: 'inputTime', label: '录入时间', width: 180 },
-        { prop: 'origin', label: '数据来源', width: 80 }
+        { prop: '序号', label: '序号', width: 80 },
+        { prop: 'agency', label: '管辖单位', width: 200 },
+        { prop: 'enterpriseCode', label: '企业编码', width: 120 },
+        { prop: 'companyName', label: '企业名称', width: 200 },
+        { prop: 'legalPerson', label: '法人姓名', width: 100 },
+        { prop: 'unifiedSocialCreditCode', label: '社会信用代码', width: 120 },
+        { prop: 'phone', label: '联系电话', width: 150 },
+        { prop: 'businessStatus', label: '营业状态', width: 100 },
+        { prop: 'inputTime', label: '录入时间', width: 180 }
       ],
       dialogVisible: false,
       submitDisabled: false,
@@ -320,44 +254,8 @@ export default {
               { label: '其他', value: '4' }
             ]
           },
-          {
-            key: 'industry',
-            label: '行业分类',
-            type: 'select',
-            options: [
-              { label: '旅馆业', value: 1 },
-              { label: '留宿洗浴业', value: 2 }
-            ]
-          },
+          { key: '占地面积', label: '占地面积（平米）', type: 'input' },
           { key: 'enterpriseCode', label: '企业编码', type: 'input' },
-          { key: 'signboardName', label: '招牌名称', type: 'input' },
-          { key: 'area', label: '占地面积（平米）', type: 'input' },
-          { key: '传真', label: '传真', type: 'input' },
-          { key: '房间数', label: '房间数', type: 'input' },
-          { key: '床位数', label: '床位数', type: 'input' },
-          {
-            key: '旅馆星级',
-            label: '旅馆星级',
-            type: 'select',
-            options: [
-              { label: '一星级', value: 1 },
-              { label: '二星级', value: 2 },
-              { label: '三星级', value: 3 },
-              { label: '四星级', value: 4 },
-              { label: '五星级', value: 5 },
-              { label: '其他', value: 6 }
-            ]
-          },
-          {
-            key: '旅馆等级',
-            label: '旅馆等级',
-            type: 'select',
-            options: [
-              { label: 'A级', value: 1 },
-              { label: 'B级', value: 2 },
-              { label: 'C级', value: 3 }
-            ]
-          },
           {
             key: 'agency',
             label: '管辖单位',
@@ -368,16 +266,8 @@ export default {
               { label: 'aaaa', value: 3 }
             ]
           },
-          { key: '实际经营地址', label: '实际经营地址', type: 'input' },
-          {
-            key: 'hasStandard',
-            label: '是否有标准地址',
-            type: 'radio',
-            options: [
-              { label: '是', value: 1 },
-              { label: '否', value: 2 }
-            ]
-          }
+          { key: '企业登记日期', label: '企业登记日期', type: 'datePicker' },
+          { key: '地址', label: '地址', type: 'input', width: '500px' },
         ],
         '工商信息': [
           { key: 'companyName', label: '企业名称(全称)', type: 'input' },
@@ -413,20 +303,15 @@ export default {
             ]
           },
           { key: '法人证件号码', label: '法人证件号码', type: 'input' },
-          { key: '工商经营地址', label: '工商经营地址', type: 'input' },
-          { key: '经营范围', label: '经营范围（主营）', type: 'input' }
+          { key: '工商经营地址', label: '工商经营地址', type: 'input', width: '500px' },
+          { key: '经营范围', label: '经营范围（主营）', type: 'input', width: '500px' }
         ],
         '管理信息': [
           { key: '单位负责人', label: '单位负责人', type: 'input' },
           { key: '负责人证件号码', label: '负责人证件号码', type: 'input' },
           { key: '负责人联系电话', label: '负责人联系电话', type: 'input' },
-          { key: '安保负责人', label: '安保负责人', type: 'input' },
-          { key: '安保负责人证件号码', label: '安保负责人证件号码', type: 'input' },
-          { key: '安保负责人联系电话', label: '安保负责人联系电话', type: 'input' },
-          { key: '消防意见书发放日期', label: '消防意见书发放日期', type: 'datePicker' },
-          { key: '消防合格证号', label: '消防合格证号', type: 'input' },
-          { key: '消防审核单位', label: '消防审核单位', type: 'input' },
-          { key: '消防审核意见书编号', label: '消防审核意见书编号', type: 'input' },
+          { key: '列管民警姓名', label: '列管民警姓名', type: 'input' },
+          { key: '列管民警手机', label: '列管民警手机', type: 'input' },
           { key: '备注', label: '备注', type: 'textarea', }
         ]
       }
@@ -437,13 +322,13 @@ export default {
       let tittle = '';
       switch (this.flag) {
         case 'edit':
-          tittle = '编辑旅馆信息';
+          tittle = '编辑机动车修理业信息';
           break;
         case 'add':
-          tittle = '新增旅馆信息';
+          tittle = '新增机动车修理业信息';
           break;
         case 'detail':
-          tittle = '旅馆信息详情';
+          tittle = '机动车修理业详情';
           break;
       }
 

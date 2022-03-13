@@ -83,6 +83,30 @@ export const constantRoutes = [
 
     ]
   },
+  {
+    path: '/specialindustries',
+    component: Layout,
+    children: [
+      {
+        path: 'fleatrade',
+        name: 'fleatrade',
+        component: () => import('@/views/fleaTrade/index'),
+        meta: { title: '旧货交易', icon: 'el-icon-school' }
+      }
+    ]
+  },
+  {
+    path: '/specialindustries',
+    component: Layout,
+    children: [
+      {
+        path: 'vehiclerepair',
+        name: 'vehiclerepair',
+        component: () => import('@/views//vehicleRepair/index'),
+        meta: { title: '机动车修理业', icon: 'el-icon-school' }
+      }
+    ]
+  },
   // TODO  添加页面路由
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
