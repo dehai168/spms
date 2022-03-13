@@ -7,14 +7,14 @@
     </el-col>
     <el-col :span="17">
       <ul>
-        <li :class="{ active: activeMenu.indexOf('/special/') > -1 }">
-          <app-link to="/special"> <i class="el-icon-postcard"></i> 特种行业 </app-link>
+        <li :class="{ active: activeMenu.indexOf('/specialindustries/') > -1 }">
+          <app-link to="/specialindustries"> <i class="el-icon-postcard"></i> 特种行业 </app-link>
         </li>
-        <li :class="{ active: activeMenu.indexOf('/fun/') > -1 }">
-          <app-link to="fun"> <i class="el-icon-mic"></i> 娱乐场所 </app-link>
+        <li :class="{ active: activeMenu.indexOf('/entertainment-places/') > -1 }">
+          <app-link to="/entertainment-places"> <i class="el-icon-mic"></i> 娱乐场所 </app-link>
         </li>
-        <li :class="{ active: activeMenu.indexOf('/employee/') > -1 }">
-          <app-link to="employee"><i class="el-icon-s-custom"></i> 从业人员 </app-link>
+        <li :class="{ active: activeMenu.indexOf('/employees/') > -1 }">
+          <app-link to="/employees"><i class="el-icon-s-custom"></i> 从业人员 </app-link>
         </li>
         <li :class="{ active: activeMenu.indexOf('/analysis/') > -1 }">
           <app-link to="/analysis"><i class="el-icon-s-data"></i> 智能研判分析 </app-link>

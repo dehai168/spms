@@ -21,11 +21,9 @@ export default {
       const route = this.$route
       const { path } = route
       const rootPath = path.split('/')[1]
-      console.log(rootPath)
       const destPaths = this.$router.options.routes.filter(v => {
         return v.path.indexOf(rootPath) > -1
       })
-      console.log(destPaths)
       return destPaths;
     },
     activeMenu() {

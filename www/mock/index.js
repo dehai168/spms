@@ -7,10 +7,20 @@ const {
 const auth = require('./auth')
 const user = require('./user')
 const table = require('./table')
+const hotelBase = require('./hotelBase')
+const domesticTraveler = require('./domesticTraveler')
+const overseasTraveler = require('./overseasTraveler')
+const fleaTrade = require('./fleaTrade')
+const vehicleRepair = require('./vehicleRepair')
 const mocks = [
   ...auth,
   ...user,
-  ...table
+  ...table,
+  ...hotelBase,
+  ...domesticTraveler,
+  ...overseasTraveler,
+  ...fleaTrade,
+  ...vehicleRepair
 ]
 // TODO 结束
 
