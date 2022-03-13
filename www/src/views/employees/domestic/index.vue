@@ -86,6 +86,7 @@ export default {
 				{
 					key: 'agency',
 					label: '行业类别',
+					type: 'input'
 				},
 				{
 					key: 'enterpriseCode',
