@@ -300,10 +300,10 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 100px);
   width: 100%;
   .main {
-    height: calc(100vh - 84px);
+    height: calc(100% - 184px);
     width: 100%;
     padding: 5px;
   }

@@ -11,9 +11,8 @@ export function exist(params) {
 export function items(params) {
   return request({
     url: '/hotelbase',
-    method: 'post',
-    params,
-    data: { a: 1 }
+    method: 'get',
+    params
   })
 }
 export function list(params) {
