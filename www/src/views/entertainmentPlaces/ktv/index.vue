@@ -1,12 +1,12 @@
 <template>
 	<div class="ktv-container">
-		<el-form ref="form" :model="form" label-width="140px">
+		<el-form ref="form" :model="queryForm" label-width="140px">
 			<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-				<el-select v-if="formItem.type == 'select'" v-model="form[formItem.key]" placeholder="请选择">
+				<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" placeholder="请选择">
 					<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 				</el-select>
-				<el-input v-else-if="formItem.type == 'input'" v-model="form[formItem.key]" />
-				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="form[formItem.key]" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" />
+				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 			</el-form-item>
 
 			<el-form-item>
@@ -28,6 +28,9 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
+				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
+			</el-footer>
 		</div>
 		<el-dialog title="详情" :visible.sync="dialogVisible" width="60%" top="10px">
 			<el-tabs type="card" :value="1">
@@ -65,12 +68,12 @@
 </template>
 
 <script>
-
+import defaultSettings from '@/settings'
 
 export default {
 	data() {
 		return {
-			form: {
+			queryForm: {
 				agency: '',
 				industry: '',
 				logout: '',
@@ -241,6 +244,10 @@ export default {
 				},
 
 			],
+			tableDataCount: 0,
+			pagesizes: defaultSettings.pageSizes,
+			pagesize: defaultSettings.pageSizes[0],
+			pageindex: 1,
 			tableData: [{
 				agency: 'hahahhaaaahaahhahaha',
 				industry: '',
@@ -285,6 +292,14 @@ export default {
 		handleCancel() {
 			this.dialogVisible = false;
 		},
+		handleSizeChange(pagesize) {
+			this.queryForm.pagesize = pagesize
+			this.handleQuery()
+		},
+		handleCurrentChange(pageindex) {
+			this.queryForm.pageindex = pageindex
+			this.handleQuery()
+		},
 
 	}
 
@@ -309,6 +324,6 @@ export default {
 	}
 }
 .el-descriptions {
-  margin-top: 20px;
+	margin-top: 20px;
 }
 </style>

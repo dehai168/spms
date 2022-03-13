@@ -125,6 +125,24 @@ export const constantRoutes = [
       },
     ]
   },
+  
+  {
+    path: '/employees',
+    component: Layout,
+    meta: { title: '从业人员', icon: 'el-icon-school' },
+    children: [
+      {
+        path: '/employees/domestic',
+        component: () => import('@/views/employees/domestic/index'),
+        meta: { title: '国内从业人员', icon: 'el-icon-school' },
+      },
+      {
+        path: '/employees/bar',
+        component: () => import('@/views/employees/overseas/index'),
+        meta: { title: '境外从业人员', icon: 'el-icon-school' },
+      },
+    ]
+  },
 
   // TODO  添加页面路由
   // 404 page must be placed at the end !!!

@@ -14,10 +14,12 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import MyCard from './views/specialIndustries/hotel/hotelBase/MyCard.vue'
+
 Vue.use(ElementUI,{
   size: 'mini',
 })
-
+Vue.component('my-card',MyCard)
 Vue.config.productionTip = false
 
 new Vue({

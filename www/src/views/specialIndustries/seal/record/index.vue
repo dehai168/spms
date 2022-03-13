@@ -1,12 +1,12 @@
 <template>
 	<div class="seal-list-container">
-		<el-form ref="form" :model="form" label-width="140px">
+		<el-form ref="form" :model="queryForm" label-width="140px">
 			<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-				<el-select v-if="formItem.type == 'select'" v-model="form[formItem.key]" placeholder="请选择">
+				<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" placeholder="请选择">
 					<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 				</el-select>
-				<el-input v-else-if="formItem.type == 'input'" v-model="form[formItem.key]" />
-				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="form[formItem.key]" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" />
+				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 			</el-form-item>
 
 			<el-form-item>
@@ -15,17 +15,20 @@
 			</el-form-item>
 		</el-form>
 		<div class="seal-list-body">
-			<el-button @click="dialogFormVisible = true">新增</el-button>
+			<!-- <el-button @click="dialogFormVisible = true">新增</el-button> -->
 			<el-table :data="tableData">
 				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
-				<el-table-column prop="operate" label="操作" width="200" fixed="right">
+				<el-table-column prop="operate" label="操作" fixed="right">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
+			<el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
+				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
+			</el-footer>
 		</div>
-		<el-dialog title="公章备案详情" :visible.sync="dialogVisible" width="60%" >
+		<el-dialog title="公章备案详情" :visible.sync="dialogVisible" width="60%">
 			<el-tabs type="card" :value="activeName">
 				<el-tab-pane v-for="(tab, tabIdx) in detailTabs" :key="tabIdx" :label="tab.label" :name="tabIdx + 1 + ''">
 					<el-descriptions border size="medium" :column="4">
@@ -45,13 +48,15 @@
 </template>
 
 <script>
-
+import defaultSettings from '@/settings'
 
 export default {
 	data() {
 		return {
 			dialogVisible: false,
 			activeName: '1',
+			pagesizes: defaultSettings.pageSizes,
+			tableDataCount: 0,
 			detail: {
 				unitInfo: [
 					{ label: '单位类型', value: '其他' },
@@ -134,13 +139,15 @@ export default {
 				],
 			},
 
-			form: {
+			queryForm: {
 				useUnit: '',
 				makeUnit: '',
 				recordStatus: '',
 				orderNo: '',
 				applyDate: '',
 				recordDate: '',
+				pagesize: defaultSettings.pageSizes[0],
+				pageindex: 1
 			},
 			formItems: [
 				{
@@ -150,7 +157,7 @@ export default {
 				},
 				{
 					key: 'makeUnit',
-					label: '招牌名称',
+					label: '刻制单位',
 					type: 'input'
 				},
 				{
@@ -189,21 +196,15 @@ export default {
 				recordDate: '',
 			}],
 			columns: [
-				{ prop: 'agency', label: '管辖单位', width: 180 },
-				{ prop: 'enterpriseCode', label: '企业编码', width: 80 },
-				{ prop: 'companyName', label: '企业名称', width: 100 },
-				{ prop: 'signboardName', label: '招牌名称', width: 180 },
-				{ prop: 'legalPerson', label: '法人姓名', width: 80 },
-				{ prop: 'unifiedSocialCreditCode', label: '社会信用代码', width: 100 },
-				{ prop: 'phone', label: '联系电话', width: 100 },
-				{ prop: 'checkStatus', label: '核查状态', width: 80 },
-				{ prop: 'businessType', label: '行业类别', width: 80 },
-				{ prop: 'businessStatus', label: '营业状态', width: 80 },
-				{ prop: 'logout', label: '注销状态', width: 80 },
-				{ prop: 'licenseStatus', label: '许可证状态', width: 80 },
-				{ prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
-				{ prop: 'inputTime', label: '录入时间', width: 180 },
-				{ prop: 'origin', label: '数据来源', width: 80 }
+				{ prop: 'agency', label: '印章订单编号', },
+				{ prop: 'enterpriseCode', label: '使用单位名称', },
+				{ prop: 'companyName', label: '使用单位法人姓名', },
+				{ prop: 'signboardName', label: '提交备案时间', },
+				{ prop: 'legalPerson', label: '备案时间', },
+				{ prop: 'unifiedSocialCreditCode', label: '订单状态', },
+				{ prop: 'phone', label: '备案状态', },
+				{ prop: 'checkStatus', label: '消息来源', },
+				{ prop: 'businessType', label: '申请时间', },
 			],
 			detailTabs: [
 				{ label: '使用单位信息', props: 'unitInfo' },
@@ -234,6 +235,14 @@ export default {
 		},
 		handleCancel() {
 			this.dialogFormVisible = false;
+		},
+		handleSizeChange(pagesize) {
+			this.queryForm.pagesize = pagesize
+			this.handleQuery()
+		},
+		handleCurrentChange(pageindex) {
+			this.queryForm.pageindex = pageindex
+			this.handleQuery()
 		},
 
 	}
