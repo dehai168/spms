@@ -1,47 +1,116 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 42px">
-      <el-form ref="queryForm" :inline="true" :model="queryForm">
-        <el-form-item>
-          <el-input placeholder="请输入关键字" suffix-icon="el-icon-search" v-model="queryForm.name" style="width: 400px"> </el-input>
-          <el-button type="primary" icon="el-icon-find" @click="handleQuery">搜索</el-button>
-          <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
-        </el-form-item>
-        <el-form-item style="float: right">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 82px">
+      <el-row>
+        <el-col :span="20">
+          <el-form ref="queryForm" :inline="true" :model="queryForm">
+            <el-row>
+              <el-col :span="6">
+                <el-form-item label="重点地区名称" style="width: 100%">
+                  <el-input v-model="form.name"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="区划名称">
+                  <el-input v-model="form.name" maxlength="20"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="性别">
+                  <el-select v-model="queryForm.sex" placeholder="请选择">
+                    <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="民族">
+                  <el-select v-model="queryForm.national" placeholder="请选择">
+                    <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="6">
+                <el-form-item label="登记单位名称">
+                  <el-select v-model="queryForm.company" placeholder="请选择">
+                    <el-option v-for="item in companyList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="登记日期">
+                  <el-date-picker v-model="queryForm.datetime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-button type="primary" icon="el-icon-find" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-col>
+        <el-col :span="4">
           <el-button type="primary" icon="el-icon-plus" @click="handleCreate">添加</el-button>
           <el-button icon="el-icon-delete" @click="handleBatchRemove">删除</el-button>
-          <el-button icon="el-icon-download" @click="handleImport">导入</el-button>
-          <el-button icon="el-icon-download" @click="handleExport">导出</el-button>
-        </el-form-item>
-      </el-form>
+          <!-- <el-button icon="el-icon-download" @click="handleImport">导入</el-button>
+          <el-button icon="el-icon-download" @click="handleExport">导出</el-button> -->
+        </el-col>
+      </el-row>
     </el-header>
     <el-main class="main">
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column fixed type="selection" width="55"> </el-table-column>
-        <el-table-column fixed label="操作" width="90">
+        <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column prop="name" label="重点地区名称"> </el-table-column>
+        <el-table-column prop="remark" label="区划名称"> </el-table-column>
+        <el-table-column prop="createuser" label="性别"> </el-table-column>
+        <el-table-column prop="createdat" label="名族"> </el-table-column>
+        <el-table-column prop="updateuser" label="年龄段从"> </el-table-column>
+        <el-table-column prop="updatedat" label="年龄至"> </el-table-column>
+        <el-table-column prop="updatedat" label="登记单位名称"> </el-table-column>
+        <el-table-column prop="updatedat" label="登记人"> </el-table-column>
+        <el-table-column prop="updatedat" label="登记时间"> </el-table-column>
+        <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
+            <el-button type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
             <el-button type="text" @click="handleUpdate(scope.$index, scope.row)">编辑</el-button>
             <el-button type="text" @click="handleRemove(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="关键字" width="90"> </el-table-column>
-        <el-table-column prop="remark" label="备注"> </el-table-column>
-        <el-table-column prop="createuser" label="添加人员"> </el-table-column>
-        <el-table-column prop="createdat" label="添加时间" width="140"> </el-table-column>
-        <el-table-column prop="updateuser" label="更新人员"> </el-table-column>
-        <el-table-column prop="updatedat" label="更新时间" width="140"> </el-table-column>
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
     </el-footer>
-    <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="50%" :close-on-click-modal="false">
+    <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
-        <el-form-item prop="name" label="关键字">
+        <el-form-item prop="name" label="重点地区名称">
           <el-input v-model="form.name" maxlength="20"></el-input>
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input type="textarea" :rows="3" v-model="form.remark" maxlength="150"></el-input>
+        <el-form-item prop="name" label="区划名称">
+          <el-input v-model="form.name" maxlength="20"></el-input>
+        </el-form-item>
+        <el-form-item label="名族">
+          <el-select v-model="queryForm.national" placeholder="请选择" style="width: 100%">
+            <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-select v-model="queryForm.sex" placeholder="请选择" style="width: 100%">
+            <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="年龄范围从">
+          <el-input v-model="form.name" maxlength="20"></el-input>
+        </el-form-item>
+        <el-form-item label="年龄范围至">
+          <el-input v-model="form.name" maxlength="20"></el-input>
+        </el-form-item>
+        <el-form-item label="起始时间">
+          <el-date-picker v-model="form.starttime" type="datetime" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
+        </el-form-item>
+        <el-form-item label="结束时间">
+          <el-date-picker v-model="form.endtime" type="datetime" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -71,11 +140,11 @@
 </template>
 <script>
 import defaultSettings from '@/settings'
-import { items, item, create, update, remove, batchremove, importexcel, exportexcel, exist, templeteUrl, uploadUrl, download } from '@/api/table'
+import { items, item, create, update, remove, batchremove, importexcel, exportexcel, exist, templeteUrl, uploadUrl, download } from '@/api/focusareas'
 import { formatDate } from '@/utils/index'
 import Cookies from 'js-cookie'
 export default {
-  name: 'Table',
+  name: 'FocusAreas',
   components: {},
   props: {},
   data() {
@@ -120,6 +189,20 @@ export default {
       formRules: {
         name: [{ required: true, trigger: 'blur', validator: validateName }]
       },
+      sexList: [
+        { value: 1, label: '男' },
+        { value: 2, label: '女' }
+      ],
+      nationalList: [
+        { value: 1, label: '汉族' },
+        { value: 2, label: '壮族' },
+        { value: 3, label: '满族' }
+      ],
+      companyList: [
+        { value: 1, label: '单位1' },
+        { value: 2, label: '单位2' },
+        { value: 3, label: '单位3' }
+      ],
       uploadHeader: {},
       addflag: true,
       importDialogVisible: false,
@@ -173,8 +256,8 @@ export default {
           console.error(e)
         })
     },
-    handleReset(){
-      this.$refs.queryForm.resetFields();
+    handleReset() {
+      this.$refs.queryForm.resetFields()
     },
     handleExport() {
       exportexcel(this.queryForm)
@@ -317,6 +400,22 @@ export default {
       this.queryForm.pageindex = pageindex
       this.handleQuery()
     },
+    handleView(index, row) {
+      this.formClear(false)
+      item({
+        keyid: row.keyid
+      })
+        .then(res => {
+          if (res.code === 20000) {
+            this.form = res.data
+            this.editKeyName = this.form.name
+            this.dialogVisible = true
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
     handleUpdate(index, row) {
       this.formClear(false)
       item({
@@ -409,7 +508,7 @@ export default {
   width: 100%;
 }
 .main {
-  height: calc(100vh - 152px);
+  height: calc(100vh - 192px);
   width: 100%;
   padding: 5px;
 }

@@ -1,0 +1,280 @@
+<template>
+  <el-container class="container">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 42px">
+      <el-row>
+        <el-col :span="20">
+          <el-form ref="queryForm" :inline="true" :model="queryForm">
+            <el-row>
+              <el-col :span="6">
+                <el-form-item label="预警时间" style="width: 100%">
+                  <el-date-picker v-model="queryForm.datetime" type="date" placeholder="选择日期"> </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="状态">
+                  <el-select v-model="queryForm.state" placeholder="请选择">
+                    <el-option v-for="item in stateList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="姓名">
+                  <el-input v-model="form.name" maxlength="20"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="证件号码">
+                  <el-input v-model="form.id" maxlength="20"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-col>
+        <el-col :span="4">
+          <el-button type="primary" icon="el-icon-find" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
+        </el-col>
+      </el-row>
+    </el-header>
+    <el-main class="main">
+      <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%">
+        <el-table-column prop="name" label="预警时间"> </el-table-column>
+        <el-table-column prop="remark" label="预警地点"> </el-table-column>
+        <el-table-column prop="createuser" label="姓名"> </el-table-column>
+        <el-table-column prop="createdat" label="证件号码"> </el-table-column>
+        <el-table-column prop="updateuser" label="状态"> </el-table-column>
+        <el-table-column prop="updatedat" label="处理结果"> </el-table-column>
+        <el-table-column fixed="right" label="操作" width="120">
+          <template slot-scope="scope">
+            <el-button v-if="scope.row.keyid % 2 !== 0" type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
+            <el-button v-if="scope.row.keyid % 2 === 0" type="text" @click="handleDispose(scope.$index, scope.row)">处理</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-main>
+    <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
+    </el-footer>
+    <el-dialog title="处理" :visible.sync="disposeDialogVisible" width="30%" :close-on-click-modal="false">
+      <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
+        <el-form-item prop="name" label="预警时间">
+          <el-input v-model="form.name" maxlength="20" disabled></el-input>
+        </el-form-item>
+        <el-form-item prop="id" label="预警地点">
+          <el-input v-model="form.id" maxlength="20" disabled></el-input>
+        </el-form-item>
+        <el-form-item prop="id" label="姓名">
+          <el-input v-model="form.id" maxlength="20" disabled></el-input>
+        </el-form-item>
+        <el-form-item prop="id" label="身份证号">
+          <el-input v-model="form.id" maxlength="20" disabled></el-input>
+        </el-form-item>
+        <el-form-item prop="id" label="预警原因">
+          <el-input v-model="form.id" maxlength="20" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="处理结果">
+          <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="form.remark"> </el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="disposeDialogVisible = false">取 消</el-button>
+        <el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="详情" :visible.sync="detailDialogVisible" width="30%" :close-on-click-modal="false">
+      <fieldset>
+        <legend>预警信息</legend>
+        <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
+          <el-form-item prop="name" label="预警时间">
+            <el-input v-model="form.name" maxlength="20" disabled></el-input>
+          </el-form-item>
+          <el-form-item prop="id" label="预警地点">
+            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          </el-form-item>
+          <el-form-item prop="id" label="姓名">
+            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          </el-form-item>
+          <el-form-item prop="id" label="身份证号">
+            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          </el-form-item>
+          <el-form-item prop="id" label="预警原因">
+            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          </el-form-item>
+        </el-form>
+      </fieldset>
+      <fieldset>
+        <legend>处理信息</legend>
+        <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
+          <el-form-item prop="name" label="处理人">
+            <el-input v-model="form.name" maxlength="20" disabled></el-input>
+          </el-form-item>
+          <el-form-item prop="id" label="处理时间">
+            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          </el-form-item>
+          <el-form-item prop="id" label="处理结果">
+            <el-input type="textarea" :rows="3" v-model="form.id" maxlength="20" disabled></el-input>
+          </el-form-item>
+        </el-form>
+      </fieldset>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="detailDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="detailDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+  </el-container>
+</template>
+<script>
+import defaultSettings from '@/settings'
+import { items, item, create } from '@/api/earlywarn'
+import { formatDate } from '@/utils/index'
+export default {
+  name: 'EarlyWarn',
+  components: {},
+  props: {},
+  data() {
+    return {
+      pagesizes: defaultSettings.pageSizes,
+      queryForm: {
+        name: '',
+        datetime: null,
+        pagesize: defaultSettings.pageSizes[0],
+        pageindex: 1
+      },
+      form: {
+        keyid: -1,
+        name: '',
+        remark: ''
+      },
+      formRules: {
+        name: [{ required: true, trigger: 'blur', message: '请输入' }],
+        id: [{ required: true, trigger: 'blur', message: '请输入' }]
+      },
+      stateList: [
+        { value: 0, label: '待处理' },
+        { value: 1, label: '已处理' }
+      ],
+      detailDialogVisible: false,
+      disposeDialogVisible: false,
+      submitDisabled: false,
+      tableLoading: false,
+      tableData: [],
+      tableDataCount: 0
+    }
+  },
+  computed: {},
+  created() {
+    const that = this
+    this.init(function () {
+      that.handleQuery()
+    })
+  },
+  mounted() {},
+  destroyed() {},
+  methods: {
+    init(callback) {
+      // 初始化异步操作，例如数据字典
+      callback()
+    },
+    handleQuery() {
+      this.tableLoading = true
+      items(this.queryForm)
+        .then(res => {
+          if (res.code === 20000) {
+            res.data.items.forEach(element => {
+              element.createdat = formatDate('datetime', element.createdat)
+              element.updatedat = formatDate('datetime', element.updatedat)
+            })
+            this.tableData = res.data.items
+            this.tableDataCount = res.data.total
+          }
+          this.tableLoading = false
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+    handleReset() {
+      this.$refs.queryForm.resetFields()
+    },
+    handleSubmit() {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.submitDisabled = true // 防止重复提交
+          create(this.form)
+            .then(res => {
+              if (res.code === 20000) {
+                if (res.data) {
+                  this.$message({
+                    message: '操作成功!',
+                    type: 'success'
+                  })
+                  this.disposeDialogVisible = false
+                  this.handleQuery()
+                } else {
+                  this.$message({
+                    message: '操作失败!',
+                    type: 'warning'
+                  })
+                }
+              }
+              this.submitDisabled = false
+            })
+            .catch(e => {
+              console.error(e)
+              this.submitDisabled = false
+            })
+        }
+      })
+    },
+    handleSizeChange(pagesize) {
+      this.queryForm.pagesize = pagesize
+      this.handleQuery()
+    },
+    handleCurrentChange(pageindex) {
+      this.queryForm.pageindex = pageindex
+      this.handleQuery()
+    },
+    handleView(index, row) {
+      item({
+        keyid: row.keyid
+      })
+        .then(res => {
+          if (res.code === 20000) {
+            this.form = res.data
+            this.editKeyName = this.form.name
+            this.detailDialogVisible = true
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+    handleDispose(index, row) {
+      item({
+        keyid: row.keyid
+      })
+        .then(res => {
+          if (res.code === 20000) {
+            this.form = res.data
+            this.editKeyName = this.form.name
+            this.disposeDialogVisible = true
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    }
+  }
+}
+</script>
+<style scoped>
+.container {
+  height: calc(100vh - 110px);
+  width: 100%;
+}
+.main {
+  height: calc(100vh - 152px);
+  width: 100%;
+  padding: 5px;
+}
+</style>

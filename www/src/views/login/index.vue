@@ -2,6 +2,8 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <div class="title-container">
+        <svg-icon class="logo" icon-class="police badge" />
+        <!-- <img class="logo" :src="logoSrc" alt="" /> -->
         <h3 class="title">{{ title }}</h3>
       </div>
 
@@ -64,7 +66,8 @@ export default {
       }
     }
     return {
-      title:defaultSettings.title,
+      title: defaultSettings.title,
+      logoSrc: defaultSettings.logo,
       authcodeSrc: '',
       loginForm: {
         username: '',
@@ -245,7 +248,11 @@ $light_gray: #eee;
 
   .title-container {
     position: relative;
-
+    text-align: center;
+    .logo {
+      width: 100px;
+      height: 100px;
+    }
     .title {
       font-size: 26px;
       color: $light_gray;

@@ -43,22 +43,38 @@ export const constantRoutes = [
     hidden: true
   },
 
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/table',
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: () => import('@/views/table/index'),
+  //       meta: { title: '表格', icon: 'el-icon-school' }
+  //     }
+  //   ]
+  // },
+  // 一级路由
   {
     path: '/',
     component: Layout,
-    redirect: '/table',
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '表格', icon: 'el-icon-school' }
-      }
-    ]
+    redirect: '/special',
+  },
+  {
+    path: '/special',
+    component: Layout,
+    redirect: '/special/hotel/base',
+  },
+  {
+    path: '/analysis',
+    component: Layout,
+    redirect: '/analysis/index/focusareas',
   },
   // TODO  添加页面路由
   {
-    path: '/specialindustries/hotel',
+    path: '/special/hotel',
     component: Layout,
     meta: { title: '旅馆业', icon: 'el-icon-school' },
     children: [
@@ -79,6 +95,32 @@ export const constantRoutes = [
         name: 'overseas',
         component: () => import('@/views/overseasTraveler/index'),
         meta: { title: '境内旅客', icon: 'el-icon-school' }
+      }
+
+    ]
+  },
+  {
+    path: '/analysis/index',
+    component: Layout,
+    meta: { title: '智能研判分析', icon: 'el-icon-school' },
+    children: [
+      {
+        path: 'focusareas',
+        name: 'focusareas',
+        component: () => import('@/views/focusAreas/index'),
+        meta: { title: '重点地区管理', icon: 'el-icon-school' }
+      },
+      {
+        path: 'focustarget',
+        name: 'focustarget',
+        component: () => import('@/views/focusTarget/index'),
+        meta: { title: '重点关注对象管理', icon: 'el-icon-school' }
+      },
+      {
+        path: 'earlywarn',
+        name: 'earlywarn',
+        component: () => import('@/views/earlyWarn/index'),
+        meta: { title: '预警查询', icon: 'el-icon-school' }
       }
 
     ]

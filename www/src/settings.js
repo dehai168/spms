@@ -1,16 +1,6 @@
 module.exports = {
-  title: '特殊行业人员管理系统',
-  logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png',
-  /**
-   * @type {boolean} true | false
-   * @description Whether fix the header
-   */
-  fixedHeader: false,
-  /**
-   * @type {boolean} true | false
-   * @description Whether show the logo in sidebar
-   */
-  sidebarLogo: true,
+  title: '娱乐场所及特行特业管控系统',
+  logo: 'http://img1.3png.com/0297648a122c3e1b95d13c22e8c664b36fd4.png',
   tokenKey: 'spms_token',
   /**
    *
