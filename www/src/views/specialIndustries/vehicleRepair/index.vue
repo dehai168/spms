@@ -103,59 +103,60 @@
       <el-form
         ref="addEditForm"
         :model="addEditForm"
-        label-width="130px"
+        label-width="7.5vw"
         :inline="true"
         :disabled="flag == 'detail'"
       >
         <my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
-          <el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
-            <el-select
-              v-if="formItem.type == 'select'"
-              v-model="addEditForm[formItem.key]"
-              :style="{ width: formItem.width || '200px' }"
-              placeholder="请选择"
-            >
-              <el-option
-                v-for="option in formItem.options"
-                :key="option.value"
-                :value="option.value"
-                :label="option.label"
-              />
-            </el-select>
-            <el-input
-              v-else-if="formItem.type == 'input'"
-              v-model="addEditForm[formItem.key]"
-              :style="{ width: formItem.width || '200px' }"
-            />
-            <el-input
-              v-else-if="formItem.type == 'textarea'"
-              v-model="addEditForm[formItem.key]"
-              type="textarea"
-              style="width:500px"
-            />
-            <el-date-picker
-              v-else-if="formItem.type == 'datePicker'"
-              v-model="addEditForm[formItem.key]"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            />
-            <el-radio-group
-              v-else-if="formItem.type == 'radio'"
-              v-model="addEditForm[formItem.key]"
-            >
-              <el-radio
-                v-for="option in formItem.options"
-                :key="option.value"
-                :label="option.value"
-              >{{ option.label }}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <!-- 标准地址根据用户选择 显示   这里单独处理 -->
-          <el-form-item v-if="index === 0 && addEditForm.hasStandard == 1" label="标准经营地址">
-            <el-input v-model="addEditForm.standardAddress" style="width:150px" />
-          </el-form-item>
+          <el-row v-for="(row, rowIndex) in cardItem" :key="rowIndex">
+            <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
+              <el-form-item :label="formItem.label">
+                <el-select
+                  v-if="formItem.type == 'select'"
+                  v-model="addEditForm[formItem.key]"
+                  :style="{ width: formItem.width || '13.5vw' }"
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="option in formItem.options"
+                    :key="option.value"
+                    :value="option.value"
+                    :label="option.label"
+                  />
+                </el-select>
+                <el-input
+                  v-else-if="formItem.type == 'input'"
+                  v-model="addEditForm[formItem.key]"
+                  :style="{ width: formItem.width || '13.5vw' }"
+                />
+                <el-input
+                  v-else-if="formItem.type == 'textarea'"
+                  v-model="addEditForm[formItem.key]"
+                  type="textarea"
+                  style="width:500px"
+                />
+                <el-date-picker
+                  v-else-if="formItem.type == 'datePicker'"
+                  v-model="addEditForm[formItem.key]"
+                  :style="{ width: formItem.width || '13.5vw' }"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                />
+                <el-radio-group
+                  v-else-if="formItem.type == 'radio'"
+                  v-model="addEditForm[formItem.key]"
+                >
+                  <el-radio
+                    v-for="option in formItem.options"
+                    :key="option.value"
+                    :label="option.value"
+                  >{{ option.label }}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </my-card>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -252,76 +253,90 @@ export default {
       },
       addEditformItems: {
         '基础信息': [
-          {
-            key: 'businessStatus',
-            label: '营业状态',
-            type: 'select',
-            options: [
-              { label: '营业', value: '1' },
-              { label: '停业', value: '2' },
-              { label: '歇业', value: '3' },
-              { label: '其他', value: '4' }
-            ]
-          },
-          { key: '占地面积', label: '占地面积（平米）', type: 'input' },
-          { key: 'enterpriseCode', label: '企业编码', type: 'input' },
-          {
-            key: 'agency',
-            label: '管辖单位',
-            type: 'select',
-            options: [
-              { label: 'aaaa', value: 1 },
-              { label: 'aaaa', value: 2 },
-              { label: 'aaaa', value: 3 }
-            ]
-          },
-          { key: '企业登记日期', label: '企业登记日期', type: 'datePicker' },
-          { key: '地址', label: '地址', type: 'input', width: '500px' },
+          [
+            {
+              key: 'businessStatus',
+              label: '营业状态',
+              type: 'select',
+              options: [
+                { label: '营业', value: '1' },
+                { label: '停业', value: '2' },
+                { label: '歇业', value: '3' },
+                { label: '其他', value: '4' }
+              ]
+            },
+            { key: '占地面积', label: '占地面积（平米）', type: 'input' },
+            { key: 'enterpriseCode', label: '企业编码', type: 'input' },
+          ],
+          [
+            {
+              key: 'agency',
+              label: '管辖单位',
+              type: 'select',
+              options: [
+                { label: 'aaaa', value: 1 },
+                { label: 'aaaa', value: 2 },
+                { label: 'aaaa', value: 3 }
+              ]
+            },
+            { key: '企业登记日期', label: '企业登记日期', type: 'datePicker' },
+          ],
+          [{ key: '地址', label: '地址', type: 'input', width: '500px', span: 24 },]
         ],
         '工商信息': [
-          { key: 'companyName', label: '企业名称(全称)', type: 'input' },
-          { key: 'unifiedSocialCreditCode', label: '社会信用代码', type: 'input' },
-          {
-            key: '行政区域',
-            label: '行政区域',
-            type: 'select',
-            options: [
-              { label: 'xxx', value: 1 },
-              { label: 'xxxx', value: 2 }
-            ]
-          },
-          {
-            key: '经济类型',
-            label: '经济类型',
-            type: 'select',
-            options: [
-              { label: 'xxx', value: 1 },
-              { label: 'xxxx', value: 2 }
-            ]
-          },
-          { key: '企业电话', label: '企业电话', type: 'input' },
-          { key: '注册资本（万元）', label: '注册资本（万元）', type: 'input' },
-          { key: 'legalPerson', label: '法人姓名', type: 'input' },
-          {
-            key: '法人证件类型',
-            label: '法人证件类型',
-            type: 'select',
-            options: [
-              { label: 'xxx', value: 1 },
-              { label: 'xxxx', value: 2 }
-            ]
-          },
-          { key: '法人证件号码', label: '法人证件号码', type: 'input' },
-          { key: '工商经营地址', label: '工商经营地址', type: 'input', width: '500px' },
-          { key: '经营范围', label: '经营范围（主营）', type: 'input', width: '500px' }
+          [
+            { key: 'companyName', label: '企业名称(全称)', type: 'input' },
+            { key: 'unifiedSocialCreditCode', label: '社会信用代码', type: 'input' },
+            {
+              key: '行政区域',
+              label: '行政区域',
+              type: 'select',
+              options: [
+                { label: 'xxx', value: 1 },
+                { label: 'xxxx', value: 2 }
+              ]
+            },
+          ],
+          [
+            {
+              key: '经济类型',
+              label: '经济类型',
+              type: 'select',
+              options: [
+                { label: 'xxx', value: 1 },
+                { label: 'xxxx', value: 2 }
+              ]
+            },
+            { key: '企业电话', label: '企业电话', type: 'input' },
+            { key: '注册资本（万元）', label: '注册资本（万元）', type: 'input' },
+          ],
+          [
+            { key: 'legalPerson', label: '法人姓名', type: 'input' },
+            {
+              key: '法人证件类型',
+              label: '法人证件类型',
+              type: 'select',
+              options: [
+                { label: 'xxx', value: 1 },
+                { label: 'xxxx', value: 2 }
+              ]
+            },
+            { key: '法人证件号码', label: '法人证件号码', type: 'input' },
+          ],
+          [{ key: '工商经营地址', label: '工商经营地址', type: 'input', width: '500px', span: 24 }],
+          [{ key: '经营范围', label: '经营范围（主营）', type: 'input', width: '500px', span: 24 }]
         ],
         '管理信息': [
-          { key: '单位负责人', label: '单位负责人', type: 'input' },
-          { key: '负责人证件号码', label: '负责人证件号码', type: 'input' },
-          { key: '负责人联系电话', label: '负责人联系电话', type: 'input' },
-          { key: '列管民警姓名', label: '列管民警姓名', type: 'input' },
-          { key: '列管民警手机', label: '列管民警手机', type: 'input' },
-          { key: '备注', label: '备注', type: 'textarea', }
+          [
+            { key: '单位负责人', label: '单位负责人', type: 'input' },
+            { key: '负责人证件号码', label: '负责人证件号码', type: 'input' },
+            { key: '负责人联系电话', label: '负责人联系电话', type: 'input' },
+          ],
+          [
+            { key: '列管民警姓名', label: '列管民警姓名', type: 'input' },
+            { key: '列管民警手机', label: '列管民警手机', type: 'input' },
+          ],
+          [{ key: '备注', label: '备注', type: 'textarea', span: 24 }],
         ]
       }
     };
