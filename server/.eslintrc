@@ -1,0 +1,17 @@
+{
+  "extends": "eslint-config-egg",
+  "rules": {
+    "key-spacing": 0,
+    "eol-last": 0,
+    "indent": 0,
+    "quotes": 0,
+    "semi": 0,
+    "no-bitwise": "off",
+    "no-else-return": "off",
+    "valid-jsdoc": "off",
+    "no-trailing-spaces": "off",
+    "space-before-function-paren": 0,
+    "array-bracket-spacing": 0,
+    "linebreak-style": "off"
+  }
+}
