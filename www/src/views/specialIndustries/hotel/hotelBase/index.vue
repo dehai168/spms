@@ -639,7 +639,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  height: calc(100vh - 100px);
+  height: calc(100vh - 120px);
   width: 100%;
   .main {
     height: calc(100% - 184px);
