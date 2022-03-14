@@ -6,7 +6,7 @@
           <el-form ref="queryForm" :inline="true" :model="queryForm">
             <el-row>
               <el-col :span="6">
-                <el-form-item label="姓名" style="width: 100%">
+                <el-form-item label="人员姓名" style="width: 100%">
                   <el-input v-model="form.name"></el-input>
                 </el-form-item>
               </el-col>
@@ -31,12 +31,12 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-form-item label="创建日期">
                   <el-date-picker v-model="queryForm.datetime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="18">
+              <el-col :span="16">
                 <el-button type="primary" icon="el-icon-find" @click="handleQuery">搜索</el-button>
                 <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
               </el-col>
