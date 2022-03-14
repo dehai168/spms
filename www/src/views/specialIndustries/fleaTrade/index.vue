@@ -1,40 +1,44 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 188px">
-      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="138px">
-        <el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-          <el-select
-            v-if="formItem.type == 'select'"
-            v-model="queryForm[formItem.key]"
-            style="width:330px"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="option in formItem.options"
-              :key="option.value"
-              :value="option.value"
-              :label="option.label"
-            />
-          </el-select>
-          <el-input
-            v-else-if="formItem.type == 'input'"
-            v-model="queryForm[formItem.key]"
-            style="width:330px"
-          />
-          <el-date-picker
-            v-else-if="formItem.type == 'datePicker'"
-            v-model="queryForm[formItem.key]"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">搜索</el-button>
-          <el-button>重置</el-button>
-        </el-form-item>
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 140px">
+      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="8.5vw">
+        <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
+          <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
+            <el-form-item :label="formItem.label">
+              <el-select
+                v-if="formItem.type == 'select'"
+                v-model="queryForm[formItem.key]"
+                style="width:12vw"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="option in formItem.options"
+                  :key="option.value"
+                  :value="option.value"
+                  :label="option.label"
+                />
+              </el-select>
+              <el-input
+                v-else-if="formItem.type == 'input'"
+                v-model="queryForm[formItem.key]"
+                style="width:12vw"
+              />
+              <el-date-picker
+                v-else-if="formItem.type == 'datePicker'"
+                v-model="queryForm[formItem.key]"
+                style="width:12vw"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
+              <div v-else-if="formItem.type == 'btn'">
+                <el-button type="primary" @click="handleQuery">搜索</el-button>
+                <el-button>重置</el-button>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </el-header>
     <el-main class="main">
@@ -189,47 +193,54 @@ export default {
       tableDataCount: 0,
       tableSelected: [],
       formItems: [
-        {
-          key: '行政区划',
-          label: '行政区划',
-          type: 'select',
-          options: [
-            { label: 'aaaa', value: 1 },
-            { label: 'aaaa', value: 2 },
-            { label: 'aaaa', value: 3 }
-          ]
-        },
-        {
-          key: '派出所名称',
-          label: '派出所名称',
-          type: 'select',
-          options: [
-            { label: '旅馆业', value: 1 },
-            { label: '留宿洗浴业', value: 2 }
-          ]
-        },
-        { key: '备案编号', label: '备案编号', type: 'input' },
-        { key: '企业名称', label: '企业名称', type: 'input' },
-        { key: '企业地址', label: '企业地址', type: 'input' },
-        { key: '企业门楼牌号', label: '企业门楼牌号', type: 'input' },
-        { key: '企业详址', label: '企业详址', type: 'input' },
-        { key: '分类', label: '分类', type: 'input' },
-        { key: '特种行业许可证编号', label: '特种行业许可证编号', type: 'input' },
-        { key: '法定代表人姓名', label: '法定代表人姓名', type: 'input' }
+        [
+          {
+            key: '行政区划',
+            label: '行政区划',
+            type: 'select',
+            options: [
+              { label: 'aaaa', value: 1 },
+              { label: 'aaaa', value: 2 },
+              { label: 'aaaa', value: 3 }
+            ]
+          },
+          {
+            key: '派出所名称',
+            label: '派出所名称',
+            type: 'select',
+            options: [
+              { label: '旅馆业', value: 1 },
+              { label: '留宿洗浴业', value: 2 }
+            ]
+          },
+          { key: '备案编号', label: '备案编号', type: 'input' },
+          { key: '企业名称', label: '企业名称', type: 'input' },
+        ],
+        [
+          { key: '企业地址', label: '企业地址', type: 'input' },
+          { key: '企业门楼牌号', label: '企业门楼牌号', type: 'input' },
+          { key: '企业详址', label: '企业详址', type: 'input' },
+          { key: '分类', label: '分类', type: 'input' },
+        ],
+        [
+          { key: '特种行业许可证编号', label: '特种行业许可证编号', type: 'input' },
+          { key: '法定代表人姓名', label: '法定代表人姓名', type: 'input' },
+          { key: 'btn', type: 'btn' },
+        ]
       ],
       columns: [
         { prop: '序号', label: '序号', width: 80 },
         { prop: 'agency', label: '行政区划', width: 180 },
-        { prop: 'enterpriseCode', label: '派出所名称', width: 120 },
+        { prop: 'enterpriseCode', label: '派出所名称', minWidth: 200 },
         { prop: 'companyName', label: '备案编号', width: 120 },
-        { prop: 'signboardName', label: '企业名称', width: 180 },
-        { prop: 'legalPerson', label: '企业地址', width: 180 },
+        { prop: 'signboardName', label: '企业名称', minWidth: 180 },
+        { prop: 'legalPerson', label: '企业地址', minWidth: 180 },
         { prop: 'unifiedSocialCreditCode', label: '企业门楼牌号', width: 100 },
-        { prop: 'phone', label: '企业详址', width: 180 },
+        { prop: 'phone', label: '企业详址', minWidth: 180 },
         { prop: 'checkStatus', label: '分类', width: 150 },
         { prop: 'businessType', label: '特种行业许可证编号', width: 180 },
         { prop: 'businessStatus', label: '法定代表人姓名', width: 120 },
-        { prop: 'logout', label: '法定代表人联系电话', width: 150 }
+        { prop: 'logout', label: '法定代表人联系电话', minWidth: 180 }
       ],
       dialogVisible: false,
       submitDisabled: false,

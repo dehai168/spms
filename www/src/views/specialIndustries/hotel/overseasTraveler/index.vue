@@ -1,40 +1,44 @@
 <template>
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 142px">
-      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="110px">
-        <el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-          <el-select
-            v-if="formItem.type == 'select'"
-            v-model="queryForm[formItem.key]"
-            style="width:150px"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="option in formItem.options"
-              :key="option.value"
-              :value="option.value"
-              :label="option.label"
-            />
-          </el-select>
-          <el-input
-            v-else-if="formItem.type == 'input'"
-            v-model="queryForm[formItem.key]"
-            style="width:150px"
-          />
-          <el-date-picker
-            v-else-if="formItem.type == 'datePicker'"
-            v-model="queryForm[formItem.key]"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">搜索</el-button>
-          <el-button>重置</el-button>
-        </el-form-item>
+      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="7vw">
+        <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
+          <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
+            <el-form-item :label="formItem.label">
+              <el-select
+                v-if="formItem.type == 'select'"
+                v-model="queryForm[formItem.key]"
+                style="width:14vw"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="option in formItem.options"
+                  :key="option.value"
+                  :value="option.value"
+                  :label="option.label"
+                />
+              </el-select>
+              <el-input
+                v-else-if="formItem.type == 'input'"
+                v-model="queryForm[formItem.key]"
+                style="width:14vw"
+              />
+              <el-date-picker
+                v-else-if="formItem.type == 'datePicker'"
+                v-model="queryForm[formItem.key]"
+                style="width:14vw"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
+              <div v-else-if="formItem.type == 'btn'">
+                <el-button type="primary" @click="handleQuery">搜索</el-button>
+                <el-button>重置</el-button>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </el-header>
     <el-main class="main">
@@ -46,7 +50,12 @@
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column v-for="column in columns" :key="column.prop" v-bind="column" />
+        <el-table-column
+          v-for="column in columns"
+          :key="column.prop"
+          v-bind="column"
+          :show-overflow-tooltip="true"
+        />
         <el-table-column prop="operate" label="操作" width="80" fixed="right">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
@@ -140,33 +149,40 @@ export default {
       tableDataCount: 0,
       tableSelected: [],
       formItems: [
-        { key: '入住时间', label: '入住时间', type: 'datePicker' },
-        { key: '英文姓', label: '英文姓', type: 'input' },
-        { key: '英文名', label: '英文名', type: 'input' },
-        {
-          key: '性别',
-          label: '性别',
-          type: 'select',
-          options: [
-            { label: '未注销', value: 1 },
-            { label: '已注销', value: 2 }
-          ]
-        },
-        { key: '出生日期', label: '出生日期', type: 'datePicker' },
-        { key: '证件号码', label: '证件号码', type: 'input' },
-        {
-          key: '管辖单位',
-          label: '管辖单位',
-          type: 'select',
-          options: [
-            { label: '变更待核查', value: 1 },
-            { label: '关停', value: 2 }
-          ]
-        },
-        { key: '招牌名称', label: '招牌名称', type: 'input' },
-        { key: 'companyName', label: '企业名称', type: 'input' },
-        { key: '中文名', label: '中文名', type: 'input' },
-        { key: '国家/地区', label: '国家/地区', type: 'input' }
+        [
+          { key: '入住时间', label: '入住时间', type: 'datePicker' },
+          { key: '英文姓', label: '英文姓', type: 'input' },
+          { key: '英文名', label: '英文名', type: 'input' },
+          {
+            key: '性别',
+            label: '性别',
+            type: 'select',
+            options: [
+              { label: '未注销', value: 1 },
+              { label: '已注销', value: 2 }
+            ]
+          },
+        ],
+        [
+          { key: '出生日期', label: '出生日期', type: 'datePicker' },
+          { key: '证件号码', label: '证件号码', type: 'input' },
+          {
+            key: '管辖单位',
+            label: '管辖单位',
+            type: 'select',
+            options: [
+              { label: '变更待核查', value: 1 },
+              { label: '关停', value: 2 }
+            ]
+          },
+          { key: '招牌名称', label: '招牌名称', type: 'input' },
+        ],
+        [
+          { key: 'companyName', label: '企业名称', type: 'input' },
+          { key: '中文名', label: '中文名', type: 'input' },
+          { key: '国家/地区', label: '国家/地区', type: 'input' },
+          { key: 'btn', type: 'btn' },
+        ]
       ],
       columns: [
         { prop: '序号', label: '序号', width: 80 },
@@ -177,13 +193,13 @@ export default {
         { prop: '性别', label: '性别', width: 80 },
         { prop: '出生日期', label: '出生日期', width: 120 },
         { prop: '证件号码', label: '证件号码', width: 180 },
-        { prop: '联系电话', label: '联系电话', width: 80 },
-        { prop: '房间号', label: '房间号', width: 120 },
+        { prop: '联系电话', label: '联系电话', minWidth: 180 },
+        { prop: '房间号', label: '房间号', minWidth: 120 },
         { prop: '入住时间', label: '入住时间', width: 80 },
         { prop: '退房时间', label: '退房时间', width: 80 },
-        { prop: '招牌名称', label: '招牌名称', width: 180 },
-        { prop: '企业名称', label: '企业名称', width: 180 },
-        { prop: '管辖单位', label: '管辖单位', width: 180 }
+        { prop: '招牌名称', label: '招牌名称', minWidth: 200 },
+        { prop: '企业名称', label: '企业名称', minWidth: 200 },
+        { prop: '管辖单位', label: '管辖单位', minWidth: 200 }
       ],
       dialogVisible: false,
       detailData: {

@@ -1,40 +1,44 @@
 <template>
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 96px">
-      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="110px">
-        <el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-          <el-select
-            v-if="formItem.type == 'select'"
-            v-model="queryForm[formItem.key]"
-            style="width:150px"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="option in formItem.options"
-              :key="option.value"
-              :value="option.value"
-              :label="option.label"
-            />
-          </el-select>
-          <el-input
-            v-else-if="formItem.type == 'input'"
-            v-model="queryForm[formItem.key]"
-            style="width:150px"
-          />
-          <el-date-picker
-            v-else-if="formItem.type == 'datePicker'"
-            v-model="queryForm[formItem.key]"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">搜索</el-button>
-          <el-button>重置</el-button>
-        </el-form-item>
+      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="7vw">
+        <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
+          <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
+            <el-form-item :label="formItem.label">
+              <el-select
+                v-if="formItem.type == 'select'"
+                v-model="queryForm[formItem.key]"
+                style="width:14vw"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="option in formItem.options"
+                  :key="option.value"
+                  :value="option.value"
+                  :label="option.label"
+                />
+              </el-select>
+              <el-input
+                v-else-if="formItem.type == 'input'"
+                v-model="queryForm[formItem.key]"
+                style="width:14vw"
+              />
+              <el-date-picker
+                v-else-if="formItem.type == 'datePicker'"
+                v-model="queryForm[formItem.key]"
+                style="width:14vw"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              />
+              <div v-else-if="formItem.type == 'btn'">
+                <el-button type="primary" @click="handleQuery">搜索</el-button>
+                <el-button>重置</el-button>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </el-header>
     <el-main class="main">
@@ -197,41 +201,46 @@ export default {
       tableDataCount: 0,
       tableSelected: [],
       formItems: [
-        {
-          key: 'agency',
-          label: '管辖单位',
-          type: 'select',
-          options: [
-            { label: 'aaaa', value: 1 },
-            { label: 'aaaa', value: 2 },
-            { label: 'aaaa', value: 3 }
-          ]
-        },
-        { key: 'enterpriseCode', label: '企业编码', type: 'input' },
-        { key: 'unifiedSocialCreditCode', label: '社会信用代码', type: 'input' },
-        { key: 'legalPerson', label: '法人姓名', type: 'input' },
-        { key: 'companyName', label: '企业名称', type: 'input' },
-        { key: 'inputTime', label: '录入时间', type: 'datePicker' },
-        {
-          key: 'businessStatus',
-          label: '营业状态',
-          type: 'select',
-          options: [
-            { label: '营业', value: 1 },
-            { label: '停业', value: 2 },
-            { label: '歇业', value: 3 },
-            { label: '其他', value: 4 }
-          ]
-        },
+        [
+          {
+            key: 'agency',
+            label: '管辖单位',
+            type: 'select',
+            options: [
+              { label: 'aaaa', value: 1 },
+              { label: 'aaaa', value: 2 },
+              { label: 'aaaa', value: 3 }
+            ]
+          },
+          { key: 'enterpriseCode', label: '企业编码', type: 'input' },
+          { key: 'unifiedSocialCreditCode', label: '社会信用代码', type: 'input' },
+          { key: 'legalPerson', label: '法人姓名', type: 'input' },
+        ],
+        [
+          { key: 'companyName', label: '企业名称', type: 'input' },
+          { key: 'inputTime', label: '录入时间', type: 'datePicker' },
+          {
+            key: 'businessStatus',
+            label: '营业状态',
+            type: 'select',
+            options: [
+              { label: '营业', value: 1 },
+              { label: '停业', value: 2 },
+              { label: '歇业', value: 3 },
+              { label: '其他', value: 4 }
+            ]
+          },
+          { key: 'btn', type: 'btn' },
+        ],
       ],
       columns: [
         { prop: '序号', label: '序号', width: 80 },
-        { prop: 'agency', label: '管辖单位', width: 200 },
+        { prop: 'agency', label: '管辖单位', minWidth: 200 },
         { prop: 'enterpriseCode', label: '企业编码', width: 120 },
-        { prop: 'companyName', label: '企业名称', width: 200 },
+        { prop: 'companyName', label: '企业名称', minWidth: 200 },
         { prop: 'legalPerson', label: '法人姓名', width: 100 },
-        { prop: 'unifiedSocialCreditCode', label: '社会信用代码', width: 120 },
-        { prop: 'phone', label: '联系电话', width: 150 },
+        { prop: 'unifiedSocialCreditCode', label: '社会信用代码', minWidth: 120 },
+        { prop: 'phone', label: '联系电话', minWidth: 180 },
         { prop: 'businessStatus', label: '营业状态', width: 100 },
         { prop: 'inputTime', label: '录入时间', width: 180 }
       ],
