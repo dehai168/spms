@@ -127,6 +127,12 @@ export const constantRoutes = [
         meta: { title: '机动车修理业', icon: 'el-icon-school' }
       },
       {
+        path: '/specialindustries/scrapMetal',
+        name: 'scrapMetal',
+        component: () => import('@/views/specialIndustries/scrapMetal/index'),
+        meta: { title: '废旧金属回收', icon: 'el-icon-school' }
+      },
+      {
         path: '/specialindustries/seal',
         component: SubLayout,
         meta: { title: '公章刻制业', icon: 'el-icon-school' },

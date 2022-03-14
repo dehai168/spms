@@ -2,11 +2,11 @@
 	<div class="ktv-container">
 		<el-form ref="form" :model="queryForm" label-width="140px">
 			<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-				<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" placeholder="请选择">
+				<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
 					<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 				</el-select>
-				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" />
-				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
+				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 			</el-form-item>
 
 			<el-form-item>
@@ -249,13 +249,13 @@ export default {
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
 			tableData: new Array(10).fill({
-agency: '测试数据',
-enterpriseCode: '测试数据',
-companyName: '测试数据',
-signboardName: '测试数据',
-legalPerson: '测试数据',
-unifiedSocialCreditCode: '测试数据',
-phone: '测试数据',
+				agency: '测试数据',
+				enterpriseCode: '测试数据',
+				companyName: '测试数据',
+				signboardName: '测试数据',
+				legalPerson: '测试数据',
+				unifiedSocialCreditCode: '测试数据',
+				phone: '测试数据',
 			}),
 			columns: [
 				{ prop: 'agency', label: '治安管理机构', },
@@ -313,7 +313,6 @@ phone: '测试数据',
 	}
 
 	.ktv-body {
-		
 	}
 }
 .el-descriptions {
