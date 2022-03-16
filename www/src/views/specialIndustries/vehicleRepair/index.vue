@@ -34,7 +34,7 @@
               />
               <div v-else-if="formItem.type == 'btn'">
                 <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button>重置</el-button>
+                <el-button @click="handleReset">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -139,10 +139,8 @@
                   v-else-if="formItem.type == 'datePicker'"
                   v-model="addEditForm[formItem.key]"
                   :style="{ width: formItem.width || '13.5vw' }"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
+                  type="date"
+                  placeholder="请选择日期"
                 />
                 <el-radio-group
                   v-else-if="formItem.type == 'radio'"
@@ -169,7 +167,7 @@
 
 <script>
 import defaultSettings from '@/settings'
-import { items, item, create, update, batchremove } from '@/api/vehicleRepair'
+import { items, create, update, remove } from '@/api/vehicleRepair'
 import { formatDate } from '@/utils/index'
 import MyCard from './MyCard.vue';
 export default {
@@ -180,20 +178,13 @@ export default {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        agency: '',
-        industry: '',
-        logout: '',
-        enterpriseCode: '',
-        legalPerson: '',
-        checkStatus: '',
-        licenseStatus: '',
-        companyName: '',
-        businessType: '',
-        signboardName: '',
-        unifiedSocialCreditCode: '',
-        businessStatus: '',
+        jurisdiction_unit: '',
+        enterprise_code: '',
+        credit_code: '',
+        legal_person: '',
+        enterprise: '',
         inputTime: '',
-        licenseIssueDate: '',
+        business_state: '',
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -204,7 +195,7 @@ export default {
       formItems: [
         [
           {
-            key: 'agency',
+            key: 'jurisdiction_unit',
             label: '管辖单位',
             type: 'select',
             options: [
@@ -213,15 +204,15 @@ export default {
               { label: 'aaaa', value: 3 }
             ]
           },
-          { key: 'enterpriseCode', label: '企业编码', type: 'input' },
-          { key: 'unifiedSocialCreditCode', label: '社会信用代码', type: 'input' },
-          { key: 'legalPerson', label: '法人姓名', type: 'input' },
+          { key: 'enterprise_code', label: '企业编码', type: 'input' },
+          { key: 'credit_code', label: '社会信用代码', type: 'input' },
+          { key: 'legal_person', label: '法人姓名', type: 'input' },
         ],
         [
-          { key: 'companyName', label: '企业名称', type: 'input' },
+          { key: 'enterprise', label: '企业名称', type: 'input' },
           { key: 'inputTime', label: '录入时间', type: 'datePicker' },
           {
-            key: 'businessStatus',
+            key: 'business_state',
             label: '营业状态',
             type: 'select',
             options: [
@@ -235,15 +226,19 @@ export default {
         ],
       ],
       columns: [
-        { prop: '序号', label: '序号', width: 80 },
-        { prop: 'agency', label: '管辖单位', minWidth: 200 },
-        { prop: 'enterpriseCode', label: '企业编码', width: 120 },
-        { prop: 'companyName', label: '企业名称', minWidth: 200 },
-        { prop: 'legalPerson', label: '法人姓名', width: 100 },
-        { prop: 'unifiedSocialCreditCode', label: '社会信用代码', minWidth: 120 },
-        { prop: 'phone', label: '联系电话', minWidth: 180 },
-        { prop: 'businessStatus', label: '营业状态', width: 100 },
-        { prop: 'inputTime', label: '录入时间', width: 180 }
+        { type: 'index', label: '序号', width: 80 },
+        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200 },
+        { prop: 'enterprise_code', label: '企业编码', width: 120 },
+        { prop: 'enterprise', label: '企业名称', minWidth: 200 },
+        { prop: 'legal_person', label: '法人姓名', width: 100 },
+        { prop: 'credit_code', label: '社会信用代码', minWidth: 120 },
+        { prop: 'enterprise_telephone', label: '联系电话', minWidth: 180 },
+        {
+          prop: 'business_state',
+          label: '营业状态', width: 100,
+          formatter: (row, column, cellValue, index) => (cellValue == 1 ? '未营业' : '营业')
+        },
+        { prop: 'input_time', label: '录入时间', width: 180 }
       ],
       dialogVisible: false,
       submitDisabled: false,
@@ -255,7 +250,7 @@ export default {
         '基础信息': [
           [
             {
-              key: 'businessStatus',
+              key: 'business_state',
               label: '营业状态',
               type: 'select',
               options: [
@@ -265,12 +260,12 @@ export default {
                 { label: '其他', value: '4' }
               ]
             },
-            { key: '占地面积', label: '占地面积（平米）', type: 'input' },
-            { key: 'enterpriseCode', label: '企业编码', type: 'input' },
+            { key: 'area', label: '占地面积（平米）', type: 'input' },
+            { key: 'enterprise_code', label: '企业编码', type: 'input' },
           ],
           [
             {
-              key: 'agency',
+              key: 'jurisdiction_unit',
               label: '管辖单位',
               type: 'select',
               options: [
@@ -279,16 +274,16 @@ export default {
                 { label: 'aaaa', value: 3 }
               ]
             },
-            { key: '企业登记日期', label: '企业登记日期', type: 'datePicker' },
+            { key: 'register_date', label: '企业登记日期', type: 'datePicker' },
           ],
-          [{ key: '地址', label: '地址', type: 'input', width: '500px', span: 24 },]
+          [{ key: 'enterprise_address', label: '地址', type: 'input', width: '500px', span: 24 },]
         ],
         '工商信息': [
           [
-            { key: 'companyName', label: '企业名称(全称)', type: 'input' },
-            { key: 'unifiedSocialCreditCode', label: '社会信用代码', type: 'input' },
+            { key: 'enterprise', label: '企业名称(全称)', type: 'input' },
+            { key: 'credit_code', label: '社会信用代码', type: 'input' },
             {
-              key: '行政区域',
+              key: 'district',
               label: '行政区域',
               type: 'select',
               options: [
@@ -299,7 +294,7 @@ export default {
           ],
           [
             {
-              key: '经济类型',
+              key: 'economic_type',
               label: '经济类型',
               type: 'select',
               options: [
@@ -307,13 +302,13 @@ export default {
                 { label: 'xxxx', value: 2 }
               ]
             },
-            { key: '企业电话', label: '企业电话', type: 'input' },
-            { key: '注册资本（万元）', label: '注册资本（万元）', type: 'input' },
+            { key: 'enterprise_telephone', label: '企业电话', type: 'input' },
+            { key: 'register_cost', label: '注册资本（万元）', type: 'input' },
           ],
           [
-            { key: 'legalPerson', label: '法人姓名', type: 'input' },
+            { key: 'legal_person', label: '法人姓名', type: 'input' },
             {
-              key: '法人证件类型',
+              key: 'legal_certificate_type',
               label: '法人证件类型',
               type: 'select',
               options: [
@@ -321,20 +316,20 @@ export default {
                 { label: 'xxxx', value: 2 }
               ]
             },
-            { key: '法人证件号码', label: '法人证件号码', type: 'input' },
+            { key: 'legal_certificate_code', label: '法人证件号码', type: 'input' },
           ],
-          [{ key: '工商经营地址', label: '工商经营地址', type: 'input', width: '500px', span: 24 }],
-          [{ key: '经营范围', label: '经营范围（主营）', type: 'input', width: '500px', span: 24 }]
+          [{ key: 'operate_address', label: '工商经营地址', type: 'input', width: '500px', span: 24 }],
+          [{ key: 'operate_scale', label: '经营范围（主营）', type: 'input', width: '500px', span: 24 }]
         ],
         '管理信息': [
           [
-            { key: '单位负责人', label: '单位负责人', type: 'input' },
-            { key: '负责人证件号码', label: '负责人证件号码', type: 'input' },
-            { key: '负责人联系电话', label: '负责人联系电话', type: 'input' },
+            { key: 'chief_person', label: '单位负责人', type: 'input' },
+            { key: 'chief_certificate_code', label: '负责人证件号码', type: 'input' },
+            { key: 'chief_telephone', label: '负责人联系电话', type: 'input' },
           ],
           [
-            { key: '列管民警姓名', label: '列管民警姓名', type: 'input' },
-            { key: '列管民警手机', label: '列管民警手机', type: 'input' },
+            { key: 'manage_police_name', label: '列管民警姓名', type: 'input' },
+            { key: 'manage_police_telephone', label: '列管民警手机', type: 'input' },
           ],
           [{ key: '备注', label: '备注', type: 'textarea', span: 24 }],
         ]
@@ -372,7 +367,12 @@ export default {
     },
     handleQuery() {
       this.tableLoading = true
-      items(this.queryForm)
+      const { inputTime, ...rest } = this.queryForm;
+      items({
+        fromdate: formatDate('datetime', inputTime[0]),
+        todate: formatDate('datetime', inputTime[1]),
+        ...rest
+      })
         .then(res => {
           if (res.code === 20000) {
             res.data.items.forEach(element => {
@@ -389,34 +389,23 @@ export default {
         })
     },
     handleEdit(index, row, flag) {
-      this.formClear(flag, false)
-      item({
-        keyid: row.keyid
-      })
-        .then(res => {
-          if (res.code === 20000) {
-            this.addEditForm = res.data
-            this.dialogVisible = true
-          }
-        })
-        .catch(e => {
-          console.error(e)
-        })
+      this.formClear(flag, false);
+      this.addEditForm = row;
+      this.dialogVisible = true;
     },
     handlePerson() { },
     handleRemove(index, row) {
-      this.removeData([row.keyid], [row.name])
+      this.removeData(row.vehicle_repairid)
     },
-    removeData(ids, names) {
+    removeData(vehicle_repairid) {
       this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          batchremove({
-            ids,
-            names
+          remove({
+            vehicle_repairid
           })
             .then(res => {
               if (res.code === 20000) {
@@ -425,9 +414,6 @@ export default {
                     message: '操作成功!',
                     type: 'success'
                   })
-                  if (ids.length === this.tableDataCount && this.queryForm.pageindex !== 1) {
-                    this.queryForm.pageindex = 1
-                  }
                   this.handleQuery()
                 } else {
                   this.$message({
@@ -443,7 +429,11 @@ export default {
         })
         .catch(() => { })
     },
-    handleReset() { },
+    handleReset() {
+      const { pagesize, pageindex } = this.queryForm;
+      this.queryForm = { pagesize, pageindex };
+      this.$refs.queryForm.resetFields();
+    },
 
     formClear(flag, visible) {
       this.dialogVisible = visible
@@ -457,11 +447,15 @@ export default {
       this.formClear('add', true)
     },
     handleSubmit() {
-      console.log(this.addEditForm)
+      const { register_date, ...rest } = this.addEditForm;
+      const requestData = {
+        register_date: formatDate('datetime', register_date),
+        ...rest
+      };
 
       this.submitDisabled = true // 防止重复提交
       if (this.flag === 'add') {
-        create(this.addEditForm)
+        create(requestData)
           .then(res => {
             if (res.code === 20000) {
               if (res.data) {
@@ -486,7 +480,7 @@ export default {
             this.submitDisabled = false
           })
       } else if (this.flag === 'edit') {
-        update(this.addEditForm)
+        update(requestData)
           .then(res => {
             if (res.code === 20000) {
               if (res.data) {

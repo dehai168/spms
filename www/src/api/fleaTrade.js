@@ -1,89 +1,35 @@
 import request from '@/utils/request'
-import { getToken } from '@/utils/auth'
 
-export function exist(params) {
-  return request({
-    url: '/fleatrade/exist',
-    method: 'get',
-    params
-  })
-}
 export function items(params) {
+  const { pagesize: size, pageindex: index, ...data } = params;
   return request({
-    url: '/fleatrade',
-    method: 'get',
-    params
-  })
-}
-export function list(params) {
-  return request({
-    url: '/fleatrade/list',
-    method: 'get',
-    params
-  })
-}
-export function item(params) {
-  return request({
-    url: '/fleatrade/id/' + params.keyid,
-    method: 'get',
-    params
+    url: '/police/junktrade/list',
+    method: 'post',
+    params: {
+      size,
+      index
+    },
+    data
   })
 }
 export function create(data) {
   return request({
-    url: '/fleatrade',
+    url: '/police/junktrade/add',
     method: 'post',
     data
   })
 }
 export function update(data) {
   return request({
-    url: '/fleatrade/' + data.keyid,
-    method: 'put',
+    url: '/police/junktrade/update',
+    method: 'post',
     data
   })
 }
-export function remove(data) {
+export function remove(params) {
   return request({
-    url: '/fleatrade/' + data.keyid,
-    method: 'delete',
-    data
-  })
-}
-export function batchremove(data) {
-  return request({
-    url: '/fleatrade/batchremove',
-    method: 'delete',
-    data
-  })
-}
-export function changestatus(params) {
-  return request({
-    url: '/fleatrade/changestatus',
+    url: '/police/junktrade/delete',
     method: 'get',
     params
   })
-}
-export function exportexcel(params) {
-  return request({
-    url: '/fleatrade/exportexcel',
-    method: 'get',
-    params
-  })
-}
-export function importexcel(params) {
-  return request({
-    url: '/fleatrade/importexcel',
-    method: 'get',
-    params
-  })
-}
-export function templeteUrl() {
-  return process.env.VUE_APP_BASE_API + '/file/download?type=template&name=vehicle.xlsx&token=' + getToken()
-}
-export function uploadUrl() {
-  return process.env.VUE_APP_BASE_API + '/file/upload?type=temp'
-}
-export function download(filename) {
-  window.open(process.env.VUE_APP_BASE_API + '/file/download?type=temp&name=' + filename + '&token=' + getToken())
 }
