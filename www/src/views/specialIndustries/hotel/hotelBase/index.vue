@@ -484,10 +484,10 @@ export default {
       this.tableLoading = true
       const { inputTime, licenseIssueDate, ...rest } = this.queryForm;
       items({
-        input_begin: inputTime ? formatDate('datetime', inputTime[0]) : undefined,
-        input_end: inputTime ? formatDate('datetime', inputTime[1]) : undefined,
-        license_begin: licenseIssueDate ? formatDate('datetime', licenseIssueDate[0]) : undefined,
-        license_end: licenseIssueDate ? formatDate('datetime', licenseIssueDate[1]) : undefined,
+        input_begin: inputTime ? formatDate('date', inputTime[0]) : undefined,
+        input_end: inputTime ? formatDate('date', inputTime[1]) : undefined,
+        license_begin: licenseIssueDate ? formatDate('date', licenseIssueDate[0]) : undefined,
+        license_end: licenseIssueDate ? formatDate('date', licenseIssueDate[1]) : undefined,
         ...rest
       })
         .then(res => {
@@ -568,7 +568,7 @@ export default {
 
       const { fire_opinion_date, is_standard_address, ...rest } = this.addEditForm;
       const requestData = {
-        fire_opinion_date: formatDate('datetime', fire_opinion_date),
+        fire_opinion_date: formatDate('date', fire_opinion_date),
         is_standard_address: !!is_standard_address,
         ...rest
       };
