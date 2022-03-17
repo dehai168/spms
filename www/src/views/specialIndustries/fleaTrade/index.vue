@@ -169,16 +169,16 @@ export default {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        district: '',
-        police_unit: '',
-        record_code: '',
-        enterprise: '',
-        enterprise_address: '',
-        enterprise_build_no: '',
-        enterprise_detail_address: '',
-        junk_type: '',
-        special_license: '',
-        legal_person: '',
+        // district: '',
+        // police_unit: '',
+        // record_code: '',
+        // enterprise: '',
+        // enterprise_address: '',
+        // enterprise_build_no: '',
+        // enterprise_detail_address: '',
+        // junk_type: '',
+        // special_license: '',
+        // legal_person: '',
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -376,13 +376,9 @@ export default {
       this.tableLoading = true
       items(this.queryForm)
         .then(res => {
-          if (res.code === 20000) {
-            res.data.items.forEach(element => {
-              element.createdat = formatDate('datetime', element.createdat)
-              element.updatedat = formatDate('datetime', element.updatedat)
-            })
-            this.tableData = res.data.items
-            this.tableDataCount = res.data.total
+          if (res.code === 200) {
+            this.tableData = res.data
+            this.tableDataCount = res.data.size
           }
           this.tableLoading = false
         })
@@ -452,7 +448,7 @@ export default {
       console.log(this.addEditForm)
       const { fire_opinion_date, 填表日期, 操作时间, ...rest } = this.addEditForm;
       const requestData = {
-        fire_check_time: formatDate('datetime', fire_opinion_date),
+        fire_check_time: fire_opinion_date ? formatDate('datetime', fire_opinion_date) : undefined,
         填表日期: formatDate('datetime', 填表日期),
         操作时间: formatDate('datetime', 操作时间),
         ...rest
@@ -461,14 +457,13 @@ export default {
       if (this.flag === 'add') {
         create(requestData)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data) {
                 this.$message({
                   message: '操作成功!',
                   type: 'success'
                 })
                 this.dialogVisible = false
-                this.editKeyName = ''
                 this.handleQuery()
               } else {
                 this.$message({
@@ -486,14 +481,13 @@ export default {
       } else if (this.flag === 'edit') {
         update(requestData)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data) {
                 this.$message({
                   message: '操作成功!',
                   type: 'success'
                 })
                 this.dialogVisible = false
-                this.editKeyName = ''
                 this.handleQuery()
               } else {
                 this.$message({

@@ -57,7 +57,7 @@
           v-bind="column"
           :show-overflow-tooltip="true"
         />
-        <el-table-column prop="operate" label="操作" width="200">
+        <el-table-column prop="operate" label="操作" width="200" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -178,13 +178,13 @@ export default {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        jurisdiction_unit: '',
-        enterprise_code: '',
-        credit_code: '',
-        legal_person: '',
-        enterprise: '',
-        inputTime: '',
-        business_state: '',
+        // jurisdiction_unit: '',
+        // enterprise_code: '',
+        // credit_code: '',
+        // legal_person: '',
+        // enterprise: '',
+        // inputTime: '',
+        // business_state: '',
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -369,18 +369,14 @@ export default {
       this.tableLoading = true
       const { inputTime, ...rest } = this.queryForm;
       items({
-        fromdate: formatDate('datetime', inputTime[0]),
-        todate: formatDate('datetime', inputTime[1]),
+        fromdate: inputTime ? formatDate('date', inputTime[0]) : undefined,
+        todate: inputTime ? formatDate('date', inputTime[1]) : undefined,
         ...rest
       })
         .then(res => {
-          if (res.code === 20000) {
-            res.data.items.forEach(element => {
-              element.createdat = formatDate('datetime', element.createdat)
-              element.updatedat = formatDate('datetime', element.updatedat)
-            })
-            this.tableData = res.data.items
-            this.tableDataCount = res.data.total
+          if (res.code === 200) {
+            this.tableData = res.data
+            this.tableDataCount = res.data.size
           }
           this.tableLoading = false
         })
@@ -408,7 +404,7 @@ export default {
             vehicle_repairid
           })
             .then(res => {
-              if (res.code === 20000) {
+              if (res.code === 200) {
                 if (res.data) {
                   this.$message({
                     message: '操作成功!',
@@ -449,7 +445,7 @@ export default {
     handleSubmit() {
       const { register_date, ...rest } = this.addEditForm;
       const requestData = {
-        register_date: formatDate('datetime', register_date),
+        register_date: register_date ? formatDate('datetime', register_date) : undefined,
         ...rest
       };
 
@@ -457,14 +453,13 @@ export default {
       if (this.flag === 'add') {
         create(requestData)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data) {
                 this.$message({
                   message: '操作成功!',
                   type: 'success'
                 })
                 this.dialogVisible = false
-                this.editKeyName = ''
                 this.handleQuery()
               } else {
                 this.$message({
@@ -482,14 +477,13 @@ export default {
       } else if (this.flag === 'edit') {
         update(requestData)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data) {
                 this.$message({
                   message: '操作成功!',
                   type: 'success'
                 })
                 this.dialogVisible = false
-                this.editKeyName = ''
                 this.handleQuery()
               } else {
                 this.$message({

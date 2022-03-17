@@ -201,20 +201,20 @@ export default {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        jurisdiction_unit: '',
-        trade_type: '',
-        logout: '',
-        enterprise_code: '',
-        legal_person: '',
-        checkStatus: '',
-        licenseStatus: '',
-        enterprise: '',
-        business_type: '',
-        sign_name: '',
-        credit_code: '',
-        business_state: '',
-        inputTime: [],
-        licenseIssueDate: [],
+        // jurisdiction_unit: '',
+        // trade_type: '',
+        // logout: '',
+        // enterprise_code: '',
+        // legal_person: '',
+        // checkStatus: '',
+        // licenseStatus: '',
+        // enterprise: '',
+        // business_type: '',
+        // sign_name: '',
+        // credit_code: '',
+        // business_state: '',
+        // inputTime: [],
+        // licenseIssueDate: [],
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -527,20 +527,16 @@ export default {
       this.tableLoading = true
       const { inputTime, licenseIssueDate, ...rest } = this.queryForm;
       items({
-        input_begin: formatDate('datetime', inputTime[0]),
-        input_end: formatDate('datetime', inputTime[1]),
-        license_begin: formatDate('datetime', licenseIssueDate[0]),
-        license_end: formatDate('datetime', licenseIssueDate[1]),
+        input_begin: inputTime ? formatDate('datetime', inputTime[0]) : undefined,
+        input_end: inputTime ? formatDate('datetime', inputTime[1]) : undefined,
+        license_begin: licenseIssueDate ? formatDate('datetime', licenseIssueDate[0]) : undefined,
+        license_end: licenseIssueDate ? formatDate('datetime', licenseIssueDate[1]) : undefined,
         ...rest
       })
         .then(res => {
-          if (res.code === 20000) {
-            res.data.items.forEach(element => {
-              element.createdat = formatDate('datetime', element.createdat)
-              element.updatedat = formatDate('datetime', element.updatedat)
-            })
-            this.tableData = res.data.items
-            this.tableDataCount = res.data.total
+          if (res.code === 200) {
+            this.tableData = res.data
+            this.tableDataCount = res.data.size
           }
           this.tableLoading = false
         })
@@ -617,14 +613,13 @@ export default {
       if (this.flag === 'add') {
         create(requestData)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data) {
                 this.$message({
                   message: '操作成功!',
                   type: 'success'
                 })
                 this.dialogVisible = false
-                this.editKeyName = ''
                 this.handleQuery()
               } else {
                 this.$message({
@@ -649,7 +644,6 @@ export default {
                   type: 'success'
                 })
                 this.dialogVisible = false
-                this.editKeyName = ''
                 this.handleQuery()
               } else {
                 this.$message({

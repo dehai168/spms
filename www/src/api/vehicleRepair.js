@@ -4,7 +4,7 @@ export function items(params) {
   const { pagesize: size, pageindex: index, ...data } = params;
   return request({
     url: '/police/vechiclerepair/list',
-    method: 'get',
+    method: 'post',
     params: {
       size,
       index
