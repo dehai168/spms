@@ -121,7 +121,7 @@
             <el-option
               v-for="option in formItem.options"
               :key="option.value"
-              :value="option.value"
+              :value="formItem.valueType == 'string' ? option.value : +option.value"
               :label="option.label"
             />
           </el-select>
@@ -163,6 +163,8 @@
 <script>
 import defaultSettings from '@/settings'
 import { items, create, update, remove } from '@/api/fleaTrade'
+import map from '@/const/map'
+import mapToArray from '@/utils/mapToArray'
 import { formatDate } from '@/utils/index'
 export default {
   data() {
@@ -192,20 +194,12 @@ export default {
             key: 'district',
             label: '行政区划',
             type: 'select',
-            options: [
-              { label: 'aaaa', value: 1 },
-              { label: 'aaaa', value: 2 },
-              { label: 'aaaa', value: 3 }
-            ]
+            options: mapToArray(map.district)
           },
           {
             key: 'police_unit',
             label: '派出所名称',
-            type: 'select',
-            options: [
-              { label: '旅馆业', value: 1 },
-              { label: '留宿洗浴业', value: 2 }
-            ]
+            type: 'input',
           },
           { key: 'record_code', label: '备案编号', type: 'input' },
           { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -214,7 +208,7 @@ export default {
           { key: 'enterprise_address', label: '企业地址', type: 'input' },
           { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
           { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
-          { key: 'junk_type', label: '分类', type: 'input' },
+          { key: 'junk_type', label: '分类', type: 'select', options: mapToArray(map.trade_type) },
         ],
         [
           { key: 'special_license', label: '特种行业许可证编号', type: 'input' },
@@ -224,14 +218,14 @@ export default {
       ],
       columns: [
         { type: 'index', label: '序号', width: 80 },
-        { prop: 'district', label: '行政区划', width: 180 },
+        { prop: 'district', label: '行政区划', width: 180, formatter: (r, c, value) => map.district[value] },
         { prop: 'police_unit', label: '派出所名称', minWidth: 200 },
         { prop: 'record_code', label: '备案编号', width: 120 },
         { prop: 'enterprise', label: '企业名称', minWidth: 180 },
         { prop: 'enterprise_address', label: '企业地址', minWidth: 180 },
         { prop: 'enterprise_build_no', label: '企业门楼牌号', width: 100 },
         { prop: 'enterprise_detail_address', label: '企业详址', minWidth: 180 },
-        { prop: 'junk_type', label: '分类', width: 150 },
+        { prop: 'junk_type', label: '分类', width: 150, formatter: (r, c, value) => map.trade_type[value] },
         { prop: 'special_license', label: '特种行业许可证编号', width: 180 },
         { prop: 'legal_person', label: '法定代表人姓名', width: 120 },
         { prop: 'legal_telephone', label: '法定代表人联系电话', minWidth: 180 }
@@ -247,21 +241,13 @@ export default {
           key: 'district',
           label: '行政区划',
           type: 'select',
-          options: [
-            { label: '营业', value: '1' },
-            { label: '停业', value: '2' },
-            { label: '歇业', value: '3' },
-            { label: '其他', value: '4' }
-          ]
+          valueType: 'string',
+          options: mapToArray(map.district)
         },
         {
           key: 'police_unit',
           label: '派出所名称',
-          type: 'select',
-          options: [
-            { label: '旅馆业', value: 1 },
-            { label: '留宿洗浴业', value: 2 }
-          ]
+          type: 'input'
         },
         { key: 'record_code', label: '备案编号', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -271,10 +257,8 @@ export default {
           key: 'junk_type',
           label: '分类',
           type: 'select',
-          options: [
-            { label: '旅馆业', value: 1 },
-            { label: '留宿洗浴业', value: 2 }
-          ]
+          valueType: 'string',
+          options: mapToArray(map.trade_type)
         },
         { key: 'chief_telephone', label: '经营负责人电话', type: 'input' },
         { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
@@ -283,10 +267,7 @@ export default {
           key: 'economic_type',
           label: '经济性质',
           type: 'select',
-          options: [
-            { label: '是', value: 1 },
-            { label: '否', value: 2 }
-          ]
+          options: mapToArray(map.economic_type)
         },
         { key: 'special_license', label: '特种行业许可证编号', type: 'input' },
         { key: 'enterprise_permit_code', label: '工商营业执照编号', type: 'input' },
@@ -305,7 +286,7 @@ export default {
         {
           key: '房屋结构',
           label: '房屋结构',
-          type: 'select',
+          type: 'input',
           options: [
             { label: 'xxx', value: 1 },
             { label: 'xxxx', value: 2 }
@@ -330,8 +311,8 @@ export default {
           label: '是否有安全规章制度',
           type: 'select',
           options: [
-            { label: 'xxx', value: 1 },
-            { label: 'xxxx', value: 2 }
+            { label: '是', value: 1 },
+            { label: '否', value: 0 }
           ]
         },
         { key: '技防物防设施', label: '技防物防设施', type: 'input' },
@@ -388,7 +369,7 @@ export default {
     },
     handleEdit(index, row, flag) {
       this.formClear(flag, false)
-      this.addEditForm = row;
+      this.addEditForm = { ...row, is_fire_regulation: +row.is_fire_regulation };
       this.dialogVisible = true;
     },
     handlePerson() { },
@@ -446,9 +427,10 @@ export default {
     },
     handleSubmit() {
       console.log(this.addEditForm)
-      const { fire_opinion_date, 填表日期, 操作时间, ...rest } = this.addEditForm;
+      const { fire_opinion_date, 填表日期, 操作时间, is_fire_regulation, ...rest } = this.addEditForm;
       const requestData = {
         fire_check_time: fire_opinion_date ? formatDate('datetime', fire_opinion_date) : undefined,
+        is_fire_regulation: !!is_fire_regulation,
         填表日期: formatDate('datetime', 填表日期),
         操作时间: formatDate('datetime', 操作时间),
         ...rest

@@ -110,15 +110,15 @@
       >
         <div style="display:flex;justify-content:space-around;">
           <el-form-item label="申报方式" required>
-            <el-radio-group v-model="addEditForm.xxx">
-              <el-radio label="1">告知承诺制</el-radio>
-              <el-radio label="2">一般审批制</el-radio>
+            <el-radio-group v-model="addEditForm.declare_type">
+              <el-radio :label="0">告知承诺制</el-radio>
+              <el-radio :label="1">一般审批制</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="工商类型" required>
-            <el-radio-group v-model="addEditForm.xxx">
-              <el-radio label="1">个体工商户</el-radio>
-              <el-radio label="2">工商企业</el-radio>
+            <el-radio-group v-model="addEditForm.business_type">
+              <el-radio :label="0">个体工商户</el-radio>
+              <el-radio :label="2">工商企业</el-radio>
             </el-radio-group>
           </el-form-item>
         </div>
@@ -136,7 +136,7 @@
                   <el-option
                     v-for="option in formItem.options"
                     :key="option.value"
-                    :value="option.value"
+                    :value="formItem.key == 'district' ? option.value : +option.value"
                     :label="option.label"
                   />
                 </el-select>
@@ -171,7 +171,7 @@
               </el-form-item>
               <!-- 标准地址根据用户选择 显示   这里单独处理 -->
               <el-form-item
-                v-else-if="formItem.type == 'standardAddress' && addEditForm.hasStandard == 1"
+                v-else-if="formItem.type == 'standardAddress' && addEditForm.is_standard_address == 1"
                 :label="formItem.label"
               >
                 <el-input v-model="addEditForm.standardAddress" style="width:12vw" />
@@ -191,6 +191,8 @@
 <script>
 import defaultSettings from '@/settings'
 import { items, create, update, remove } from '@/api/hotelBase'
+import mapToArray from '@/utils/mapToArray';
+import map from '@/const/map';
 import { formatDate } from '@/utils/index'
 import MyCard from './MyCard.vue';
 export default {
@@ -227,21 +229,13 @@ export default {
           {
             key: 'jurisdiction_unit',
             label: '管辖单位',
-            type: 'select',
-            options: [
-              { label: 'aaaa', value: 1 },
-              { label: 'aaaa', value: 2 },
-              { label: 'aaaa', value: 3 }
-            ]
+            type: 'input',
           },
           {
             key: 'trade_type',
             label: '行业分类',
             type: 'select',
-            options: [
-              { label: '旅馆业', value: 1 },
-              { label: '留宿洗浴业', value: 2 }
-            ]
+            options: mapToArray(map.hotel_trade_type)
           },
           {
             key: 'logout',
@@ -294,7 +288,7 @@ export default {
             label: '工商类型',
             type: 'select',
             options: [
-              { label: '个体工商户', value: 1 },
+              { label: '个体工商户', value: 0 },
               { label: '工商企业', value: 2 }
             ]
           },
@@ -304,12 +298,7 @@ export default {
             key: 'business_state',
             label: '营业状态',
             type: 'select',
-            options: [
-              { label: '营业', value: 1 },
-              { label: '停业', value: 2 },
-              { label: '歇业', value: 3 },
-              { label: '其他', value: 4 }
-            ]
+            options: mapToArray(map.business_state)
           },
         ],
         [
@@ -328,8 +317,8 @@ export default {
         { prop: 'credit_code', label: '社会信用代码', width: 100 },
         { prop: 'enterprise_telephone', label: '联系电话', width: 100 },
         { prop: 'checkStatus', label: '核查状态', width: 80 },
-        { prop: 'trade_type', label: '行业类别', width: 80 },
-        { prop: 'business_state', label: '营业状态', width: 80 },
+        { prop: 'trade_type', label: '行业类别', width: 120, formatter: (row, column, cellValue, index) => map.hotel_trade_type[cellValue] },
+        { prop: 'business_state', label: '营业状态', width: 80, formatter: (row, column, cellValue, index) => map.business_state[cellValue] },
         { prop: 'logout', label: '注销状态', width: 80 },
         { prop: 'licenseStatus', label: '许可证状态', width: 120 },
         { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
@@ -340,7 +329,8 @@ export default {
       submitDisabled: false,
       flag: 'add',
       addEditForm: {
-
+        declare_type: '0',
+        business_type: '0'
       },
       addEditformItems: {
         '基础信息': [
@@ -349,21 +339,13 @@ export default {
               key: 'business_state',
               label: '营业状态',
               type: 'select',
-              options: [
-                { label: '营业', value: '1' },
-                { label: '停业', value: '2' },
-                { label: '歇业', value: '3' },
-                { label: '其他', value: '4' }
-              ]
+              options: mapToArray(map.business_state)
             },
             {
               key: 'trade_type',
               label: '行业分类',
               type: 'select',
-              options: [
-                { label: '旅馆业', value: 1 },
-                { label: '留宿洗浴业', value: 2 }
-              ]
+              options: mapToArray(map.hotel_trade_type)
             },
             { key: 'enterprise_code', label: '企业编码', type: 'input' },
           ],
@@ -380,14 +362,7 @@ export default {
               key: 'hotel_star',
               label: '旅馆星级',
               type: 'select',
-              options: [
-                { label: '一星级', value: 1 },
-                { label: '二星级', value: 2 },
-                { label: '三星级', value: 3 },
-                { label: '四星级', value: 4 },
-                { label: '五星级', value: 5 },
-                { label: '其他', value: 6 }
-              ]
+              options: mapToArray(map.hotel_star)
             },
           ],
           [
@@ -395,23 +370,14 @@ export default {
               key: 'hotel_level',
               label: '旅馆等级',
               type: 'select',
-              options: [
-                { label: 'A级', value: 1 },
-                { label: 'B级', value: 2 },
-                { label: 'C级', value: 3 }
-              ]
+              options: mapToArray(map.hotel_level)
             },
           ],
           [
             {
               key: 'jurisdiction_unit',
               label: '管辖单位',
-              type: 'select',
-              options: [
-                { label: 'aaaa', value: 1 },
-                { label: 'aaaa', value: 2 },
-                { label: 'aaaa', value: 3 }
-              ]
+              type: 'input',
             },
             { key: 'actual_address', label: '实际经营地址', type: 'input' },
           ],
@@ -422,7 +388,7 @@ export default {
               type: 'radio',
               options: [
                 { label: '是', value: 1 },
-                { label: '否', value: 2 }
+                { label: '否', value: 0 }
               ]
             },
             { key: 'standard_address', label: '标准经营地址', type: 'standardAddress' },
@@ -437,10 +403,7 @@ export default {
               key: 'district',
               label: '行政区域',
               type: 'select',
-              options: [
-                { label: 'xxx', value: 1 },
-                { label: 'xxxx', value: 2 }
-              ]
+              options: mapToArray(map.district)
             },
           ],
           [
@@ -448,10 +411,7 @@ export default {
               key: 'economic_type',
               label: '经济类型',
               type: 'select',
-              options: [
-                { label: 'xxx', value: 1 },
-                { label: 'xxxx', value: 2 }
-              ]
+              options: mapToArray(map.economic_type)
             },
             { key: 'enterprise_telephone', label: '企业电话', type: 'input' },
             { key: 'register_cost', label: '注册资本（万元）', type: 'input' },
@@ -462,10 +422,7 @@ export default {
               key: 'legal_certificate_type',
               label: '法人证件类型',
               type: 'select',
-              options: [
-                { label: 'xxx', value: 1 },
-                { label: 'xxxx', value: 2 }
-              ]
+              options: mapToArray(map.legal_certificate_type)
             },
             { key: 'legal_certificate_code', label: '法人证件号码', type: 'input' },
           ],
@@ -546,7 +503,7 @@ export default {
     },
     handleEdit(index, row, flag) {
       this.formClear(flag, false);
-      this.addEditForm = row;
+      this.addEditForm = { ...row, is_standard_address: +row.is_standard_address };
       this.dialogVisible = true;
     },
     handlePerson() { },
@@ -564,7 +521,7 @@ export default {
             hotelid
           })
             .then(res => {
-              if (res.code === 20000) {
+              if (res.code === 200) {
                 if (res.data) {
                   this.$message({
                     message: '操作成功!',
@@ -595,7 +552,11 @@ export default {
       this.dialogVisible = visible
       this.flag = flag
       if (this.$refs.addEditForm) {
-        this.addEditForm = {};
+        this.addEditForm = {
+          declare_type: '0',
+          business_type: '0'
+
+        };
         this.$refs.addEditForm.resetFields()
       }
     },
@@ -605,9 +566,10 @@ export default {
     handleSubmit() {
       this.submitDisabled = true // 防止重复提交
 
-      const { fire_opinion_date, ...rest } = this.addEditForm;
+      const { fire_opinion_date, is_standard_address, ...rest } = this.addEditForm;
       const requestData = {
         fire_opinion_date: formatDate('datetime', fire_opinion_date),
+        is_standard_address: !!is_standard_address,
         ...rest
       };
       if (this.flag === 'add') {
@@ -637,7 +599,7 @@ export default {
       } else if (this.flag === 'edit') {
         update(requestData)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data) {
                 this.$message({
                   message: '操作成功!',

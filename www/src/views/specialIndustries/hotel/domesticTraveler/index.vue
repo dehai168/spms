@@ -34,7 +34,7 @@
               />
               <div v-else-if="formItem.type == 'btn'">
                 <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button>重置</el-button>
+                <el-button @click="handleReset">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -90,20 +90,16 @@
             :key="item.key"
             :label="item.label"
             :style="{ width: cardItem.width }"
-          >{{ detailData[item.key] }}</el-form-item>
+          >{{ item.formatter ? item.formatter(detailData[item.key]) : detailData[item.key] }}</el-form-item>
         </my-card>
         <div class="photo-coantainer">
           <el-image
             style="width: 100px; height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+            :src="detailData.certificate_image"
             :fit="fit"
           />
           <div class="photo-tittle">证件照片</div>
-          <el-image
-            style="width: 100px; height: 100px"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            :fit="fit"
-          />
+          <el-image style="width: 100px; height: 100px" :src="detailData.scene_capture" :fit="fit" />
           <div class="photo-tittle">现场照片</div>
         </div>
       </el-form>
@@ -116,7 +112,9 @@
 
 <script>
 import defaultSettings from '@/settings'
-import { items, item } from '@/api/domesticTraveler'
+import { items } from '@/api/domesticTraveler'
+import mapToArray from '@/utils/mapToArray';
+import map from '@/const/map';
 import { formatDate } from '@/utils/index'
 import MyCard from './MyCard.vue'
 export default {
@@ -127,20 +125,6 @@ export default {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        agency: '',
-        industry: '',
-        logout: '',
-        enterpriseCode: '',
-        legalPerson: '',
-        checkStatus: '',
-        licenseStatus: '',
-        companyName: '',
-        businessType: '',
-        signboardName: '',
-        unifiedSocialCreditCode: '',
-        businessStatus: '',
-        inputTime: '',
-        licenseIssueDate: '',
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -150,102 +134,97 @@ export default {
       tableSelected: [],
       formItems: [
         [
-          { key: '入住时间', label: '入住时间', type: 'datePicker' },
-          { key: '姓名', label: '姓名', type: 'input' },
+          { key: 'inTime', label: '入住时间', type: 'datePicker' },
+          { key: 'realname', label: '姓名', type: 'input' },
           {
-            key: '名族',
-            label: '名族',
+            key: 'nation',
+            label: '民族',
             type: 'select',
-            options: [
-              { label: '未注销', value: 1 },
-              { label: '已注销', value: 2 }
-            ]
+            options: mapToArray(map.nation)
           },
           {
-            key: '性别',
+            key: 'sex',
             label: '性别',
             type: 'select',
             options: [
-              { label: '未注销', value: 1 },
-              { label: '已注销', value: 2 }
+              { label: '男', value: '男' },
+              { label: '女', value: '女' }
             ]
           },
         ],
         [
-          { key: '出生日期', label: '出生日期', type: 'datePicker' },
-          { key: '证件号码', label: '证件号码', type: 'input' },
+          { key: 'birthday', label: '出生日期', type: 'datePicker' },
+          { key: 'certificate_code', label: '证件号码', type: 'input' },
           {
-            key: '管辖单位',
+            key: 'security_manage_org',
             label: '管辖单位',
-            type: 'select',
+            type: 'input',
             options: [
               { label: '变更待核查', value: 1 },
               { label: '关停', value: 2 }
             ]
           },
-          { key: '招牌名称', label: '招牌名称', type: 'input' },
+          { key: 'sign_name', label: '招牌名称', type: 'input' },
         ],
         [
-          { key: 'companyName', label: '企业名称', type: 'input' },
+          { key: 'enterprise', label: '企业名称', type: 'input' },
           { key: 'btn', type: 'btn' }
         ]
       ],
       columns: [
-        { prop: '序号', label: '序号', width: 80 },
+        { label: '序号', width: 80, type: 'index' },
         { prop: '行业类型', label: '行业类型', width: 180 },
-        { prop: 'name', label: '姓名', width: 120 },
-        { prop: '性别', label: '性别', width: 80 },
-        { prop: '证件号码', label: '证件号码', width: 180 },
-        { prop: '民族', label: '民族', width: 80 },
-        { prop: '省市县', label: '省市县', width: 120 },
-        { prop: '详细地址', label: '详细地址', minWidth: 200 },
-        { prop: '房间号', label: '房间号', width: 120 },
-        { prop: '入住时间', label: '入住时间', width: 80 },
-        { prop: '退房时间', label: '退房时间', width: 80 },
-        { prop: '招牌名称', label: '招牌名称', minWidth: 200 },
-        { prop: '企业名称', label: '企业名称', minWidth: 200 },
-        { prop: '管辖单位', label: '管辖单位', minWidth: 200 },
+        { prop: 'realname', label: '姓名', width: 120 },
+        { prop: 'sex', label: '性别', width: 80 },
+        { prop: 'certificate_code', label: '证件号码', width: 180 },
+        { prop: 'nation', label: '民族', width: 80 },
+        { prop: 'province_city', label: '省市县', width: 120 },
+        { prop: 'detail_address', label: '详细地址', minWidth: 200 },
+        { prop: 'in_room', label: '房间号', width: 120 },
+        { prop: 'in_time', label: '入住时间', width: 150 },
+        { prop: 'out_time', label: '退房时间', width: 150 },
+        { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
+        { prop: 'enterprise', label: '企业名称', minWidth: 200 },
+        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200 },
       ],
       dialogVisible: false,
-      detailData: {
-        name: 'sssssss'
-      },
+      detailData: {},
       detailItems: {
         '旅客证件信息': {
           width: '40%',
           items: [
-            { key: 'name', label: '姓名' },
+            { key: 'realname', label: '姓名' },
             { key: 'sex', label: '性别' },
-            { key: '民族', label: '民族' },
-            { key: '出生日期', label: '出生日期' },
-            { key: '证件类型', label: '证件类型' },
-            { key: '证件号码', label: '证件号码' },
-            { key: '省市县', label: '省市县' },
-            { key: '联系电话', label: '联系电话' },
-            { key: '详细地址', label: '详细地址' },
+            { key: 'nation', label: '民族' },
+            { key: 'birthday', label: '出生日期' },
+            { key: 'certificate_type', label: '证件类型', formatter: (value) => map.certificate_type[value]  },
+            { key: 'certificate_code', label: '证件号码' },
+            { key: 'province_city', label: '省市县' },
+            { key: 'telephone', label: '联系电话' },
+            { key: 'detail_address', label: '详细地址' },
           ]
         },
         '旅客入住信息': {
           width: '30%',
           items: [
-            { key: 'num', label: '入住房间号' },
-            { key: 'date', label: '入住时间' },
-            { key: '退房时间', label: '退房时间' },
-            { key: '人像比对相似度', label: '人像比对相似度' },
-            { key: '人像比对结果', label: '人像比对结果' },
-            { key: '是否人工复核', label: '是否人工复核' },
+            { key: 'in_room', label: '入住房间号' },
+            { key: 'in_time', label: '入住时间' },
+            { key: 'out_time', label: '退房时间' },
+            { key: 'image_similarity', label: '人像比对相似度' },
+            { key: 'image_result', label: '人像比对结果' },
+            { key: 'is_person_check', label: '是否人工复核', formatter: (value) => value ? '是' : '否' },
           ]
         },
         '管理信息': {
           width: '40%',
           items: [
-            { key: '招牌名称', label: '招牌名称' },
-            { key: '企业名称', label: '企业名称' },
-            { key: '治安管理机构', label: '治安管理机构' },
-            { key: '标准经营地址', label: '标准经营地址' },
-            { key: '前台保存时间', label: '前台保存时间' },
-            { key: '最后更新时间', label: '最后更新时间' },
-            { key: '数据上报形式', label: '数据上报形式' },
+            { key: 'sign_name', label: '招牌名称' },
+            { key: 'enterprise', label: '企业名称' },
+            { key: 'security_manage_org', label: '治安管理机构' },
+            { key: 'standard_address', label: '标准经营地址' },
+            { key: 'save_time', label: '前台保存时间' },
+            { key: 'last_update_time', label: '最后更新时间' },
+            { key: 'data_upload_type', label: '数据上报形式' },
           ]
         },
       }
@@ -264,15 +243,18 @@ export default {
     },
     handleQuery() {
       this.tableLoading = true
-      items(this.queryForm)
+      const { inTime, birthday, ...rest } = this.queryForm;
+      items({
+        in_begin: inTime ? formatDate('date', inTime[0]) : undefined,
+        in_end: inTime ? formatDate('date', inTime[1]) : undefined,
+        birthday_begin: birthday ? formatDate('date', birthday[0]) : undefined,
+        birthday_end: birthday ? formatDate('date', birthday[1]) : undefined,
+        ...rest
+      })
         .then(res => {
-          if (res.code === 20000) {
-            res.data.items.forEach(element => {
-              element.createdat = formatDate('datetime', element.createdat)
-              element.updatedat = formatDate('datetime', element.updatedat)
-            })
-            this.tableData = res.data.items
-            this.tableDataCount = res.data.total
+          if (res.code === 200) {
+            this.tableData = res.data
+            this.tableDataCount = res.data.size
           }
           this.tableLoading = false
         })
@@ -281,20 +263,14 @@ export default {
         })
     },
     handleDetail(index, row) {
-      item({
-        keyid: row.keyid
-      })
-        .then(res => {
-          if (res.code === 20000) {
-            this.detail = res.data
-            this.dialogVisible = true
-          }
-        })
-        .catch(e => {
-          console.error(e)
-        })
+      this.dialogVisible = true;
+      this.detailData = row;
     },
-    handleReset() { },
+    handleReset() {
+      const { pagesize, pageindex } = this.queryForm;
+      this.queryForm = { pagesize, pageindex };
+      this.$refs.queryForm.resetFields();
+    },
     handleSelectionChange(val) {
       this.tableSelected = val
     },

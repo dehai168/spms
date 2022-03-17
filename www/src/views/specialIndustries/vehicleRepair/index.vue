@@ -120,7 +120,7 @@
                   <el-option
                     v-for="option in formItem.options"
                     :key="option.value"
-                    :value="option.value"
+                    :value="formItem.valueType == 'string' ? option.value : +option.value"
                     :label="option.label"
                   />
                 </el-select>
@@ -169,6 +169,8 @@
 import defaultSettings from '@/settings'
 import { items, create, update, remove } from '@/api/vehicleRepair'
 import { formatDate } from '@/utils/index'
+import map from '@/const/map'
+import mapToArray from '@/utils/mapToArray'
 import MyCard from './MyCard.vue';
 export default {
   components: {
@@ -197,7 +199,7 @@ export default {
           {
             key: 'jurisdiction_unit',
             label: '管辖单位',
-            type: 'select',
+            type: 'input',
             options: [
               { label: 'aaaa', value: 1 },
               { label: 'aaaa', value: 2 },
@@ -215,12 +217,7 @@ export default {
             key: 'business_state',
             label: '营业状态',
             type: 'select',
-            options: [
-              { label: '营业', value: 1 },
-              { label: '停业', value: 2 },
-              { label: '歇业', value: 3 },
-              { label: '其他', value: 4 }
-            ]
+            options: mapToArray(map.business_state)
           },
           { key: 'btn', type: 'btn' },
         ],
@@ -236,7 +233,7 @@ export default {
         {
           prop: 'business_state',
           label: '营业状态', width: 100,
-          formatter: (row, column, cellValue, index) => (cellValue == 1 ? '未营业' : '营业')
+          formatter: (r, c, value) => map.business_state[value]
         },
         { prop: 'input_time', label: '录入时间', width: 180 }
       ],
@@ -253,12 +250,7 @@ export default {
               key: 'business_state',
               label: '营业状态',
               type: 'select',
-              options: [
-                { label: '营业', value: '1' },
-                { label: '停业', value: '2' },
-                { label: '歇业', value: '3' },
-                { label: '其他', value: '4' }
-              ]
+              options: mapToArray(map.business_state)
             },
             { key: 'area', label: '占地面积（平米）', type: 'input' },
             { key: 'enterprise_code', label: '企业编码', type: 'input' },
@@ -267,7 +259,7 @@ export default {
             {
               key: 'jurisdiction_unit',
               label: '管辖单位',
-              type: 'select',
+              type: 'input',
               options: [
                 { label: 'aaaa', value: 1 },
                 { label: 'aaaa', value: 2 },
@@ -286,10 +278,8 @@ export default {
               key: 'district',
               label: '行政区域',
               type: 'select',
-              options: [
-                { label: 'xxx', value: 1 },
-                { label: 'xxxx', value: 2 }
-              ]
+              valueType: 'string',
+              options: mapToArray(map.district)
             },
           ],
           [
@@ -297,10 +287,7 @@ export default {
               key: 'economic_type',
               label: '经济类型',
               type: 'select',
-              options: [
-                { label: 'xxx', value: 1 },
-                { label: 'xxxx', value: 2 }
-              ]
+              options: mapToArray(map.economic_type)
             },
             { key: 'enterprise_telephone', label: '企业电话', type: 'input' },
             { key: 'register_cost', label: '注册资本（万元）', type: 'input' },
@@ -311,10 +298,7 @@ export default {
               key: 'legal_certificate_type',
               label: '法人证件类型',
               type: 'select',
-              options: [
-                { label: 'xxx', value: 1 },
-                { label: 'xxxx', value: 2 }
-              ]
+              options: mapToArray(map.legal_certificate_type)
             },
             { key: 'legal_certificate_code', label: '法人证件号码', type: 'input' },
           ],
@@ -445,7 +429,7 @@ export default {
     handleSubmit() {
       const { register_date, ...rest } = this.addEditForm;
       const requestData = {
-        register_date: register_date ? formatDate('datetime', register_date) : undefined,
+        register_date: register_date ? formatDate('date', register_date) : undefined,
         ...rest
       };
 
