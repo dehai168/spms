@@ -7,12 +7,12 @@
             <el-row>
               <el-col :span="6">
                 <el-form-item label="重点地区名称" style="width: 100%">
-                  <el-input v-model="form.name"></el-input>
+                  <el-input v-model="queryForm.impotant_fence"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
                 <el-form-item label="区划名称">
-                  <el-input v-model="form.name" maxlength="20"></el-input>
+                  <el-input v-model="queryForm.fence_name" maxlength="20"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -24,7 +24,7 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item label="民族">
-                  <el-select v-model="queryForm.national" placeholder="请选择">
+                  <el-select v-model="queryForm.nation" placeholder="请选择">
                     <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                   </el-select>
                 </el-form-item>
@@ -33,14 +33,12 @@
             <el-row>
               <el-col :span="6">
                 <el-form-item label="登记单位名称">
-                  <el-select v-model="queryForm.company" placeholder="请选择">
-                    <el-option v-for="item in companyList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                  </el-select>
+                  <el-input v-model="queryForm.register_unit" maxlength="20"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="登记日期">
-                  <el-date-picker v-model="queryForm.datetime" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
+                  <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
                 </el-form-item>
               </el-col>
               <el-col :span="10">
@@ -61,15 +59,15 @@
     <el-main class="main">
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="name" label="重点地区名称"> </el-table-column>
-        <el-table-column prop="remark" label="区划名称"> </el-table-column>
-        <el-table-column prop="createuser" label="性别"> </el-table-column>
-        <el-table-column prop="createdat" label="名族"> </el-table-column>
-        <el-table-column prop="updateuser" label="年龄段从"> </el-table-column>
-        <el-table-column prop="updatedat" label="年龄至"> </el-table-column>
-        <el-table-column prop="updatedat" label="登记单位名称"> </el-table-column>
-        <el-table-column prop="updatedat" label="登记人"> </el-table-column>
-        <el-table-column prop="updatedat" label="登记时间"> </el-table-column>
+        <el-table-column prop="important_fence" label="重点地区名称"> </el-table-column>
+        <el-table-column prop="fence_name" label="区划名称"> </el-table-column>
+        <el-table-column prop="sex" label="性别"> </el-table-column>
+        <el-table-column prop="nation" label="名族"> </el-table-column>
+        <el-table-column prop="begin_age" label="年龄段从"> </el-table-column>
+        <el-table-column prop="end_age" label="年龄至"> </el-table-column>
+        <el-table-column prop="register_unit" label="登记单位"> </el-table-column>
+        <el-table-column prop="register_user" label="登记人"> </el-table-column>
+        <el-table-column prop="input_time" label="登记时间"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
@@ -80,37 +78,40 @@
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.size" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
     </el-footer>
     <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
-        <el-form-item prop="name" label="重点地区名称">
-          <el-input v-model="form.name" maxlength="20"></el-input>
+        <el-form-item prop="important_fence" label="重点地区名称">
+          <el-input v-model="form.important_fence" maxlength="20"></el-input>
         </el-form-item>
-        <el-form-item prop="name" label="区划名称">
-          <el-input v-model="form.name" maxlength="20"></el-input>
+        <el-form-item prop="fence_name" label="区划名称">
+          <el-input v-model="form.fence_name" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="名族">
-          <el-select v-model="queryForm.national" placeholder="请选择" style="width: 100%">
+          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%">
             <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="性别">
-          <el-select v-model="queryForm.sex" placeholder="请选择" style="width: 100%">
+          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%">
             <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="年龄范围从">
-          <el-input v-model="form.name" maxlength="20"></el-input>
+          <el-input-number v-model="form.begin_age" :max="120" :min="0" style="width: 100%"></el-input-number>
         </el-form-item>
         <el-form-item label="年龄范围至">
-          <el-input v-model="form.name" maxlength="20"></el-input>
+          <el-input-number v-model="form.end_age" :max="120" :min="0" style="width: 100%"></el-input-number>
         </el-form-item>
         <el-form-item label="起始时间">
-          <el-date-picker v-model="form.starttime" type="datetime" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
+          <el-date-picker v-model="form.begin_date" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
         </el-form-item>
         <el-form-item label="结束时间">
-          <el-date-picker v-model="form.endtime" type="datetime" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
+          <el-date-picker v-model="form.end_date" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
+        </el-form-item>
+        <el-form-item label="登记单位">
+          <el-input v-model="form.register_unit" maxlength="20"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -157,7 +158,7 @@ export default {
         } else {
           exist({ key: 'name', value })
             .then(res => {
-              if (res.code === 20000) {
+              if (res.code === 200) {
                 if (res.data) {
                   return callback(new Error('关键字已经存在,请重新输入!'))
                 } else {
@@ -174,34 +175,49 @@ export default {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        name: '',
-        pagesize: defaultSettings.pageSizes[0],
-        pageindex: 1
+        important_fence: '',
+        fence_name: '',
+        sex: '男',
+        nation: '汉族',
+        daterange: [],
+        size: defaultSettings.pageSizes[0],
+        index: 1
       },
       importForm: {
         filename: ''
       },
       form: {
-        keyid: -1,
-        name: '',
-        remark: ''
+        important_fenceid: -1,
+        important_fence: '',
+        fence_name: '',
+        nation: '汉族',
+        sex: '男',
+        begin_age: '',
+        end_age: '',
+        begin_date: '',
+        end_date: '',
+        register_unit: ''
       },
       formRules: {
-        name: [{ required: true, trigger: 'blur', validator: validateName }]
+        important_fence: [{ required: true, trigger: 'blur', message: '该项为必填项' }],
+        fence_name: [{ required: true, trigger: 'blur', message: '该项为必填项' }]
       },
       sexList: [
-        { value: 1, label: '男' },
-        { value: 2, label: '女' }
+        { value: '男', label: '男' },
+        { value: '女', label: '女' }
       ],
       nationalList: [
-        { value: 1, label: '汉族' },
-        { value: 2, label: '壮族' },
-        { value: 3, label: '满族' }
+        { value: '汉族', label: '汉族' },
+        { value: '蒙古族', label: '蒙古族' },
+        { value: '回族', label: '回族' },
+        { value: '藏族', label: '藏族' },
+        { value: '维吾尔族', label: '维吾尔族' },
+        { value: '苗族', label: '苗族' }
       ],
       companyList: [
-        { value: 1, label: '单位1' },
-        { value: 2, label: '单位2' },
-        { value: 3, label: '单位3' }
+        { value: '单位1', label: '单位1' },
+        { value: '单位2', label: '单位2' },
+        { value: '单位3', label: '单位3' }
       ],
       uploadHeader: {},
       addflag: true,
@@ -240,15 +256,20 @@ export default {
     },
     handleQuery() {
       this.tableLoading = true
+      if (this.queryForm.daterange.length > 0) {
+        this.queryForm.reg_begin = this.queryForm.daterange[0]
+        this.queryForm.reg_end = this.queryForm.daterange[1]
+      } else {
+        this.queryForm.reg_begin = ''
+        this.queryForm.reg_end = ''
+      }
       items(this.queryForm)
         .then(res => {
-          if (res.code === 20000) {
-            res.data.items.forEach(element => {
-              element.createdat = formatDate('datetime', element.createdat)
-              element.updatedat = formatDate('datetime', element.updatedat)
-            })
-            this.tableData = res.data.items
-            this.tableDataCount = res.data.total
+          if (res.code === 200) {
+            // res.data.items.forEach(element => {
+            // })
+            this.tableData = res.data
+            this.tableDataCount = res.size
           }
           this.tableLoading = false
         })
@@ -262,7 +283,7 @@ export default {
     handleExport() {
       exportexcel(this.queryForm)
         .then(res => {
-          if (res.code === 20000) {
+          if (res.code === 200) {
             download(res.data)
           }
         })
@@ -274,8 +295,8 @@ export default {
       const ids = []
       const names = []
       this.tableSelected.forEach(element => {
-        ids.push(element.keyid)
-        names.push(element.name)
+        ids.push(element.important_fenceid)
+        names.push(element.important_fence)
       })
       if (ids.length > 0) {
         this.removeData(ids, names)
@@ -311,7 +332,7 @@ export default {
           if (this.addflag) {
             create(this.form)
               .then(res => {
-                if (res.code === 20000) {
+                if (res.code === 200) {
                   if (res.data) {
                     this.$message({
                       message: '操作成功!',
@@ -336,7 +357,7 @@ export default {
           } else {
             update(this.form)
               .then(res => {
-                if (res.code === 20000) {
+                if (res.code === 200) {
                   if (res.data) {
                     this.$message({
                       message: '操作成功!',
@@ -367,7 +388,7 @@ export default {
       if (this.importForm.filename.length !== 0) {
         importexcel(this.importForm)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data.flag) {
                 that.importDialogVisible = false
                 that.handleQuery()
@@ -392,23 +413,22 @@ export default {
     handleSelectionChange(val) {
       this.tableSelected = val
     },
-    handleSizeChange(pagesize) {
-      this.queryForm.pagesize = pagesize
+    handleSizeChange(size) {
+      this.queryForm.size = size
       this.handleQuery()
     },
-    handleCurrentChange(pageindex) {
-      this.queryForm.pageindex = pageindex
+    handleCurrentChange(index) {
+      this.queryForm.index = index
       this.handleQuery()
     },
     handleView(index, row) {
       this.formClear(false)
       item({
-        keyid: row.keyid
+        important_fenceid: row.important_fenceid
       })
         .then(res => {
-          if (res.code === 20000) {
+          if (res.code === 200) {
             this.form = res.data
-            this.editKeyName = this.form.name
             this.dialogVisible = true
           }
         })
@@ -419,12 +439,12 @@ export default {
     handleUpdate(index, row) {
       this.formClear(false)
       item({
-        keyid: row.keyid
+        important_fenceid: row.important_fenceid
       })
         .then(res => {
-          if (res.code === 20000) {
+          if (res.code === 200) {
             this.form = res.data
-            this.editKeyName = this.form.name
+            this.editKeyName = this.form.important_fence
             this.dialogVisible = true
           }
         })
@@ -433,7 +453,7 @@ export default {
         })
     },
     handleRemove(index, row) {
-      this.removeData([row.keyid], [row.name])
+      this.removeData([row.important_fenceid], [row.important_fence])
     },
     removeData(ids, names) {
       this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
@@ -447,14 +467,14 @@ export default {
             names
           })
             .then(res => {
-              if (res.code === 20000) {
+              if (res.code === 200) {
                 if (res.data) {
                   this.$message({
                     message: '操作成功!',
                     type: 'success'
                   })
-                  if (ids.length === this.tableDataCount && this.queryForm.pageindex !== 1) {
-                    this.queryForm.pageindex = 1
+                  if (ids.length === this.tableDataCount && this.queryForm.index !== 1) {
+                    this.queryForm.index = 1
                   }
                   this.handleQuery()
                 } else {
@@ -484,7 +504,7 @@ export default {
       return isXls && isLt2M
     },
     handleUploadSuccess(res, file, filelist) {
-      if (res.code === 20000) {
+      if (res.code === 200) {
         this.importForm.filename = res.data.sname
       } else {
         this.$message({

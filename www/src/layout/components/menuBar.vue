@@ -1,11 +1,11 @@
 <template>
   <el-row class="container">
-    <el-col :span="6">
+    <el-col :span="8">
       <svg-icon class="logo" icon-class="police badge" />
       <!-- <img class="logo" :src="logoSrc" alt="" /> -->
       <span class="title">{{ title }}</span>
     </el-col>
-    <el-col :span="17">
+    <el-col :span="15">
       <ul>
         <li :class="{ active: activeMenu.indexOf('/specialindustries/') > -1 }">
           <app-link to="/specialindustries"> <i class="el-icon-postcard"></i> 特种行业 </app-link>
