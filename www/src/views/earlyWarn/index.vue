@@ -5,12 +5,12 @@
         <el-col :span="20">
           <el-form ref="queryForm" :inline="true" :model="queryForm">
             <el-row>
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-form-item label="预警时间" style="width: 100%">
-                  <el-date-picker v-model="queryForm.datetime" type="date" placeholder="选择日期"> </el-date-picker>
+                  <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="4">
                 <el-form-item label="状态">
                   <el-select v-model="queryForm.state" placeholder="请选择">
                     <el-option v-for="item in stateList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -19,12 +19,12 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item label="姓名">
-                  <el-input v-model="form.name" maxlength="20"></el-input>
+                  <el-input v-model="queryForm.realname" maxlength="20"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
                 <el-form-item label="证件号码">
-                  <el-input v-model="form.id" maxlength="20"></el-input>
+                  <el-input v-model="queryForm.certificate_code" maxlength="20"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -38,12 +38,12 @@
     </el-header>
     <el-main class="main">
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%">
-        <el-table-column prop="name" label="预警时间"> </el-table-column>
-        <el-table-column prop="remark" label="预警地点"> </el-table-column>
-        <el-table-column prop="createuser" label="姓名"> </el-table-column>
-        <el-table-column prop="createdat" label="证件号码"> </el-table-column>
-        <el-table-column prop="updateuser" label="状态"> </el-table-column>
-        <el-table-column prop="updatedat" label="处理结果"> </el-table-column>
+        <el-table-column prop="alarm_time" label="预警时间"> </el-table-column>
+        <el-table-column prop="alarm_address" label="预警地点"> </el-table-column>
+        <el-table-column prop="realname" label="姓名"> </el-table-column>
+        <el-table-column prop="certificate_code" label="证件号码"> </el-table-column>
+        <el-table-column prop="state" label="状态"> </el-table-column>
+        <el-table-column prop="dispose_msg" label="处理结果"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button v-if="scope.row.keyid % 2 !== 0" type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
@@ -57,23 +57,23 @@
     </el-footer>
     <el-dialog title="处理" :visible.sync="disposeDialogVisible" width="30%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
-        <el-form-item prop="name" label="预警时间">
-          <el-input v-model="form.name" maxlength="20" disabled></el-input>
+        <el-form-item label="预警时间">
+          <el-input v-model="form.alarm_time" disabled></el-input>
         </el-form-item>
-        <el-form-item prop="id" label="预警地点">
-          <el-input v-model="form.id" maxlength="20" disabled></el-input>
+        <el-form-item label="预警地点">
+          <el-input v-model="form.alarm_address" disabled></el-input>
         </el-form-item>
-        <el-form-item prop="id" label="姓名">
-          <el-input v-model="form.id" maxlength="20" disabled></el-input>
+        <el-form-item label="姓名">
+          <el-input v-model="form.realame" disabled></el-input>
         </el-form-item>
-        <el-form-item prop="id" label="身份证号">
-          <el-input v-model="form.id" maxlength="20" disabled></el-input>
+        <el-form-item label="身份证号">
+          <el-input v-model="form.certificate_code" disabled></el-input>
         </el-form-item>
-        <el-form-item prop="id" label="预警原因">
-          <el-input v-model="form.id" maxlength="20" disabled></el-input>
+        <el-form-item label="预警原因">
+          <el-input v-model="form.alarm_reason" disabled></el-input>
         </el-form-item>
-        <el-form-item label="处理结果">
-          <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="form.remark"> </el-input>
+        <el-form-item prop="dispose_msg" label="处理结果">
+          <el-input type="textarea" :rows="3" placeholder="请输入内容" maxlength="250" v-model="form.dispose_msg"> </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -85,34 +85,34 @@
       <fieldset>
         <legend>预警信息</legend>
         <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
-          <el-form-item prop="name" label="预警时间">
-            <el-input v-model="form.name" maxlength="20" disabled></el-input>
+          <el-form-item label="预警时间">
+            <el-input v-model="form.alarm_time" disabled></el-input>
           </el-form-item>
-          <el-form-item prop="id" label="预警地点">
-            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          <el-form-item label="预警地点">
+            <el-input v-model="form.alarm_address" disabled></el-input>
           </el-form-item>
-          <el-form-item prop="id" label="姓名">
-            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          <el-form-item label="姓名">
+            <el-input v-model="form.realame" disabled></el-input>
           </el-form-item>
-          <el-form-item prop="id" label="身份证号">
-            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          <el-form-item label="身份证号">
+            <el-input v-model="form.certificate_code" disabled></el-input>
           </el-form-item>
-          <el-form-item prop="id" label="预警原因">
-            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          <el-form-item label="预警原因">
+            <el-input v-model="form.alarm_reason" disabled></el-input>
           </el-form-item>
         </el-form>
       </fieldset>
       <fieldset>
         <legend>处理信息</legend>
         <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
-          <el-form-item prop="name" label="处理人">
-            <el-input v-model="form.name" maxlength="20" disabled></el-input>
+          <el-form-item label="处理人">
+            <el-input v-model="form.dispose_user" disabled></el-input>
           </el-form-item>
-          <el-form-item prop="id" label="处理时间">
-            <el-input v-model="form.id" maxlength="20" disabled></el-input>
+          <el-form-item label="处理时间">
+            <el-input v-model="form.dispose_time" disabled></el-input>
           </el-form-item>
-          <el-form-item prop="id" label="处理结果">
-            <el-input type="textarea" :rows="3" v-model="form.id" maxlength="20" disabled></el-input>
+          <el-form-item label="处理结果">
+            <el-input type="textarea" :rows="3" v-model="form.dispose_msg" disabled></el-input>
           </el-form-item>
         </el-form>
       </fieldset>
@@ -135,21 +135,30 @@ export default {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        name: '',
-        datetime: null,
+        realname: '',
+        certificate_code: '',
+        state: -1,
+        daterange: [],
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
       form: {
-        keyid: -1,
-        name: '',
-        remark: ''
+        alarmid: -1,
+        realname: '',
+        certificate_code: '',
+        alarm_time: '',
+        alarm_address: '',
+        alarm_reason: '',
+        state: -1,
+        dispose_user: '',
+        dispose_time: '',
+        dispose_msg: ''
       },
       formRules: {
-        name: [{ required: true, trigger: 'blur', message: '请输入' }],
-        id: [{ required: true, trigger: 'blur', message: '请输入' }]
+        dispose_msg: [{ required: true, trigger: 'blur', message: '请输入' }]
       },
       stateList: [
+        { value: -1, label: '所有' },
         { value: 0, label: '待处理' },
         { value: 1, label: '已处理' }
       ],
@@ -179,13 +188,9 @@ export default {
       this.tableLoading = true
       items(this.queryForm)
         .then(res => {
-          if (res.code === 20000) {
-            res.data.items.forEach(element => {
-              element.createdat = formatDate('datetime', element.createdat)
-              element.updatedat = formatDate('datetime', element.updatedat)
-            })
-            this.tableData = res.data.items
-            this.tableDataCount = res.data.total
+          if (res.code === 200) {
+            this.tableData = res.data
+            this.tableDataCount = res.size
           }
           this.tableLoading = false
         })
@@ -202,7 +207,7 @@ export default {
           this.submitDisabled = true // 防止重复提交
           create(this.form)
             .then(res => {
-              if (res.code === 20000) {
+              if (res.code === 200) {
                 if (res.data) {
                   this.$message({
                     message: '操作成功!',
@@ -239,9 +244,8 @@ export default {
         keyid: row.keyid
       })
         .then(res => {
-          if (res.code === 20000) {
+          if (res.code === 200) {
             this.form = res.data
-            this.editKeyName = this.form.name
             this.detailDialogVisible = true
           }
         })
@@ -254,9 +258,8 @@ export default {
         keyid: row.keyid
       })
         .then(res => {
-          if (res.code === 20000) {
+          if (res.code === 200) {
             this.form = res.data
-            this.editKeyName = this.form.name
             this.disposeDialogVisible = true
           }
         })
