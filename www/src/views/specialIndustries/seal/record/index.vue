@@ -6,18 +6,18 @@
 					<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 				</el-select>
 				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
-				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				<el-date-picker v-else-if="formItem.type == 'datePicker'" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 			</el-form-item>
 
 			<el-form-item>
-				<el-button type="primary" @click="handleSearch">搜索</el-button>
-				<el-button>重置</el-button>
+				<el-button type="primary" @click="getList">搜索</el-button>
+				<el-button @click="handleReset">重置</el-button>
 			</el-form-item>
 		</el-form>
 		<div class="seal-list-body">
 			<!-- <el-button @click="dialogFormVisible = true">新增</el-button> -->
 			<el-table :data="tableData" border>
-				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
+				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
 				<el-table-column prop="operate" label="操作" fixed="right">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
@@ -25,16 +25,16 @@
 				</el-table-column>
 			</el-table>
 			<el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
+				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
 		<el-dialog title="公章备案详情" :visible.sync="dialogVisible" width="60%">
 			<el-tabs type="card" :value="activeName">
 				<el-tab-pane v-for="(tab, tabIdx) in detailTabs" :key="tabIdx" :label="tab.label" :name="tabIdx + 1 + ''">
 					<el-descriptions border size="medium" :column="4">
-						<el-descriptions-item v-for="(item, idx) in detail[tab.props]" :label="item.label" :key="idx">
-							<img v-if="item.type === 'img'" width="120" height="160" src="https://img.zcool.cn/community/012f61575e211c0000012e7ece98be.jpg@1280w_1l_2o_100sh.jpg" alt="" />
-							<span v-else>{{ item.value }}</span>
+						<el-descriptions-item v-for="(item, idx) in recordInfo[tab.props]" :label="item.label" :key="idx">
+							<img v-if="item.type === 'img'" width="120" height="160" :src="detail[item.value]" alt="" />
+							<span v-else>{{ item.map ? item.map[detail[item.value]] : detail[item.value] }}</span>
 						</el-descriptions-item>
 					</el-descriptions>
 				</el-tab-pane>
@@ -49,7 +49,10 @@
 
 <script>
 import defaultSettings from '@/settings'
+import API from './api'
 
+import MAP from '../../../../const/map'
+import mapToArray from '../../../../utils/mapToArray'
 export default {
 	data() {
 		return {
@@ -57,132 +60,118 @@ export default {
 			activeName: '1',
 			pagesizes: defaultSettings.pageSizes,
 			tableDataCount: 0,
-			detail: {
+			recordInfo: {
 				unitInfo: [
-					{ label: '单位类型', value: '其他' },
-					{ label: '单位名称', value: '其他' },
-					{ label: '单位编码', value: '其他' },
-					{ label: '单位英文缩写', value: '其他' },
-					{ label: '单位少数民族文字名', value: '其他' },
-					{ label: '统一社会信用代码', value: '其他' },
-					{ label: '法人/负责人国籍', value: '其他' },
-					{ label: '法人/负责人姓名', value: '其他' },
-					{ label: '法人/负责人证件类型', value: '其他' },
-					{ label: '法人/负责人证件号码', value: '其他' },
-					{ label: '法人/负责人联系电话', value: '其他' },
-					{ label: '行政区划', value: '其他' },
-					{ label: '单位注册地址', value: '其他' },
-					{ label: '成立日期', value: '其他' },
-					{ label: '注册资本（万元）', value: '其他' },
-					{ label: '单位实际经营地址', value: '其他' },
-					{ label: '单位联系电话', value: '其他' },
-					{ label: '邮政编码', value: '其他' },
-					{ label: '经营范围（主营）', value: '其他' },
-					{ label: '备注', value: '其他' },
+					{ label: '使用单位类型', value: 'enterprise_type' },
+					{ label: '使用单位名称', value: 'enterprise' },
+					{ label: '使用单位编码', value: 'enterprise_code' },
+					{ label: '使用单位英文缩写', value: 'enterprise_english' },
+					{ label: '使用单位少数民族文字名', value: 'minority_character' },
+					{ label: '统一社会信用代码', value: 'credit_code' },
+					{ label: '法人/负责人国籍', value: 'legal_nationality',map: MAP.nationality },
+					{ label: '法人/负责人姓名', value: 'legal_person' },
+					{ label: '法人/负责人证件类型', value: 'legal_certificate_type' ,map: MAP.certificate_type },
+					{ label: '法人/负责人证件号码', value: 'legal_certificate_code' },
+					{ label: '法人/负责人联系电话', value: 'legal_telephone' },
+					{ label: '行政区划', value: 'district',map: MAP.district  },
+					{ label: '单位注册地址', value: 'register_address' },
+					{ label: '成立日期', value: 'create_date' },
+					{ label: '注册资本（万元）', value: 'register_cost' },
+					{ label: '单位实际经营地址', value: 'actual_address' },
+					{ label: '单位联系电话', value: 'enterprise_telephone' },
+					{ label: '邮政编码', value: 'post_code' },
+					{ label: '经营范围（主营）', value: 'operate_scale' },
+					{ label: '备注', value: 'remark' },
 				],
 				sealInfo: [
-					{ label: '印章状态', value: '已制作' },
-					{ label: '印章制作类型', value: '已制作' },
-					{ label: '是否有电子印章', value: '已制作' },
-					{ label: '印章编码', value: '已制作' },
-					{ label: '印章类型', value: '已制作' },
-					{ label: '印章材料', value: '已制作' },
-					{ label: '印章名称', value: '已制作' },
-					{ label: '印章尺寸', value: '已制作' },
-					{ label: '印章形状', value: '已制作' },
-					{ label: '印油说明简要情况', value: '已制作' },
-					{ label: '制作人', value: '已制作' },
-					{ label: '制作时间', value: '已制作' },
-					{ label: '印章图像宽度', value: '已制作' },
-					{ label: '印章图像高度', value: '已制作' },
-					{ label: '电子原始印模', value: '已制作', type: 'img' },
-					{ label: '实物印文图像', value: '已制作', type: 'img' },
+					{ label: '印章状态', value: 'seal_state' },
+					{ label: '印章制作类型', value: 'seal_made_type' },
+					{ label: '是否有电子印章', value: 'is_e_seal' },
+					{ label: '印章编码', value: 'seal_code' },
+					{ label: '印章类型', value: 'seal_type' },
+					{ label: '印章材料', value: 'seal_material' },
+					{ label: '印章名称', value: 'seal_material' },
+					{ label: '印章尺寸', value: 'seal_size' },
+					{ label: '印章形状', value: 'seal_shape' },
+					{ label: '印油说明简要情况', value: 'seal_ink_desc' },
+					{ label: '制作人', value: 'mader' },
+					{ label: '制作时间', value: 'made_time' },
+					{ label: '印章图像宽度', value: 'seal_width' },
+					{ label: '印章图像高度', value: 'seal_height' },
+					{ label: '电子原始印模', value: 'seal_original_image', type: 'img' },
+					{ label: '实物印文图像', value: 'seal_actual_image', type: 'img' },
 				],
 				requireDoc: [
-					{ label: '主要负责人身份证', value: '已制作' },
-					{ label: '经办人身份证', value: '已制作' },
-					{ label: '其他资料', value: '已制作' },
+					{ label: '主要负责人身份证', value: 'chief_person' },
+					// { label: '经办人身份证', value: 'operator_name' },
+					{ label: '其他资料', value: 'other_info' },
 				],
 				operatorInfo: [
-					{ label: '经办人姓名', value: '张三' },
-					{ label: '经办人证件类型', value: '已制作' },
-					{ label: '经办人证件号码', value: '已制作' },
-					{ label: '经办人联系电话', value: '已制作' },
-					{ label: '实际居住地址', value: '已制作' },
-					{ label: '取章方式', value: '已制作' },
-					{ label: '证件照', value: '已制作', type: 'img' },
-					{ label: '现场照', value: '已制作', type: 'img' },
+					{ label: '经办人姓名', value: 'operator_name' },
+					{ label: '经办人证件类型', value: 'operator_certificate_type',map: MAP.certificate_type },
+					{ label: '经办人证件号码', value: 'operator_certificate_code' },
+					{ label: '经办人联系电话', value: 'operator_telephone' },
+					{ label: '实际居住地址', value: 'operator_actual_address' },
+					
+					{ label: '证件照', value: 'operator_certificate_image', type: 'img' },
+					{ label: '现场照', value: 'operator_scene_image', type: 'img' },
 				],
 				deliveryInfo: [
-					{ label: '取章方式', value: '已制作' },
-					{ label: '取章人姓名', value: '张三' },
-					{ label: '取章人证件类型', value: '已制作' },
-					{ label: '取章人证件号码', value: '已制作' },
-					{ label: '取章时间', value: '已制作' },
-					{ label: '证件照', value: '已制作', type: 'img' },
-					{ label: '现场照', value: '已制作', type: 'img' },
+					{ label: '取章方式', value: 'get_seal_type',map: MAP.get_seal_type  },
+					{ label: '取章人姓名', value: 'get_seal_name' },
+					{ label: '取章人证件类型', value: 'get_seal_certificate_type',map: MAP.certificate_type  },
+					{ label: '取章人证件号码', value: 'get_seal_certificate_code' },
+					{ label: '取章时间', value: 'get_seal_time' },
+					{ label: '证件照', value: 'get_seal_certificate_image', type: 'img' },
+					{ label: '现场照', value: 'get_seal_scene_image', type: 'img' },
 				],
 				makeInfo: [
-					{ label: '企业名称', value: '已制作' },
-					{ label: '企业联系电话', value: '张三' },
-					{ label: '企业经营地址', value: '已制作' },
+					{ label: '刻制企业名称', value: 'engrave_enterprise' },
+					{ label: '刻制企业联系电话', value: 'engrave_telephone' },
+					{ label: '刻制企业经营地址', value: 'engrave_address' },
 				],
 				recordInfo: [
-					{ label: '提交备案人员', value: '已制作' },
-					{ label: '提交备案时间', value: '张三' },
-					{ label: '备案机关编码', value: '已制作' },
-					{ label: '备案机关名称', value: '已制作' },
-					{ label: '确认结果', value: '已制作' },
-					{ label: '备案确认人', value: '已制作' },
-					{ label: '备案告知', value: '已制作' },
-					{ label: '备案确认时间', value: '已制作' },
+					{ label: '提交备案人员', value: 'submit_record_name' },
+					{ label: '提交备案时间', value: 'submit_record_time' },
+					{ label: '备案机关编码', value: 'record_unit_code' },
+					{ label: '备案机关名称', value: 'record_unit' },
+					{ label: '确认结果', value: 'record_result' },
+					{ label: '备案确认人', value: 'record_confirm_name' },
+					{ label: '备案告知', value: 'record_opinin' },
+					{ label: '备案确认时间', value: 'record_confirm_time' },
 				],
 			},
-
+			pager: {
+				pageindex: 1,
+				pagesize: 10
+			},
 			queryForm: {
-				useUnit: '',
-				makeUnit: '',
-				recordStatus: '',
-				orderNo: '',
-				applyDate: '',
-				recordDate: '',
-				pagesize: defaultSettings.pageSizes[0],
-				pageindex: 1
+
 			},
 			formItems: [
 				{
-					key: 'useUnit',
+					key: 'enterprise',
 					label: '印章使用单位',
 					type: 'input'
 				},
 				{
-					key: 'makeUnit',
+					key: 'engrave_enterprise',
 					label: '刻制单位',
 					type: 'input'
 				},
 				{
-					key: 'recordStatus',
+					key: 'record_result',
 					label: '备案状态',
 					type: 'select',
-					options: [
-						{ label: '营业', value: 1 },
-						{ label: '停业', value: 2 },
-						{ label: '歇业', value: 3 },
-						{ label: '其他', value: 4 }
-					]
+					options: mapToArray(MAP.record_result)
 				},
 				{
-					key: 'orderNo',
-					label: '订单编号',
-					type: 'input'
-				},
-				{
-					key: 'applyDate',
+					key: 'request',
 					label: '申请时间',
 					type: 'datePicker'
 				},
 				{
-					key: 'recordDate',
+					key: 'record',
 					label: '备案时间',
 					type: 'datePicker'
 				}
@@ -199,15 +188,15 @@ export default {
 				businessType: '测试数据',
 			}),
 			columns: [
-				{ prop: 'agency', label: '印章订单编号', },
-				{ prop: 'enterpriseCode', label: '使用单位名称', },
-				{ prop: 'companyName', label: '使用单位法人姓名', },
-				{ prop: 'signboardName', label: '提交备案时间', },
-				{ prop: 'legalPerson', label: '备案时间', },
-				{ prop: 'unifiedSocialCreditCode', label: '订单状态', },
-				{ prop: 'phone', label: '备案状态', },
-				{ prop: 'checkStatus', label: '消息来源', },
-				{ prop: 'businessType', label: '申请时间', },
+				{ prop: 'seal_code', label: '印章编码', },
+				{ prop: 'enterprise', label: '使用单位名称', },
+				{ prop: 'legal_person', label: '法人姓名', },
+				{ prop: 'submit_record_time', label: '提交备案时间', },
+				{ prop: 'record_confirm_time', label: '备案时间', },
+				{ prop: 'seal_state', label: '印章状态', },
+				{ prop: 'record_result', label: '备案状态', formatter: (row, col, cell) => MAP.record_result[cell]  },
+				// { prop: 'checkStatus', label: '消息来源', },
+				{ prop: 'input_time', label: '录入时间', },
 			],
 			detailTabs: [
 				{ label: '使用单位信息', props: 'unitInfo' },
@@ -218,18 +207,44 @@ export default {
 				{ label: '刻制企业信息', props: 'makeInfo' },
 				{ label: '备案信息', props: 'recordInfo' },
 			],
-			dialogFormVisible: false
+			dialogFormVisible: false,
+			detail: {}
 		};
 	},
+	created() {
+		this.getList()
+	},
 	methods: {
+		async getList() {
+			const params = { ...this.queryForm }
+			this.formItems.forEach(v => {
+				if (v.type === 'datePicker' && params[v.key]) {
+					const range = params[v.key]
+					params[v.key + '_begin'] = range[0]
+					params[v.key + '_end'] = range[1]
+					delete params[v.key]
+				}
+			})
+			const { data, size } = await API.list({
+				index: this.pager.pageindex,
+				size: this.pager.pagesize
+			}, params)
+			this.tableData = data
+			this.tableDataCount = size
+		},
 		handleDetail(index, row) {
+			this.detail = row
 			this.dialogVisible = true
 		},
 		handleEdit() { },
 		handlePerson() { },
 		handleDelete() { },
 		handleSearch() { },
-		handleReset() { },
+		handleReset() {
+			this.queryForm = {}
+			this.pager.pageindex = 1
+			this.getList()
+		},
 		handleAdd() {
 
 		},
@@ -240,12 +255,12 @@ export default {
 			this.dialogFormVisible = false;
 		},
 		handleSizeChange(pagesize) {
-			this.queryForm.pagesize = pagesize
-			this.handleQuery()
+			this.pager.pagesize = pagesize
+			this.getList()
 		},
 		handleCurrentChange(pageindex) {
-			this.queryForm.pageindex = pageindex
-			this.handleQuery()
+			this.pager.pageindex = pageindex
+			this.getList()
 		},
 
 	}

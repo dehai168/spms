@@ -6,30 +6,30 @@
 					<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 				</el-select>
 				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
-				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				<el-date-picker v-else-if="formItem.type == 'datePicker'" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 			</el-form-item>
 
 			<el-form-item>
 				<el-button type="primary" @click="handleSearch">搜索</el-button>
-				<el-button>重置</el-button>
+				<el-button @click="handleReset">重置</el-button>
 			</el-form-item>
 		</el-form>
 		<div class="ktv-body">
-			<el-button @click="dialogVisible = true">新增</el-button>
+			<el-button @click="handleAdd">新增</el-button>
 			<el-table :data="tableData" border>
-				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
+				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" :formatter="column.formatter" />
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
 						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" disabled>编辑</el-button>
-						<el-popconfirm title="确定删除此旅馆吗？" icon="el-icon-info" icon-color="red" style="margin-left: 10px">
+						<el-popconfirm title="确定删除该条信息吗？" icon="el-icon-info" icon-color="red" style="margin-left: 10px">
 							<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 						</el-popconfirm>
 					</template>
 				</el-table-column>
 			</el-table>
 			<el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
+				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
 		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh" :close-on-click-modal="false">
@@ -41,14 +41,10 @@
 						</el-select>
 						<el-input v-else-if="formItem.type == 'input'" v-model="addEditForm[formItem.key]" style="width: 150px" />
 						<el-input v-else-if="formItem.type == 'textarea'" v-model="addEditForm[formItem.key]" type="textarea" style="width: 500px" />
-						<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="addEditForm[formItem.key]" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+						<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="addEditForm[formItem.key]" type="date" value-format="yyyy-MM-dd" format="yyyy-MM-dd" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 						<el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
 							<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
 						</el-radio-group>
-					</el-form-item>
-					<!-- 标准地址根据用户选择 显示   这里单独处理 -->
-					<el-form-item v-if="index === 0 && addEditForm.hasStandard == 1" label="标准经营地址">
-						<el-input v-model="addEditForm.standardAddress" style="width: 150px" />
 					</el-form-item>
 				</my-card>
 			</el-form>
@@ -62,99 +58,81 @@
 
 <script>
 import defaultSettings from '@/settings'
+import API from './api'
+import MAP from '../../../const/map'
+import mapToArray from '../../../utils/mapToArray'
 
 export default {
 	data() {
 		return {
-			queryForm: {
-				agency: '',
-				industry: '',
-				logout: '',
-				enterpriseCode: '',
-				legalPerson: '',
-				checkStatus: '',
-				licenseStatus: '',
-				companyName: '',
-				businessType: '',
-				signboardName: '',
-				unifiedSocialCreditCode: '',
-				businessStatus: '',
-				inputTime: '',
-				licenseIssueDate: ''
+			pager: {
+				pageindex: 1,
+				pagesize: 10
 			},
+			queryForm: {},
 			formItems: [
 				{
-					key: 'agency',
+					key: 'trade_type',
 					label: '行业类别',
-					type: 'input'
+					type: 'select',
+					options: mapToArray(MAP.trade_type)
 				},
 				{
-					key: 'enterpriseCode',
-					label: '治安管辖机构',
-					type: 'input'
-				},
-				{
-					key: 'enterpriseCode',
+					key: 'enterprise',
 					label: '企业名称',
 					type: 'input'
 				},
+
 				{
-					key: 'enterpriseCode',
+					key: 'last_name',
 					label: '英文姓',
 					type: 'input'
 				},
 				{
-					key: 'enterpriseCode',
+					key: 'first_name',
 					label: '英文名',
 					type: 'input'
 				},
 				{
-					key: 'enterpriseCode',
-					label: '国籍',
+					key: 'chinese_name',
+					label: '中文姓名',
 					type: 'input'
 				},
 				{
-					key: 'enterpriseCode',
+					key: 'certificate_code',
 					label: '证件号码',
 					type: 'input'
 				},
+
 				{
-					key: 'enterpriseCode',
-					label: '出生日期',
-					type: 'datePicker'
-				},
-				{
-					key: 'enterpriseCode',
-					label: '招牌名称',
-					type: 'input'
-				},
-				{
-					key: 'enterpriseCode',
-					label: '人员编号',
-					type: 'input'
-				},
-				{
-					key: 'industry',
+					key: 'sex',
 					label: '性别',
 					type: 'select',
 					options: [
-						{ label: '男', value: 1 },
-						{ label: '女', value: 2 },
+						{ label: '男', value: '男' },
+						{ label: '女', value: '女' },
 					]
 				},
 				{
-					key: 'licenseIssueDate',
+					key: 'nationality',
+					label: '国籍',
+					type: 'select',
+					options: mapToArray(MAP.nationality)
+				},
+
+				{
+					key: 'input',
 					label: '录入时间',
 					type: 'datePicker'
 				},
 				{
-					key: '在职状态',
-					label: '在职状态',
-					type: 'input'
-				}, {
-					key: 'licenseIssueDate',
+					key: 'is_front_operator',
 					label: '是否前端操作员',
-					type: 'datePicker'
+					type: 'select',
+					options: [
+						{ label: '是', value: true },
+						{ label: '否', value: false },
+					]
 				},
 			],
 			tableDataCount: 0,
@@ -162,29 +140,28 @@ export default {
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
 			tableData: new Array(10).fill({
-				行业类别: '测试数据',
-				企业名称: '测试数据',
-				人员编号: '测试数据',
-				英文姓: '测试数据',
-				英文名: '测试数据',
-				证件号码: '测试数据',
-				性别: '测试数据',
-				国籍: '测试数据',
+				agency: '测试数据',
+				enterpriseCode: '测试数据',
+				companyName: '测试数据',
+				signboardName: '测试数据',
+				legalPerson: '测试数据',
+				unifiedSocialCreditCode: '测试数据',
+				民族: '测试数据',
 				录入时间: '测试数据',
 				在职状态: '测试数据',
 			}),
 			columns: [
-				{ prop: '行业类别', label: '行业类别', },
-				{ prop: '企业名称', label: '企业名称' },
-				{ prop: '人员编号', label: '人员编号', },
-				{ prop: '英文姓', label: '英文姓', },
-				{ prop: '英文名', label: '英文名', },
-				{ prop: '证件号码', label: '证件号码' },
-				{ prop: '性别', label: '性别', },
-				{ prop: '国籍', label: '国籍', },
-				{ prop: '录入时间', label: '录入时间', },
-				{ prop: '在职状态', label: '在职状态', },
-
+				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type[cell] },
+				{ prop: 'enterprise', label: '企业名称' },
+				{ prop: 'trade_type', label: '人员编号', },
+				{ prop: 'certificate_code', label: '证件号码' },
+				{ prop: 'last_name', label: '英文姓', },
+				{ prop: 'first_name', label: '英文名', },
+				{ prop: 'chinese_name', label: '中文姓名', },
+				{ prop: 'sex', label: '性别', },
+				{ prop: 'nationality', label: '国籍', },
+				{ prop: 'input_time', label: '录入时间', },
+				{ prop: 'state', label: '在职状态', formatter: (row, col, cell) => MAP.employeeState[cell] },
 			],
 			dialogVisible: false,
 			submitDisabled: false,
@@ -193,73 +170,67 @@ export default {
 
 			},
 			addEditformItems: {
-
 				'证件信息': [
-					{ key: 'enterpriseCode', label: '姓名', type: 'input' },
+					{ key: 'last_name', label: '英文姓', type: 'input' },
+					{ key: 'first_name', label: '英文名', type: 'input' },
+					{ key: 'chinese_name', label: '中文姓名', type: 'input' },
 					{
-						key: 'businessStatus',
+						key: 'certificate_type',
 						label: '证件类型',
 						type: 'select',
-						options: [
-							{ label: '身份证', value: '1' },
-						]
+						options: mapToArray(MAP.certificate_type)
 					},
-					{ key: 'signboardName', label: '证件号码', type: 'input' },
+					{ key: 'certificate_code', label: '证件号码', type: 'input' },
 					{
-						key: 'industry',
+						key: 'sex',
 						label: '性别',
 						type: 'select',
 						options: [
-							{ label: '男', value: 1 },
-							{ label: '女', value: 2 }
+							{ label: '男', value: '男' },
+							{ label: '女', value: '女' }
 						]
 					},
-
-					{ key: 'signboardName', label: '出生日期', type: 'datePicker' },
-					{
-						key: 'industry',
-						label: '民族',
-						type: 'select',
-						options: [
-							{ label: '汉族', value: 1 },
-						]
-					},
-					{ key: 'area', label: '民族', type: 'input' },
-					{ key: '传真', label: '户籍省县', type: 'input' },
-					{ key: '房间数', label: '户籍地详细地址', type: 'input' },
+					{ key: 'birthday', label: '出生日期', type: 'datePicker' },
+					{ key: 'nationality', label: '国籍', type: 'select', options: mapToArray(MAP.nationality) },
+					{ key: 'province_city', label: '户籍省县', type: 'input' },
+					{ key: 'detail_address', label: '户籍地详细地址', type: 'input' },
 
 				],
 				'居住信息': [
-					{ key: 'companyName', label: '现住址行政区划', type: 'input' },
-					{ key: 'unifiedSocialCreditCode', label: '居住证号码', type: 'input' },
-					{ key: 'companyName', label: '现住址', type: 'input' },
+					{ key: 'actual_live_city', label: '现住址行政区划', type: 'input' },
+					{ key: 'actual_live_code', label: '居住证号码', type: 'input' },
+					{ key: 'actual_live_address', label: '现住址', type: 'input' },
 				],
 				'管理信息': [
-					{ key: '单位负责人', label: '行业类别', type: 'input' },
-					{ key: '负责人证件号码', label: '企业名称', type: 'input' },
-					{ key: '负责人联系电话', label: '是否前端操作员', type: 'input' },
-					{ key: '安保负责人', label: '人员类别', type: 'input' },
-					{ key: '安保负责人证件号码', label: '入职日期', type: 'datePicker' },
-					{ key: '安保负责人联系电话', label: '联系电话', type: 'input' },
-					{ key: '消防意见书发放日期', label: '紧急联系人', type: 'datePicker' },
-					{ key: '消防合格证号', label: '紧急联系电话', type: 'input' },
-					{ key: '消防审核单位', label: '备注', type: 'input' },
+					{ key: 'trade_type', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type) },
+					{ key: 'enterprise', label: '企业名称', type: 'input' },
+					{
+						key: 'is_front_operator', label: '是否前端操作员', type: 'select', options: [{ label: '是', value: true },
+						{ label: '否', value: false },]
+					},
+					{ key: 'employee_type', label: '人员类别', type: 'select', options: mapToArray(MAP.employee_type) },
+					{ key: 'induction_date', label: '入职日期', type: 'datePicker' },
+					{ key: 'telephone', label: '联系电话', type: 'input' },
+					{ key: 'urgent_telephone', label: '紧急联系人', type: 'input' },
 				]
 			}
 		};
+	},
+	created() {
+		this.getList()
 	},
 	computed: {
 		dialogTittle() {
 			let tittle = '';
 			switch (this.flag) {
 				case 'edit':
-					tittle = '编辑旅馆信息';
+					tittle = '编辑';
 					break;
 				case 'add':
-					tittle = '新增旅馆信息';
+					tittle = '新增';
 					break;
 				case 'detail':
-					tittle = '旅馆信息详情';
+					tittle = '详情';
 					break;
 			}
 
@@ -267,30 +238,64 @@ export default {
 		}
 	},
 	methods: {
+		async getList() {
+			const params = { ...this.queryForm }
+			this.formItems.forEach(v => {
+				if (v.type === 'datePicker' && params[v.key]) {
+					const range = params[v.key]
+					params[v.key + '_begin'] = range[0]
+					params[v.key + '_end'] = range[1]
+					delete params[v.key]
+				}
+			})
+			const { data, size } = await API.list({
+				index: this.pager.pageindex,
+				size: this.pager.pagesize
+			}, params)
+			this.tableData = data
+			this.tableDataCount = size
+		},
 		handleDetail(index, row) {
+			this.addEditForm = row
+			this.flag = 'detail'
 			this.dialogVisible = true
+		},
+		handleReset() {
+			this.queryForm = {}
+			this.pager.pageindex = 1
+			this.getList()
 		},
 		handleEdit() { },
 		handlePerson() { },
 		handleDelete() { },
-		handleSearch() { },
-		handleReset() { },
-		handleAdd() {
-
+		handleSearch() {
+			this.getList()
 		},
-		handleSubmit() {
+
+		handleAdd() {
+			this.flag = 'add'
+			this.dialogVisible = true
+		},
+		async handleSubmit() {
+			if (this.flag === 'add') {
+				await API.add(this.addEditForm)
+				await this.getList()
+				this.$succ()
+			}
+			this.dialogVisible = false
+			this.addEditForm = {}
 
 		},
 		handleCancel() {
 			this.dialogVisible = false;
 		},
 		handleSizeChange(pagesize) {
-			this.queryForm.pagesize = pagesize
-			this.handleQuery()
+			this.pager.pagesize = pagesize
+			this.getList()
 		},
 		handleCurrentChange(pageindex) {
-			this.queryForm.pageindex = pageindex
-			this.handleQuery()
+			this.pager.pageindex = pageindex
+			this.getList()
 		},
 
 	}

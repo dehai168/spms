@@ -21,7 +21,20 @@ Vue.use(ElementUI,{
 })
 Vue.component('my-card',MyCard)
 Vue.config.productionTip = false
-
+Vue.prototype.$succ = () => {
+  ElementUI.Notification({
+    title: '提示',
+    message: '操作成功',
+    type: 'success'
+  })
+}
+Vue.prototype.$error = () => {
+  ElementUI.Notification({
+    title: '提示',
+    message: '出错了',
+    type: 'error'
+  })
+}
 new Vue({
   el: '#app',
   router,
