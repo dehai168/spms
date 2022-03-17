@@ -39,16 +39,14 @@ module.exports = {
     },
     disableHostCheck:true,
     // TODO 本地Mock数据
-    before: require('./mock/mock-server.js'),
+    // before: require('./mock/mock-server.js'),
     // TODO 远程调试开启代理
-    // proxy:{
-    //   '/web':{
-    //     target:'http://127.0.0.1:7001',
-    //     pathRewrite:{
-    //       '^/web':'/web'
-    //     }
-    //   },
-    // }
+    proxy:{
+      '/police':{
+        target:'http://159.75.81.99:6800',
+        changeOrigin:true,
+      },
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

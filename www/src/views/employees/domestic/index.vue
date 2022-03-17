@@ -62,6 +62,9 @@
 
 <script>
 import defaultSettings from '@/settings'
+import API from './api'
+import MAP from '../../../const/map'
+import mapToArray from '../../../utils/mapToArray'
 
 export default {
 	data() {
@@ -80,13 +83,16 @@ export default {
 				unifiedSocialCreditCode: '',
 				businessStatus: '',
 				inputTime: '',
-				licenseIssueDate: ''
+				licenseIssueDate: '',
+				pageindex: 1,
+				pagesize: 10
 			},
 			formItems: [
 				{
-					key: 'agency',
+					key: 'trade_type',
 					label: '行业类别',
-					type: 'input'
+					type: 'select',
+					options: mapToArray(MAP.trade_type)
 				},
 				{
 					key: 'enterpriseCode',
@@ -94,18 +100,18 @@ export default {
 					type: 'input'
 				},
 				{
-					key: 'enterpriseCode',
+					key: 'enterprise',
 					label: '企业名称',
 					type: 'input'
 				},
 
 				{
-					key: 'enterpriseCode',
+					key: 'realname',
 					label: '姓名',
 					type: 'input'
 				},
 				{
-					key: 'enterpriseCode',
+					key: 'certificate_code',
 					label: '证件号码',
 					type: 'input'
 				},
@@ -115,27 +121,17 @@ export default {
 					type: 'datePicker'
 				},
 				{
-					key: 'enterpriseCode',
-					label: '招牌名称',
-					type: 'input'
-				},
-				{
-					key: 'enterpriseCode',
-					label: '人员编号',
-					type: 'input'
-				},
-				{
-					key: 'industry',
+					key: 'sex',
 					label: '性别',
 					type: 'select',
 					options: [
-						{ label: '男', value: 1 },
-						{ label: '女', value: 2 },
+						{ label: '男', value: '男' },
+						{ label: '女', value: '女' },
 					]
 				},
 				{
-					key: '户籍省市县',
-					label: '企业编码',
+					key: 'certificate_code',
+					label: '户籍省市县',
 					type: 'input'
 				},
 				{
@@ -144,13 +140,13 @@ export default {
 					type: 'datePicker'
 				},
 				{
-					key: '在职状态',
-					label: '在职状态',
-					type: 'input'
-				}, {
-					key: 'licenseIssueDate',
+					key: 'is_front_operator',
 					label: '是否前端操作员',
-					type: 'datePicker'
+					type: 'select',
+					options: [
+						{ label: '是', value: true },
+						{ label: '否', value: false },
+					]
 				},
 			],
 			tableDataCount: 0,
@@ -242,6 +238,9 @@ export default {
 			}
 		};
 	},
+	created() {
+		this.getList()
+	},
 	computed: {
 		dialogTittle() {
 			let tittle = '';
@@ -261,6 +260,14 @@ export default {
 		}
 	},
 	methods: {
+		async getList() {
+			const { data, size } = await API.list({
+				index: this.queryForm.pageindex,
+				size: this.queryForm.pagesize
+			})
+			this.tableData = data
+			this.tableDataCount = size
+		},
 		handleDetail(index, row) {
 			this.dialogVisible = true
 		},
