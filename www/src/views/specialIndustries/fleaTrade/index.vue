@@ -141,7 +141,7 @@
             v-model="addEditForm[formItem.key]"
             type="date"
             placeholder="请选择日期"
-            style="width:300px"
+            style="width:200px"
           />
           <el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
             <el-radio
