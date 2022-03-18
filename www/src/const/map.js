@@ -280,6 +280,11 @@ export default {
     5: '注销',
 
   },
+  // 营业状态
+  my_business_state: {
+    0: '营运',
+    1: '未营业',
+  },
   // 旅馆行业类型
   hotel_trade_type: {
     1: '旅馆业',

@@ -1,14 +1,14 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 140px">
-      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="8.5vw">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 180px">
+      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="9.5vw">
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
             <el-form-item :label="formItem.label">
               <el-select
                 v-if="formItem.type == 'select'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:10vw"
                 placeholder="请选择"
               >
                 <el-option
@@ -21,12 +21,12 @@
               <el-input
                 v-else-if="formItem.type == 'input'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:10vw"
               />
               <el-date-picker
                 v-else-if="formItem.type == 'datePicker'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:10vw"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -34,7 +34,7 @@
               />
               <div v-else-if="formItem.type == 'btn'">
                 <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button>重置</el-button>
+                <el-button @click="handleReset">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -121,7 +121,7 @@
             <el-option
               v-for="option in formItem.options"
               :key="option.value"
-              :value="option.value"
+              :value="formItem.valueType == 'string' ? option.value : +option.value"
               :label="option.label"
             />
           </el-select>
@@ -139,11 +139,9 @@
           <el-date-picker
             v-else-if="formItem.type == 'datePicker'"
             v-model="addEditForm[formItem.key]"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="width:300px"
+            type="date"
+            placeholder="请选择日期"
+            style="width:200px"
           />
           <el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
             <el-radio
@@ -164,27 +162,15 @@
 
 <script>
 import defaultSettings from '@/settings'
-import { items, item, create, update, remove, batchremove } from '@/api/fleaTrade'
+import { items, create, update, remove } from '@/api/scrapMetal'
+import mapToArray from '@/utils/mapToArray';
+import map from '@/const/map';
 import { formatDate } from '@/utils/index'
 export default {
   data() {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        agency: '',
-        industry: '',
-        logout: '',
-        enterpriseCode: '',
-        legalPerson: '',
-        checkStatus: '',
-        licenseStatus: '',
-        companyName: '',
-        businessType: '',
-        signboardName: '',
-        unifiedSocialCreditCode: '',
-        businessStatus: '',
-        inputTime: '',
-        licenseIssueDate: '',
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -195,47 +181,50 @@ export default {
       formItems: [
         [
           {
-            key: '行政区划',
+            key: 'district',
             label: '行政区划',
             type: 'select',
-            options: [
-              { label: 'aaaa', value: 1 },
-              { label: 'aaaa', value: 2 },
-              { label: 'aaaa', value: 3 }
-            ]
+            options: mapToArray(map.district)
           },
           {
-            key: '派出所名称',
+            key: 'police_unit',
             label: '派出所名称',
-            type: 'select',
+            type: 'input',
             options: [
               { label: '旅馆业', value: 1 },
               { label: '留宿洗浴业', value: 2 }
             ]
           },
-          { key: '备案编号', label: '备案编号', type: 'input' },
-          { key: '企业名称', label: '企业名称', type: 'input' },
+          { key: 'enterprise', label: '企业名称', type: 'input' },
+          { key: 'enterprise_address', label: '企业地址', type: 'input' },
         ],
         [
-          { key: '企业地址', label: '企业地址', type: 'input' },
-          { key: '企业门楼牌号', label: '企业门楼牌号', type: 'input' },
-          { key: '企业详址', label: '企业详址', type: 'input' },
-          { key: '分类', label: '分类', type: 'input' },
+          { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
+          { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
+          { key: 'economic_type', label: '经济类型', type: 'select', options: mapToArray(map.economic_type) },
+          { key: 'security_level', label: '治安级别', type: 'select', options: mapToArray(map.security_level) },
+
         ],
         [
-          { key: '特种行业许可证编号', label: '特种行业许可证编号', type: 'input' },
-          { key: '法定代表人姓名', label: '法定代表人姓名', type: 'input' },
-          { key: 'btn', type: 'btn' },
-        ]
+          { key: 'legal_certificate_code', label: '法人代表证据号码', type: 'input' },
+          { key: 'chief_person', label: '单位负责人', type: 'input' },
+          { key: 'chief_certificate_code', label: '负责人证件号码', type: 'input' },
+          {
+            key: 'is_record_register', label: '是否备案登记', type: 'select', options: [
+              { label: '是', value: 1 },
+              { label: '否', value: 0 }
+            ]
+          },
+        ],
+        [{ key: 'btn', type: 'btn' },]
       ],
       columns: [
-        { prop: '序号', label: '序号', },
-        { prop: 'agency', label: '行政区划', },
-        { prop: 'enterpriseCode', label: '派出所名称',  },
-
-        { prop: 'signboardName', label: '企业名称',  },
-        { prop: 'legalPerson', label: '治安级别', },
-        { prop: 'unifiedSocialCreditCode', label: '是否备案登记', },
+        { type: 'index', label: '序号', },
+        { prop: 'district', label: '行政区划', formatter: (r, c, value) => map.district[value] },
+        { prop: 'police_unit', label: '派出所名称', },
+        { prop: 'enterprise', label: '企业名称', },
+        { prop: 'security_level', label: '治安级别', formatter: (r, c, value) => map.security_level[value] },
+        { prop: 'is_record_register', label: '是否备案登记', formatter: (r, c, value) => value ? '是' : '否' },
       ],
       dialogVisible: false,
       submitDisabled: false,
@@ -245,101 +234,70 @@ export default {
       },
       addEditformItems: [
         {
-          key: 'businessStatus',
+          key: 'district',
           label: '行政区划',
           type: 'select',
-          options: [
-            { label: '营业', value: '1' },
-            { label: '停业', value: '2' },
-            { label: '歇业', value: '3' },
-            { label: '其他', value: '4' }
-          ]
+          options: mapToArray(map.district)
         },
         {
-          key: 'industry',
+          key: 'police_unit',
           label: '派出所名称',
-          type: 'select',
+          type: 'input',
           options: [
             { label: '旅馆业', value: 1 },
             { label: '留宿洗浴业', value: 2 }
           ]
         },
-        { key: 'enterpriseCode', label: '备案编号', type: 'input' },
-        { key: 'signboardName', label: '企业名称', type: 'input' },
-        { key: 'area', label: '企业地址', type: 'input' },
-        { key: '传真', label: '企业门楼牌号', type: 'input' },
+        { key: 'enterprise_vice_class', label: '企业副分类', type: 'input' },
+        { key: 'enterprise', label: '企业名称', type: 'input' },
+        { key: 'enterprise_street', label: '企业街路巷', type: 'input' },
+        { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
+        { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
+        { key: 'county_police_unit_code', label: '公安机关代码', type: 'input' },
+        { key: 'jurisdiction_unit', label: '管辖单位', type: 'input' },
+        { key: '企业组织机构代码', label: '企业组织机构代码', type: 'input' },
+        { key: '联系电话', label: '联系电话', type: 'input' },
+
+        { key: 'post_code', label: '邮政编码', type: 'input' },
+
         {
-          key: '分类',
-          label: '分类',
+          key: 'economic_type',
+          label: '经济类型',
           type: 'select',
-          options: [
-            { label: '旅馆业', value: 1 },
-            { label: '留宿洗浴业', value: 2 }
-          ]
+          options: mapToArray(map.economic_type)
         },
-        { key: '经营负责人电话', label: '经营负责人电话', type: 'input' },
-        { key: '企业详址', label: '企业详址', type: 'input' },
-        { key: '企业网址', label: '企业网址', type: 'input' },
-        {
-          key: '经济性质',
-          label: '经济性质',
-          type: 'select',
-          options: [
-            { label: '是', value: 1 },
-            { label: '否', value: 2 }
-          ]
-        },
-        { key: '特种行业许可证编号', label: '特种行业许可证编号', type: 'input' },
-        { key: '工商营业执照编号', label: '工商营业执照编号', type: 'input' },
-        { key: '注册资金（万元）', label: '注册资金（万元）', type: 'input' },
-        { key: '经营范围', label: '经营范围', type: 'input' },
-        { key: '经营面积（平方米）', label: '经营面积（平方米）', type: 'input' },
-        { key: '上级主管部门', label: '上级主管部门', type: 'input' },
-        { key: '企业联系电话', label: '企业联系电话', type: 'input' },
-        { key: '法定代表人身份证号码', label: '法定代表人身份证号码', type: 'input' },
-        { key: '法定代表人姓名', label: '法定代表人姓名', type: 'input' },
-        { key: '法定代表人联系电话', label: '法定代表人联系电话', type: 'input' },
-        { key: '从业人员数', label: '从业人员数', type: 'input' },
-        { key: '保安人数', label: '保安人数', type: 'input' },
-        { key: '登记保管人员数', label: '登记保管人员数', type: 'input' },
-        { key: '夜间值班人数', label: '夜间值班人数', type: 'input' },
-        {
-          key: '房屋结构',
-          label: '房屋结构',
-          type: 'select',
-          options: [
-            { label: 'xxx', value: 1 },
-            { label: 'xxxx', value: 2 }
-          ]
-        },
-        {
-          key: '消防重点单位管理级别',
-          label: '消防重点单位管理级别',
-          type: 'select',
-          options: [
-            { label: 'xxx', value: 1 },
-            { label: 'xxxx', value: 2 }
-          ]
-        },
-        { key: '消防负责人', label: '消防负责人', type: 'input' },
-        { key: '消防负责人联系电话', label: '消防负责人联系电话', type: 'input' },
-        { key: '消防验收单位', label: '消防验收单位', type: 'input' },
-        { key: '消防验收意见', label: '消防验收意见', type: 'input' },
-        { key: '消防验收时间', label: '消防验收时间', type: 'datePicker' },
-        {
-          key: '是否有安全规章制度',
-          label: '是否有安全规章制度',
-          type: 'select',
-          options: [
-            { label: 'xxx', value: 1 },
-            { label: 'xxxx', value: 2 }
-          ]
-        },
-        { key: '技防物防设施', label: '技防物防设施', type: 'input' },
-        { key: '填表人', label: '填表人', type: 'input' },
-        { key: '操作时间', label: '操作时间', type: 'datePicker' },
-        { key: '填表日期', label: '填表日期', type: 'datePicker' },
-        { key: '备注', label: '备注', type: 'textarea' },
+        { key: 'concurrently_scale', label: '经营范围（主营）', type: 'input' },
+        { key: '经营范围', label: '经营范围（兼营）', type: 'input' },
+        { key: 'operate_area', label: '经营面积（平方米）', type: 'input' },
+        { key: 'security_level', label: '治安级别', type: 'select', options: mapToArray(map.security_level), valueType: 'string' },
+        { key: 'business_state', label: '营业状态', type: 'select', options: mapToArray(map.my_business_state) },
+        { key: 'legal_person', label: '法定代表人姓名', type: 'input' },
+        { key: 'legal_certificate_type', label: '法定代表证件类型', type: 'select', options: mapToArray(map.legal_certificate_type) },
+        { key: 'legal_certificate_code', label: '法定代表证件号码', type: 'input' },
+        { key: 'legal_telephone', label: '法人代表联系电话', type: 'input' },
+        { key: 'open_date', label: '开业日期', type: 'datePicker' },
+        { key: 'stop_date', label: '停业日期', type: 'datePicker' },
+        { key: 'operate_way', label: '经营方式', type: 'input' },
+        { key: 'chief_person', label: '单位负责人姓名', type: 'input' },
+        { key: 'chief_certificate_type', label: '单位负责人证件类型', type: 'select', options: mapToArray(map.certificate_type) },
+        { key: 'chief_certificate_code', label: '单位负责人证件号码', type: 'input' },
+        { key: 'chief_telephone', label: '单位负责人联系方式', type: 'input' },
+        { key: 'fire_check_unit', label: '消防审核单位', type: 'input' },
+        { key: 'fire_qualify_code', label: '消防合格证号', type: 'input' },
+        { key: 'security_enterprise_name', label: '保安公司名称', type: 'input' },
+        { key: 'security_chief_identify', label: '保安负责人身份证号', type: 'input' },
+        { key: 'security_chief_person', label: '保安负责人姓名', type: 'input' },
+        { key: 'security_chief_telephone', label: '保安负责人电话', type: 'input' },
+        { key: 'security_persons', label: '保安人数', type: 'input' },
+        { key: 'post_train_persons', label: '经岗位培训人数', type: 'input' },
+        { key: 'exit_total', label: '出口数量', type: 'input' },
+        { key: 'room_total', label: '包厢包间数', type: 'input' },
+        { key: 'is_record_register', label: '是否备案登记', type: 'input' },
+        { key: 'record_code', label: '备案登记号', type: 'input' },
+        { key: 'fire_appraisal_code', label: '消防鉴定书编号', type: 'input' },
+        { key: 'save_time', label: '保存时间', type: 'datePicker' },
+        { key: 'input_time', label: '录入时间', type: 'datePicker' },
+        { key: 'annual_check_date', label: '年审日期', type: 'datePicker' },
 
       ]
     };
@@ -375,15 +333,15 @@ export default {
     },
     handleQuery() {
       this.tableLoading = true
-      items(this.queryForm)
+      const { is_record_register, ...rest } = this.queryForm;
+      items({
+        is_record_register: typeof is_record_register === 'undefined' ? undefined : !!is_record_register,
+        ...rest
+      })
         .then(res => {
-          if (res.code === 20000) {
-            res.data.items.forEach(element => {
-              element.createdat = formatDate('datetime', element.createdat)
-              element.updatedat = formatDate('datetime', element.updatedat)
-            })
-            this.tableData = res.data.items
-            this.tableDataCount = res.data.total
+          if (res.code === 200) {
+            this.tableData = res.data
+            this.tableDataCount = res.data.size
           }
           this.tableLoading = false
         })
@@ -393,44 +351,30 @@ export default {
     },
     handleEdit(index, row, flag) {
       this.formClear(flag, false)
-      item({
-        keyid: row.keyid
-      })
-        .then(res => {
-          if (res.code === 20000) {
-            this.addEditForm = res.data
-            this.dialogVisible = true
-          }
-        })
-        .catch(e => {
-          console.error(e)
-        })
+      this.addEditForm = { ...row, is_record_register: +row.is_record_register };
+      this.dialogVisible = true;
     },
     handlePerson() { },
     handleRemove(index, row) {
-      this.removeData([row.keyid], [row.name])
+      this.removeData(row.scrap_metal_recycleid)
     },
-    removeData(ids, names) {
+    removeData(scrap_metal_recycleid) {
       this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          batchremove({
-            ids,
-            names
+          remove({
+            scrap_metal_recycleid
           })
             .then(res => {
-              if (res.code === 20000) {
+              if (res.code === 200) {
                 if (res.data) {
                   this.$message({
                     message: '操作成功!',
                     type: 'success'
                   })
-                  if (ids.length === this.tableDataCount && this.queryForm.pageindex !== 1) {
-                    this.queryForm.pageindex = 1
-                  }
                   this.handleQuery()
                 } else {
                   this.$message({
@@ -446,7 +390,11 @@ export default {
         })
         .catch(() => { })
     },
-    handleReset() { },
+    handleReset() {
+      const { pagesize, pageindex } = this.queryForm;
+      this.queryForm = { pagesize, pageindex };
+      this.$refs.queryForm.resetFields();
+    },
 
     formClear(flag, visible) {
       this.dialogVisible = visible
@@ -460,20 +408,37 @@ export default {
       this.formClear('add', true)
     },
     handleSubmit() {
-      console.log(this.addEditForm)
 
       this.submitDisabled = true // 防止重复提交
+
+      const {
+        open_date,
+        stop_date,
+        annual_check_date,
+        is_record_register,
+        input_time,
+        save_time,
+        ...rest
+      } = this.addEditForm;
+      const requestData = {
+        open_date: open_date ? formatDate('date', open_date) : undefined,
+        stop_date: stop_date ? formatDate('date', stop_date) : undefined,
+        annual_check_date: annual_check_date ? formatDate('dateTime', annual_check_date) : undefined,
+        input_time: input_time ? formatDate('dateTime', input_time) : undefined,
+        save_time: save_time ? formatDate('dateTime', save_time) : undefined,
+        is_record_register: typeof is_record_register === 'undefined' ? undefined : !!is_record_register,
+        ...rest
+      };
       if (this.flag === 'add') {
-        create(this.addEditForm)
+        create(requestData)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data) {
                 this.$message({
                   message: '操作成功!',
                   type: 'success'
                 })
                 this.dialogVisible = false
-                this.editKeyName = ''
                 this.handleQuery()
               } else {
                 this.$message({
@@ -489,16 +454,15 @@ export default {
             this.submitDisabled = false
           })
       } else if (this.flag === 'edit') {
-        update(this.addEditForm)
+        update(requestData)
           .then(res => {
-            if (res.code === 20000) {
+            if (res.code === 200) {
               if (res.data) {
                 this.$message({
                   message: '操作成功!',
                   type: 'success'
                 })
                 this.dialogVisible = false
-                this.editKeyName = ''
                 this.handleQuery()
               } else {
                 this.$message({
@@ -540,7 +504,7 @@ export default {
   height: calc(100vh - 120px);
   width: 100%;
   .main {
-    height: calc(100% - 184px);
+    height: calc(100% - 224px);
     width: 100%;
     padding: 5px;
     > button {

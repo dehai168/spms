@@ -8,7 +8,7 @@
               <el-select
                 v-if="formItem.type == 'select'"
                 v-model="queryForm[formItem.key]"
-                style="width:14vw"
+                style="width:12vw"
                 placeholder="请选择"
               >
                 <el-option
@@ -21,12 +21,12 @@
               <el-input
                 v-else-if="formItem.type == 'input'"
                 v-model="queryForm[formItem.key]"
-                style="width:14vw"
+                style="width:12vw"
               />
               <el-date-picker
                 v-else-if="formItem.type == 'datePicker'"
                 v-model="queryForm[formItem.key]"
-                style="width:14vw"
+                style="width:12vw"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"

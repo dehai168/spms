@@ -1,14 +1,14 @@
 <template>
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 188px">
-      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="7vw">
+      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="7.5vw">
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
             <el-form-item :label="formItem.label">
               <el-select
                 v-if="formItem.type == 'select'"
                 v-model="queryForm[formItem.key]"
-                style="width:14vw"
+                style="width:12vw"
                 placeholder="请选择"
               >
                 <el-option
@@ -21,12 +21,12 @@
               <el-input
                 v-else-if="formItem.type == 'input'"
                 v-model="queryForm[formItem.key]"
-                style="width:14vw"
+                style="width:12vw"
               />
               <el-date-picker
                 v-else-if="formItem.type == 'datePicker'"
                 v-model="queryForm[formItem.key]"
-                style="width: 14vw;"
+                style="width: 12vw;"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"

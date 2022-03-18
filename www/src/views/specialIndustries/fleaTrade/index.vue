@@ -8,7 +8,7 @@
               <el-select
                 v-if="formItem.type == 'select'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:11vw"
                 placeholder="请选择"
               >
                 <el-option
@@ -21,12 +21,12 @@
               <el-input
                 v-else-if="formItem.type == 'input'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:11vw"
               />
               <el-date-picker
                 v-else-if="formItem.type == 'datePicker'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:11vw"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -429,10 +429,10 @@ export default {
       console.log(this.addEditForm)
       const { fire_opinion_date, 填表日期, 操作时间, is_fire_regulation, ...rest } = this.addEditForm;
       const requestData = {
-        fire_check_time: fire_opinion_date ? formatDate('datetime', fire_opinion_date) : undefined,
+        fire_check_time: fire_opinion_date ? formatDate('date', fire_opinion_date) : undefined,
         is_fire_regulation: !!is_fire_regulation,
-        填表日期: formatDate('datetime', 填表日期),
-        操作时间: formatDate('datetime', 操作时间),
+        填表日期: formatDate('date', 填表日期),
+        操作时间: formatDate('date', 操作时间),
         ...rest
       };
       this.submitDisabled = true // 防止重复提交
