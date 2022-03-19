@@ -1,15 +1,16 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 142px">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 189px">
       <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="7vw">
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
-          <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
+          <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
             <el-form-item :label="formItem.label">
               <el-select
                 v-if="formItem.type == 'select'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:18vw"
                 placeholder="请选择"
+                :clearable="true"
               >
                 <el-option
                   v-for="option in formItem.options"
@@ -21,12 +22,12 @@
               <el-input
                 v-else-if="formItem.type == 'input'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:18vw"
               />
               <el-date-picker
                 v-else-if="formItem.type == 'datePicker'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                style="width:18vw"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -96,10 +97,10 @@
           <el-image
             style="width: 100px; height: 100px"
             :src="detailData.certificate_image"
-            :fit="fit"
+            fit="fill"
           />
           <div class="photo-tittle">证件照片</div>
-          <el-image style="width: 100px; height: 100px" :src="detailData.scene_capture" :fit="fit" />
+          <el-image style="width: 100px; height: 100px" :src="detailData.scene_capture" fit="fill" />
           <div class="photo-tittle">现场照片</div>
         </div>
       </el-form>
@@ -137,6 +138,9 @@ export default {
           { key: 'inTime', label: '入住时间', type: 'datePicker' },
           { key: 'lastname', label: '英文姓', type: 'input' },
           { key: 'firstname', label: '英文名', type: 'input' },
+
+        ],
+        [
           {
             key: 'sex',
             label: '性别',
@@ -146,23 +150,20 @@ export default {
               { label: '女', value: '女' }
             ]
           },
-        ],
-        [
           { key: 'birthday', label: '出生日期', type: 'datePicker' },
           { key: 'certificate_code', label: '证件号码', type: 'input' },
+
+        ],
+        [
           {
             key: 'security_manage_org',
             label: '管辖单位',
-            type: 'input',
-            options: [
-              { label: '变更待核查', value: 1 },
-              { label: '关停', value: 2 }
-            ]
+            type: 'select',
+            options: mapToArray(map.police_unit)
           },
           { key: 'sign_name', label: '招牌名称', type: 'input' },
-        ],
-        [
           { key: 'enterprise', label: '企业名称', type: 'input' },
+        ], [
           { key: 'chinese_name', label: '中文名', type: 'input' },
           { key: 'nationality', label: '国家/地区', type: 'input' },
           { key: 'btn', type: 'btn' },
@@ -183,7 +184,7 @@ export default {
         { prop: 'out_time', label: '退房时间', width: 150 },
         { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
-        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200 }
+        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] }
       ],
       dialogVisible: false,
       detailData: {},
@@ -199,7 +200,7 @@ export default {
             { key: 'nationality', label: '国家/地区', formatter: (value) => map.nationality[value] || '其他' },
             { key: 'certificate_type', label: '证件类型', formatter: (value) => map.certificate_type[value] || '其他' },
             { key: 'certificate_code', label: '证件号码' },
-            { key: 'visa_class', label: '签证种类', formatter: (value) => map.visa_class[value] || '其他'  },
+            { key: 'visa_class', label: '签证种类', formatter: (value) => map.visa_class[value] || '其他' },
             { key: 'visa_code', label: '签证号码' },
             { key: 'residence_validity', label: '停留有效期' },
             { key: 'enter_reason', label: '入境事由' },
@@ -217,7 +218,7 @@ export default {
             { key: 'out_time', label: '退房时间' },
             { key: 'image_similarity', label: '人像比对相似度' },
             { key: 'image_result', label: '人像比对结果' },
-            { key: 'is_person_check', label: '是否人工复核', formatter: (value) => value ? '是' : '否'}
+            { key: 'is_person_check', label: '是否人工复核', formatter: (value) => value ? '是' : '否' }
           ]
         },
         '管理信息': {
@@ -259,7 +260,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.tableData = res.data
-            this.tableDataCount = res.data.size
+            this.tableDataCount = res.size
           }
           this.tableLoading = false
         })
@@ -298,7 +299,7 @@ export default {
   height: calc(100vh - 120px);
   width: 100%;
   .main {
-    height: calc(100% - 184px);
+    height: calc(100% - 231px);
     width: 100%;
     padding: 5px;
   }

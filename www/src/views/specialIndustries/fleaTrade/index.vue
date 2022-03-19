@@ -1,15 +1,16 @@
 <template>
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 140px">
-      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="8.5vw">
+      <el-form ref="queryForm" :model="queryForm" :inline="true">
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
-            <el-form-item :label="formItem.label">
+            <el-form-item :label="formItem.label" :label-width="formItem.labelWidth || '8.5vw'">
               <el-select
                 v-if="formItem.type == 'select'"
                 v-model="queryForm[formItem.key]"
-                style="width:11vw"
+                :style="{ width: formItem.width || '11vw' }"
                 placeholder="请选择"
+                :clearable="true"
               >
                 <el-option
                   v-for="option in formItem.options"
@@ -21,12 +22,12 @@
               <el-input
                 v-else-if="formItem.type == 'input'"
                 v-model="queryForm[formItem.key]"
-                style="width:11vw"
+                :style="{ width: formItem.width || '11vw' }"
               />
               <el-date-picker
                 v-else-if="formItem.type == 'datePicker'"
                 v-model="queryForm[formItem.key]"
-                style="width:11vw"
+                :style="{ width: formItem.width || '11vw' }"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -199,7 +200,8 @@ export default {
           {
             key: 'police_unit',
             label: '派出所名称',
-            type: 'input',
+            type: 'select',
+            options: mapToArray(map.police_unit)
           },
           { key: 'record_code', label: '备案编号', type: 'input' },
           { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -211,15 +213,15 @@ export default {
           { key: 'junk_type', label: '分类', type: 'select', options: mapToArray(map.trade_type) },
         ],
         [
-          { key: 'special_license', label: '特种行业许可证编号', type: 'input' },
           { key: 'legal_person', label: '法定代表人姓名', type: 'input' },
+          { key: 'special_license', label: '特种行业许可证编号', type: 'input', labelWidth: '11vw', span: 8 },
           { key: 'btn', type: 'btn' },
         ]
       ],
       columns: [
         { type: 'index', label: '序号', width: 80 },
         { prop: 'district', label: '行政区划', width: 180, formatter: (r, c, value) => map.district[value] },
-        { prop: 'police_unit', label: '派出所名称', minWidth: 200 },
+        { prop: 'police_unit', label: '派出所名称', minWidth: 200, formatter: (r, c, value) => map.police_unit[value] },
         { prop: 'record_code', label: '备案编号', width: 120 },
         { prop: 'enterprise', label: '企业名称', minWidth: 180 },
         { prop: 'enterprise_address', label: '企业地址', minWidth: 180 },
@@ -247,7 +249,9 @@ export default {
         {
           key: 'police_unit',
           label: '派出所名称',
-          type: 'input'
+          type: 'select',
+          valueType: 'string',
+          options: mapToArray(map.police_unit)
         },
         { key: 'record_code', label: '备案编号', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -359,7 +363,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.tableData = res.data
-            this.tableDataCount = res.data.size
+            this.tableDataCount = res.size
           }
           this.tableLoading = false
         })
@@ -372,7 +376,9 @@ export default {
       this.addEditForm = { ...row, is_fire_regulation: +row.is_fire_regulation };
       this.dialogVisible = true;
     },
-    handlePerson() { },
+    handlePerson(index, row) {
+      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+    },
     handleRemove(index, row) {
       this.removeData(row.junk_tradeid)
     },
@@ -387,7 +393,7 @@ export default {
             junk_tradeid
           })
             .then(res => {
-              if (res.code === 20000) {
+              if (res.code === 200) {
                 if (res.data) {
                   this.$message({
                     message: '操作成功!',

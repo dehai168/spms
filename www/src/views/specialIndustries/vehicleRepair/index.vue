@@ -8,8 +8,9 @@
               <el-select
                 v-if="formItem.type == 'select'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                :style="{ width: formItem.width || '11vw' }"
                 placeholder="请选择"
+                :clearable="true"
               >
                 <el-option
                   v-for="option in formItem.options"
@@ -21,12 +22,12 @@
               <el-input
                 v-else-if="formItem.type == 'input'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                :style="{ width: formItem.width || '11vw' }"
               />
               <el-date-picker
                 v-else-if="formItem.type == 'datePicker'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                :style="{ width: formItem.width || '11vw' }"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -199,12 +200,8 @@ export default {
           {
             key: 'jurisdiction_unit',
             label: '管辖单位',
-            type: 'input',
-            options: [
-              { label: 'aaaa', value: 1 },
-              { label: 'aaaa', value: 2 },
-              { label: 'aaaa', value: 3 }
-            ]
+            type: 'select',
+            options: mapToArray(map.police_unit)
           },
           { key: 'enterprise_code', label: '企业编码', type: 'input' },
           { key: 'credit_code', label: '社会信用代码', type: 'input' },
@@ -212,19 +209,19 @@ export default {
         ],
         [
           { key: 'enterprise', label: '企业名称', type: 'input' },
-          { key: 'inputTime', label: '录入时间', type: 'datePicker' },
           {
             key: 'business_state',
             label: '营业状态',
             type: 'select',
             options: mapToArray(map.business_state)
           },
-          { key: 'btn', type: 'btn' },
+          { key: 'inputTime', label: '录入时间', type: 'datePicker', span: 8, width: '13vw' },
+          { key: 'btn', type: 'btn', span: 4 },
         ],
       ],
       columns: [
         { type: 'index', label: '序号', width: 80 },
-        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200 },
+        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
         { prop: 'enterprise_code', label: '企业编码', width: 120 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'legal_person', label: '法人姓名', width: 100 },
@@ -259,12 +256,9 @@ export default {
             {
               key: 'jurisdiction_unit',
               label: '管辖单位',
-              type: 'input',
-              options: [
-                { label: 'aaaa', value: 1 },
-                { label: 'aaaa', value: 2 },
-                { label: 'aaaa', value: 3 }
-              ]
+              type: 'select',
+              valueType: 'string',
+              options: mapToArray(map.police_unit)
             },
             { key: 'register_date', label: '企业登记日期', type: 'datePicker' },
           ],
@@ -360,7 +354,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.tableData = res.data
-            this.tableDataCount = res.data.size
+            this.tableDataCount = res.size
           }
           this.tableLoading = false
         })
@@ -373,7 +367,9 @@ export default {
       this.addEditForm = row;
       this.dialogVisible = true;
     },
-    handlePerson() { },
+    handlePerson(index, row) {
+      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+    },
     handleRemove(index, row) {
       this.removeData(row.vehicle_repairid)
     },

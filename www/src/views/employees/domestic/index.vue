@@ -69,7 +69,7 @@ export default {
 				pageindex: 1,
 				pagesize: 10
 			},
-			queryForm: {},
+			queryForm: { enterprise :'' },
 			formItems: [
 				{
 					key: 'trade_type',
@@ -205,6 +205,8 @@ export default {
 		};
 	},
 	created() {
+		// 其他页面跳转过来 填充企业名称
+		this.$route.query.enterprise && (this.queryForm.enterprise = this.$route.query.enterprise);
 		this.getList()
 	},
 	computed: {

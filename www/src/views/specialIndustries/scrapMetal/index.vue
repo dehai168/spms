@@ -189,11 +189,8 @@ export default {
           {
             key: 'police_unit',
             label: '派出所名称',
-            type: 'input',
-            options: [
-              { label: '旅馆业', value: 1 },
-              { label: '留宿洗浴业', value: 2 }
-            ]
+            type: 'select',
+            options: mapToArray(map.police_unit)
           },
           { key: 'enterprise', label: '企业名称', type: 'input' },
           { key: 'enterprise_address', label: '企业地址', type: 'input' },
@@ -221,7 +218,7 @@ export default {
       columns: [
         { type: 'index', label: '序号', },
         { prop: 'district', label: '行政区划', formatter: (r, c, value) => map.district[value] },
-        { prop: 'police_unit', label: '派出所名称', },
+        { prop: 'police_unit', label: '派出所名称', formatter: (r, c, value) => map.police_unit[value] },
         { prop: 'enterprise', label: '企业名称', },
         { prop: 'security_level', label: '治安级别', formatter: (r, c, value) => map.security_level[value] },
         { prop: 'is_record_register', label: '是否备案登记', formatter: (r, c, value) => value ? '是' : '否' },
@@ -242,11 +239,9 @@ export default {
         {
           key: 'police_unit',
           label: '派出所名称',
-          type: 'input',
-          options: [
-            { label: '旅馆业', value: 1 },
-            { label: '留宿洗浴业', value: 2 }
-          ]
+          type: 'select',
+          valueType: 'string',
+          options: mapToArray(map.police_unit)
         },
         { key: 'enterprise_vice_class', label: '企业副分类', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -341,7 +336,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.tableData = res.data
-            this.tableDataCount = res.data.size
+            this.tableDataCount = res.size
           }
           this.tableLoading = false
         })
@@ -354,7 +349,9 @@ export default {
       this.addEditForm = { ...row, is_record_register: +row.is_record_register };
       this.dialogVisible = true;
     },
-    handlePerson() { },
+    handlePerson(index, row) {
+      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+    },
     handleRemove(index, row) {
       this.removeData(row.scrap_metal_recycleid)
     },
