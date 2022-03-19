@@ -1,15 +1,16 @@
 <template>
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 188px">
-      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="7.5vw">
+      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="8.5vw">
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
             <el-form-item :label="formItem.label">
               <el-select
                 v-if="formItem.type == 'select'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                :style="{ width: formItem.width || '11vw' }"
                 placeholder="请选择"
+                :clearable="true"
               >
                 <el-option
                   v-for="option in formItem.options"
@@ -21,12 +22,12 @@
               <el-input
                 v-else-if="formItem.type == 'input'"
                 v-model="queryForm[formItem.key]"
-                style="width:12vw"
+                :style="{ width: formItem.width || '11vw' }"
               />
               <el-date-picker
                 v-else-if="formItem.type == 'datePicker'"
                 v-model="queryForm[formItem.key]"
-                style="width: 12vw;"
+                :style="{ width: formItem.width || '11vw' }"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -82,12 +83,12 @@
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
       <el-pagination
+        layout="total, sizes, prev, pager, next, jumper"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :page-sizes="pagesizes"
         :page-size="queryForm.pagesize"
         background
-        layout="total, sizes, prev, pager, next, jumper"
         :total="tableDataCount"
       />
     </el-footer>
@@ -103,7 +104,7 @@
       <el-form
         ref="addEditForm"
         :model="addEditForm"
-        label-width="8.5vw"
+        label-width="10vw"
         :inline="true"
         label-suffix=":"
         :disabled="flag == 'detail'"
@@ -130,20 +131,20 @@
                 <el-select
                   v-if="formItem.type == 'select'"
                   v-model="addEditForm[formItem.key]"
-                  style="width:12vw"
+                  style="width:11vw"
                   placeholder="请选择"
                 >
                   <el-option
                     v-for="option in formItem.options"
                     :key="option.value"
-                    :value="formItem.key == 'district' ? option.value : +option.value"
+                    :value="formItem.valueType == 'string' ? option.value : +option.value"
                     :label="option.label"
                   />
                 </el-select>
                 <el-input
                   v-else-if="formItem.type == 'input'"
                   v-model="addEditForm[formItem.key]"
-                  style="width:12vw"
+                  style="width:11vw"
                 />
                 <el-input
                   v-else-if="formItem.type == 'textarea'"
@@ -154,7 +155,7 @@
                 <el-date-picker
                   v-else-if="formItem.type == 'datePicker'"
                   v-model="addEditForm[formItem.key]"
-                  style="width:12vw"
+                  style="width:11vw"
                   type="date"
                   placeholder="请选择日期"
                 />
@@ -229,7 +230,8 @@ export default {
           {
             key: 'jurisdiction_unit',
             label: '管辖单位',
-            type: 'input',
+            type: 'select',
+            options: mapToArray(map.police_unit)
           },
           {
             key: 'trade_type',
@@ -302,14 +304,14 @@ export default {
           },
         ],
         [
-          { key: 'inputTime', label: '录入时间', type: 'datePicker' },
-          { key: 'licenseIssueDate', label: '许可证发证日期', type: 'datePicker' },
+          { key: 'inputTime', label: '录入时间', type: 'datePicker', width: '14vw', span: 8 },
+          { key: 'licenseIssueDate', label: '许可证发证日期', type: 'datePicker', width: '14vw', span: 8 },
           { key: 'btn', type: 'btn' }
         ]
       ],
       columns: [
         { type: 'index', label: '序号', width: 80 },
-        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200 },
+        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
         { prop: 'enterprise_code', label: '企业编码', width: 80 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
@@ -377,7 +379,9 @@ export default {
             {
               key: 'jurisdiction_unit',
               label: '管辖单位',
-              type: 'input',
+              type: 'select',
+              options: mapToArray(map.police_unit),
+              valueType: 'string'
             },
             { key: 'actual_address', label: '实际经营地址', type: 'input' },
           ],
@@ -493,7 +497,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.tableData = res.data
-            this.tableDataCount = res.data.size
+            this.tableDataCount = res.size
           }
           this.tableLoading = false
         })
@@ -506,7 +510,9 @@ export default {
       this.addEditForm = { ...row, is_standard_address: +row.is_standard_address };
       this.dialogVisible = true;
     },
-    handlePerson() { },
+    handlePerson(index, row) {
+      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+    },
     handleRemove(index, row) {
       this.removeData(row.hotelid)
     },

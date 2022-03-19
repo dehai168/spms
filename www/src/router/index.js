@@ -110,7 +110,7 @@ export const constantRoutes = [
             path: 'overseas',
             name: 'overseas',
             component: () => import('@/views/specialIndustries/hotel/overseasTraveler/index'),
-            meta: { title: '境内旅客', icon: 'el-icon-school' }
+            meta: { title: '境外旅客', icon: 'el-icon-school' }
           }
         ]
       },
