@@ -1,69 +1,61 @@
 <template>
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 82px">
-      <el-row>
-        <el-col :span="20">
-          <el-form ref="queryForm" :inline="true" :model="queryForm">
-            <el-row>
-              <el-col :span="6">
-                <el-form-item label="人员姓名" style="width: 100%">
-                  <el-input v-model="queryForm.realname"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="证件号码">
-                  <el-input v-model="queryForm.certificate_code" maxlength="20"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="性别">
-                  <el-select v-model="queryForm.sex" placeholder="请选择">
-                    <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="民族">
-                  <el-select v-model="queryForm.nation" placeholder="请选择">
-                    <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="创建日期">
-                  <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
-                </el-form-item>
-              </el-col>
-              <el-col :span="16">
-                <el-button type="primary" icon="el-icon-find" @click="handleQuery">搜索</el-button>
-                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-col>
-        <el-col :span="4">
-          <el-button type="primary" icon="el-icon-plus" @click="handleCreate">添加</el-button>
-          <el-button icon="el-icon-delete" @click="handleBatchRemove">删除</el-button>
-          <!-- <el-button icon="el-icon-download" @click="handleImport">导入</el-button>
-          <el-button icon="el-icon-download" @click="handleExport">导出</el-button> -->
-        </el-col>
-      </el-row>
+      <el-form ref="queryForm" :inline="true" :model="queryForm">
+        <el-row>
+          <el-col :span="6">
+            <el-form-item prop="realname" label="人员姓名" style="width: 100%">
+              <el-input v-model="queryForm.realname"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item prop="certificate_code" label="证件号码">
+              <el-input v-model="queryForm.certificate_code" maxlength="20"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item prop="sex" label="性别">
+              <el-select v-model="queryForm.sex" placeholder="请选择">
+                <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item prop="nation" label="民族">
+              <el-select v-model="queryForm.nation" placeholder="请选择">
+                <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item prop="daterange" label="创建日期">
+              <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="max-width: 220px"> </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="16">
+            <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
     </el-header>
     <el-main class="main">
+      <el-row>
+        <el-button type="primary" icon="el-icon-plus" @click="handleCreate" style="margin-bottom: 5px">新增</el-button>
+      </el-row>
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column type="index"> </el-table-column>
         <el-table-column prop="realname" label="姓名"> </el-table-column>
         <el-table-column prop="certificate_code" label="证件号码"> </el-table-column>
-        <el-table-column prop="sex" label="性别"> </el-table-column>
-        <el-table-column prop="nation" label="名族"> </el-table-column>
-        <el-table-column prop="birthday" label="出生日期"> </el-table-column>
-        <el-table-column prop="interest_begin" label="关注日期"> </el-table-column>
+        <el-table-column prop="sex" label="性别" width="60"> </el-table-column>
+        <el-table-column prop="nation" label="名族" width="60"> </el-table-column>
+        <el-table-column prop="birthday" label="出生日期" width="105"> </el-table-column>
+        <el-table-column prop="interest_begin" label="关注开始日期" width="105"> </el-table-column>
+        <el-table-column prop="interest_end" label="关注结束日期" width="105"> </el-table-column>
         <el-table-column prop="interest_reason" label="关注原因"> </el-table-column>
-        <el-table-column prop="" label="登记人"> </el-table-column>
-        <el-table-column prop="input_time" label="登记时间"> </el-table-column>
+        <el-table-column prop="input_time" label="登记时间" width="135"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
@@ -79,29 +71,32 @@
     <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
         <el-form-item prop="realname" label="姓名">
-          <el-input v-model="form.realname" maxlength="20"></el-input>
+          <el-input v-model="form.realname" maxlength="50" :disabled="isView"></el-input>
         </el-form-item>
         <el-form-item prop="certificate_code" label="证件号码">
-          <el-input v-model="form.certificate_code" maxlength="20"></el-input>
+          <el-input v-model="form.certificate_code" maxlength="20" :disabled="isView"></el-input>
         </el-form-item>
-        <el-form-item label="名族">
-          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%">
+        <el-form-item prop="nation" label="名族">
+          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%" :disabled="isView">
             <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%">
+        <el-form-item prop="sex" label="性别">
+          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%" :disabled="isView">
             <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="出生日期">
-          <el-date-picker v-model="form.birthday" value-format="yyyy-MM-dd" type="datetime" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
+        <el-form-item prop="birthday" label="出生日期">
+          <el-date-picker v-model="form.birthday" value-format="yyyy-MM-dd" type="date" placeholder="选择日期时间" style="width: 100%" :disabled="isView"> </el-date-picker>
         </el-form-item>
-        <el-form-item label="关注日期">
-          <el-date-picker v-model="form.interest_begin" value-format="yyyy-MM-dd" type="datetime" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
+        <el-form-item prop="interest_begin" label="关注开始日期">
+          <el-date-picker v-model="form.interest_begin" value-format="yyyy-MM-dd" type="date" placeholder="选择日期时间" style="width: 100%" :disabled="isView"> </el-date-picker>
         </el-form-item>
-        <el-form-item label="关注原因">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.interest_reason" maxlength="250"> </el-input>
+        <el-form-item prop="interest_end" label="关注结束日期">
+          <el-date-picker v-model="form.interest_end" value-format="yyyy-MM-dd" type="date" placeholder="选择日期时间" style="width: 100%" :disabled="isView"> </el-date-picker>
+        </el-form-item>
+        <el-form-item prop="interest_reason" label="关注原因">
+          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.interest_reason" maxlength="250" :disabled="isView"> </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -132,7 +127,6 @@
 <script>
 import defaultSettings from '@/settings'
 import { items, item, create, update, remove, batchremove, importexcel, exportexcel, exist, templeteUrl, uploadUrl, download } from '@/api/focustarget'
-import { formatDate } from '@/utils/index'
 import Cookies from 'js-cookie'
 export default {
   name: 'FocusTarget',
@@ -168,6 +162,7 @@ export default {
         realname: '',
         certificate_code: '',
         sex: '男',
+        nation: '汉族',
         daterange: [],
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
@@ -182,6 +177,7 @@ export default {
         sex: '男',
         nation: '汉族',
         interest_begin: null,
+        interest_end: null,
         interest_reason: ''
       },
       formRules: {
@@ -202,6 +198,7 @@ export default {
       ],
       uploadHeader: {},
       addflag: true,
+      isView: false,
       importDialogVisible: false,
       dialogVisible: false,
       submitDisabled: false,
@@ -238,11 +235,11 @@ export default {
     handleQuery() {
       this.tableLoading = true
       if (this.queryForm.daterange.length > 0) {
-        this.queryForm.reg_begin = this.queryForm.daterange[0]
-        this.queryForm.reg_end = this.queryForm.daterange[1]
+        this.queryForm.begindate = this.queryForm.daterange[0]
+        this.queryForm.enddate = this.queryForm.daterange[1]
       } else {
-        this.queryForm.reg_begin = ''
-        this.queryForm.reg_end = ''
+        this.queryForm.begindate = ''
+        this.queryForm.enddate = ''
       }
       items(this.queryForm)
         .then(res => {
@@ -299,6 +296,7 @@ export default {
     formClear(flag) {
       this.dialogVisible = flag
       this.addflag = flag
+      this.isView = false
       if (this.$refs.form) {
         this.$refs.form.resetFields()
       }
@@ -307,6 +305,10 @@ export default {
       this.formClear(true)
     },
     handleSubmit() {
+      if (this.isView) {
+        this.dialogVisible = false
+        return
+      }
       this.$refs.form.validate(valid => {
         if (valid) {
           this.submitDisabled = true // 防止重复提交
@@ -404,6 +406,10 @@ export default {
     },
     handleView(index, row) {
       this.formClear(false)
+      this.isView = true
+      this.form = { ...row }
+      this.dialogVisible = true
+      return
       item({
         important_interest_personid: row.important_interest_personid
       })
@@ -420,6 +426,10 @@ export default {
     },
     handleUpdate(index, row) {
       this.formClear(false)
+      this.form = { ...row }
+      this.dialogVisible = true
+      return
+      this.formClear(false)
       item({
         important_interest_personid: row.important_interest_personid
       })
@@ -435,17 +445,17 @@ export default {
         })
     },
     handleRemove(index, row) {
-      this.removeData([row.important_interest_personid], [row.realname])
+      this.removeData(row.important_interest_personid, row.realname)
     },
-    removeData(ids, names) {
+    removeData(important_interest_personid, names) {
       this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          batchremove({
-            ids,
+          remove({
+            important_interest_personid,
             names
           })
             .then(res => {
@@ -455,7 +465,7 @@ export default {
                     message: '操作成功!',
                     type: 'success'
                   })
-                  if (ids.length === this.tableDataCount && this.queryForm.pageindex !== 1) {
+                  if (1 === this.tableDataCount && this.queryForm.pageindex !== 1) {
                     this.queryForm.pageindex = 1
                   }
                   this.handleQuery()

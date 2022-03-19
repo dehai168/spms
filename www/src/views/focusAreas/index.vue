@@ -1,73 +1,67 @@
 <template>
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 82px">
-      <el-row>
-        <el-col :span="20">
-          <el-form ref="queryForm" :inline="true" :model="queryForm">
-            <el-row>
-              <el-col :span="6">
-                <el-form-item label="重点地区名称" style="width: 100%">
-                  <el-input v-model="queryForm.impotant_fence"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="区划名称">
-                  <el-input v-model="queryForm.fence_name" maxlength="20"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="性别">
-                  <el-select v-model="queryForm.sex" placeholder="请选择">
-                    <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="民族">
-                  <el-select v-model="queryForm.nation" placeholder="请选择">
-                    <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="6">
-                <el-form-item label="登记单位名称">
-                  <el-input v-model="queryForm.register_unit" maxlength="20"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="登记日期">
-                  <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
-                </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-button type="primary" icon="el-icon-find" @click="handleQuery">搜索</el-button>
-                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-col>
-        <el-col :span="4">
-          <el-button type="primary" icon="el-icon-plus" @click="handleCreate">添加</el-button>
-          <el-button icon="el-icon-delete" @click="handleBatchRemove">删除</el-button>
-          <!-- <el-button icon="el-icon-download" @click="handleImport">导入</el-button>
-          <el-button icon="el-icon-download" @click="handleExport">导出</el-button> -->
-        </el-col>
-      </el-row>
+      <el-form ref="queryForm" :inline="true" :model="queryForm">
+        <el-row>
+          <el-col :span="6">
+            <el-form-item prop="impotant_fence" label="重点地区名称">
+              <el-input v-model="queryForm.impotant_fence"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item prop="fence_name_temp" label="区划名称">
+              <el-cascader v-model="queryForm.fence_name_temp" :options="zoneList"></el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item prop="sex" label="性别">
+              <el-select v-model="queryForm.sex" placeholder="请选择">
+                <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item prop="nation" label="民族">
+              <el-select v-model="queryForm.nation" placeholder="请选择">
+                <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <el-form-item prop="register_unit" label="登记单位名称">
+              <el-input v-model="queryForm.register_unit" maxlength="20"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item prop="daterange" label="登记日期">
+              <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="max-width: 220px"> </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
     </el-header>
     <el-main class="main">
+      <el-row>
+        <el-button type="primary" icon="el-icon-plus" @click="handleCreate" style="margin-bottom: 5px">新增</el-button>
+      </el-row>
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55"> </el-table-column>
+        <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
         <el-table-column prop="important_fence" label="重点地区名称"> </el-table-column>
         <el-table-column prop="fence_name" label="区划名称"> </el-table-column>
-        <el-table-column prop="sex" label="性别"> </el-table-column>
-        <el-table-column prop="nation" label="名族"> </el-table-column>
-        <el-table-column prop="begin_age" label="年龄段从"> </el-table-column>
-        <el-table-column prop="end_age" label="年龄至"> </el-table-column>
+        <el-table-column prop="sex" label="性别" width="60"> </el-table-column>
+        <el-table-column prop="nation" label="名族" width="60"> </el-table-column>
+        <el-table-column prop="begin_age" label="年龄段从" width="80"> </el-table-column>
+        <el-table-column prop="end_age" label="年龄段至" width="80"> </el-table-column>
+        <el-table-column prop="begin_date" label="开始日期" width="135"> </el-table-column>
+        <el-table-column prop="end_date" label="结束日期" width="135"> </el-table-column>
         <el-table-column prop="register_unit" label="登记单位"> </el-table-column>
-        <el-table-column prop="register_user" label="登记人"> </el-table-column>
-        <el-table-column prop="input_time" label="登记时间"> </el-table-column>
+        <el-table-column prop="input_time" label="登记时间" width="135"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
@@ -83,35 +77,35 @@
     <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
         <el-form-item prop="important_fence" label="重点地区名称">
-          <el-input v-model="form.important_fence" maxlength="20"></el-input>
+          <el-input v-model="form.important_fence" maxlength="50" :disabled="isView"></el-input>
         </el-form-item>
-        <el-form-item prop="fence_name" label="区划名称">
-          <el-input v-model="form.fence_name" maxlength="20"></el-input>
+        <el-form-item prop="fence_name_temp" label="区划名称">
+          <el-cascader v-model="form.fence_name_temp" :options="zoneList" style="width: 100%" :disabled="isView"></el-cascader>
         </el-form-item>
-        <el-form-item label="名族">
-          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%">
+        <el-form-item  prop="nation" label="名族">
+          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%" :disabled="isView">
             <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%">
+        <el-form-item  prop="sex" label="性别">
+          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%" :disabled="isView">
             <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="年龄范围从">
-          <el-input-number v-model="form.begin_age" :max="120" :min="0" style="width: 100%"></el-input-number>
+        <el-form-item  prop="begin_age" label="年龄范围从">
+          <el-input-number v-model="form.begin_age" :max="120" :min="0" style="width: 100%" :disabled="isView"></el-input-number>
         </el-form-item>
-        <el-form-item label="年龄范围至">
-          <el-input-number v-model="form.end_age" :max="120" :min="0" style="width: 100%"></el-input-number>
+        <el-form-item  prop="end_age" label="年龄范围至">
+          <el-input-number v-model="form.end_age" :max="120" :min="0" style="width: 100%" :disabled="isView"></el-input-number>
         </el-form-item>
-        <el-form-item label="起始时间">
-          <el-date-picker v-model="form.begin_date" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
+        <el-form-item  prop="begin_date" label="起始时间">
+          <el-date-picker v-model="form.begin_date" type="date" value-format="yyyy-MM-dd" placeholder="选择日期" style="width: 100%" :disabled="isView"> </el-date-picker>
         </el-form-item>
-        <el-form-item label="结束时间">
-          <el-date-picker v-model="form.end_date" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" style="width: 100%"> </el-date-picker>
+        <el-form-item  prop="end_date" label="结束时间">
+          <el-date-picker v-model="form.end_date" type="date" value-format="yyyy-MM-dd" placeholder="选择日期" style="width: 100%" :disabled="isView"> </el-date-picker>
         </el-form-item>
-        <el-form-item label="登记单位">
-          <el-input v-model="form.register_unit" maxlength="20"></el-input>
+        <el-form-item  prop="register_unit" label="登记单位">
+          <el-input v-model="form.register_unit" maxlength="150" :disabled="isView"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -142,7 +136,6 @@
 <script>
 import defaultSettings from '@/settings'
 import { items, item, create, update, remove, batchremove, importexcel, exportexcel, exist, templeteUrl, uploadUrl, download } from '@/api/focusareas'
-import { formatDate } from '@/utils/index'
 import Cookies from 'js-cookie'
 export default {
   name: 'FocusAreas',
@@ -176,6 +169,7 @@ export default {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
         important_fence: '',
+        fence_name_temp: [],
         fence_name: '',
         sex: '男',
         nation: '汉族',
@@ -190,6 +184,7 @@ export default {
         important_fenceid: -1,
         important_fence: '',
         fence_name: '',
+        fence_name_temp: [],
         nation: '汉族',
         sex: '男',
         begin_age: '',
@@ -200,11 +195,29 @@ export default {
       },
       formRules: {
         important_fence: [{ required: true, trigger: 'blur', message: '该项为必填项' }],
-        fence_name: [{ required: true, trigger: 'blur', message: '该项为必填项' }]
+        fence_name_temp: [{ required: true, trigger: 'blur', message: '该项为必填项' }]
       },
       sexList: [
         { value: '男', label: '男' },
         { value: '女', label: '女' }
+      ],
+      zoneList: [
+        {
+          value: '北京市',
+          label: '北京市',
+          children: [
+            {
+              value: '北京市',
+              label: '北京市',
+              children: [
+                {
+                  value: '东城区',
+                  label: '东城区'
+                }
+              ]
+            }
+          ]
+        }
       ],
       nationalList: [
         { value: '汉族', label: '汉族' },
@@ -214,13 +227,9 @@ export default {
         { value: '维吾尔族', label: '维吾尔族' },
         { value: '苗族', label: '苗族' }
       ],
-      companyList: [
-        { value: '单位1', label: '单位1' },
-        { value: '单位2', label: '单位2' },
-        { value: '单位3', label: '单位3' }
-      ],
       uploadHeader: {},
       addflag: true,
+      isView: false,
       importDialogVisible: false,
       dialogVisible: false,
       submitDisabled: false,
@@ -263,6 +272,7 @@ export default {
         this.queryForm.reg_begin = ''
         this.queryForm.reg_end = ''
       }
+      this.queryForm.fence_name = this.queryForm.fence_name_temp.join('/')
       items(this.queryForm)
         .then(res => {
           if (res.code === 200) {
@@ -318,6 +328,7 @@ export default {
     formClear(flag) {
       this.dialogVisible = flag
       this.addflag = flag
+      this.isView = false
       if (this.$refs.form) {
         this.$refs.form.resetFields()
       }
@@ -326,8 +337,13 @@ export default {
       this.formClear(true)
     },
     handleSubmit() {
+      if (this.isView) {
+        this.dialogVisible = false
+        return
+      }
       this.$refs.form.validate(valid => {
         if (valid) {
+          this.form.fence_name = this.form.fence_name_temp.join('/')
           this.submitDisabled = true // 防止重复提交
           if (this.addflag) {
             create(this.form)
@@ -423,6 +439,11 @@ export default {
     },
     handleView(index, row) {
       this.formClear(false)
+      this.isView = true
+      this.form = { ...row }
+      this.form.fence_name_temp = row.fence_name.split('/')
+      this.dialogVisible = true
+      return
       item({
         important_fenceid: row.important_fenceid
       })
@@ -437,6 +458,11 @@ export default {
         })
     },
     handleUpdate(index, row) {
+      this.formClear(false)
+      this.form = { ...row }
+      this.form.fence_name_temp = row.fence_name.split('/')
+      this.dialogVisible = true
+      return
       this.formClear(false)
       item({
         important_fenceid: row.important_fenceid
@@ -453,17 +479,18 @@ export default {
         })
     },
     handleRemove(index, row) {
-      this.removeData([row.important_fenceid], [row.important_fence])
+      // this.removeData([row.important_fenceid], [row.important_fence])
+      this.removeData(row.important_fenceid, row.important_fence)
     },
-    removeData(ids, names) {
+    removeData(important_fenceid, names) {
       this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          batchremove({
-            ids,
+          remove({
+            important_fenceid,
             names
           })
             .then(res => {
@@ -473,7 +500,7 @@ export default {
                     message: '操作成功!',
                     type: 'success'
                   })
-                  if (ids.length === this.tableDataCount && this.queryForm.index !== 1) {
+                  if (1 === this.tableDataCount && this.queryForm.index !== 1) {
                     this.queryForm.index = 1
                   }
                   this.handleQuery()

@@ -1,11 +1,11 @@
 <template>
   <el-row class="container">
-    <el-col :span="8">
+    <el-col :span="9">
       <svg-icon class="logo" icon-class="police badge" />
       <!-- <img class="logo" :src="logoSrc" alt="" /> -->
       <span class="title">{{ title }}</span>
     </el-col>
-    <el-col :span="15">
+    <el-col :span="14">
       <ul>
         <li :class="{ active: activeMenu.indexOf('/specialindustries/') > -1 }">
           <app-link to="/specialindustries"> <i class="el-icon-postcard"></i> 特种行业 </app-link>
@@ -204,16 +204,16 @@ export default {
     width: 32px;
     height: 32px;
     vertical-align: middle;
-    margin-left: 12px;
-    margin-right: 12px;
+    margin-left: 8px;
+    margin-right: 8px;
   }
   .title {
     display: inline-block;
     margin: 0;
     color: #fff;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 60px;
-    font-size: 20px;
+    font-size: 18px;
     font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
     vertical-align: middle;
   }
@@ -221,15 +221,15 @@ export default {
     list-style: none;
     margin: 0;
     padding: 0;
-    margin-left: 100px;
+    margin-left: 10px;
     li {
       margin: 0;
       float: left;
       text-align: center;
-      width: 200px;
+      width: 150px;
       font-weight: 600;
       line-height: 60px;
-      font-size: 24px;
+      font-size: 20px;
     }
     li:hover {
       background-color: $menuBg;

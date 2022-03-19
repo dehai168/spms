@@ -2,36 +2,36 @@
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 42px">
       <el-row>
-        <el-col :span="20">
+        <el-col :span="21">
           <el-form ref="queryForm" :inline="true" :model="queryForm">
             <el-row>
-              <el-col :span="8">
-                <el-form-item label="预警时间" style="width: 100%">
-                  <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
+              <el-col :span="6">
+                <el-form-item prop="daterange" label="预警时间">
+                  <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="max-width: 220px"> </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="4">
-                <el-form-item label="状态">
+              <el-col :span="6">
+                <el-form-item prop="state" label="状态">
                   <el-select v-model="queryForm.state" placeholder="请选择">
                     <el-option v-for="item in stateList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="姓名">
+                <el-form-item prop="realname" label="姓名">
                   <el-input v-model="queryForm.realname" maxlength="20"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="证件号码">
+                <el-form-item prop="certificate_code" label="证件号码">
                   <el-input v-model="queryForm.certificate_code" maxlength="20"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
         </el-col>
-        <el-col :span="4">
-          <el-button type="primary" icon="el-icon-find" @click="handleQuery">搜索</el-button>
+        <el-col :span="3">
+          <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
         </el-col>
       </el-row>
@@ -42,8 +42,8 @@
         <el-table-column prop="alarm_address" label="预警地点"> </el-table-column>
         <el-table-column prop="realname" label="姓名"> </el-table-column>
         <el-table-column prop="certificate_code" label="证件号码"> </el-table-column>
-        <el-table-column prop="state" label="状态"> </el-table-column>
-        <el-table-column prop="dispose_msg" label="处理结果"> </el-table-column>
+        <el-table-column prop="state" label="状态"  width="80"> </el-table-column>
+        <el-table-column prop="dispose_msg" label="处理结果"  width="80"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button v-if="scope.row.keyid % 2 !== 0" type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
@@ -185,6 +185,13 @@ export default {
       callback()
     },
     handleQuery() {
+      if (this.queryForm.daterange.length > 0) {
+        this.queryForm.begindate = this.queryForm.daterange[0]
+        this.queryForm.enddate = this.queryForm.daterange[1]
+      } else {
+        this.queryForm.begindate = ''
+        this.queryForm.enddate = ''
+      }
       this.tableLoading = true
       items(this.queryForm)
         .then(res => {
