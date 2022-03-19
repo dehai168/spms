@@ -38,8 +38,8 @@ export function create(data) {
 }
 export function update(data) {
   return request({
-    url: '/police/alarm/' + data.keyid,
-    method: 'put',
+    url: '/police/alarm/dispose?token=' + getToken(),
+    method: 'post',
     data
   })
 }

@@ -40,14 +40,22 @@
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%">
         <el-table-column prop="alarm_time" label="预警时间"> </el-table-column>
         <el-table-column prop="alarm_address" label="预警地点"> </el-table-column>
+        <el-table-column prop="alarm_reason" label="预警原因"> </el-table-column>
         <el-table-column prop="realname" label="姓名"> </el-table-column>
         <el-table-column prop="certificate_code" label="证件号码"> </el-table-column>
-        <el-table-column prop="state" label="状态"  width="80"> </el-table-column>
-        <el-table-column prop="dispose_msg" label="处理结果"  width="80"> </el-table-column>
+        <el-table-column prop="state" label="状态" width="80">
+          <template slot-scope="scope">
+            <el-tag type="success" v-if="scope.row.state === 1">已处理</el-tag>
+            <el-tag type="danger" v-else>未处理</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="dispose_user" label="处理人" width="80"> </el-table-column>
+        <el-table-column prop="dispose_time" label="处理时间" width="135"> </el-table-column>
+        <el-table-column prop="dispose_msg" label="处理结果"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.keyid % 2 !== 0" type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
-            <el-button v-if="scope.row.keyid % 2 === 0" type="text" @click="handleDispose(scope.$index, scope.row)">处理</el-button>
+            <el-button v-if="scope.row.state !== 0" type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
+            <el-button v-if="scope.row.state === 0" type="text" @click="handleDispose(scope.$index, scope.row)">处理</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -64,7 +72,7 @@
           <el-input v-model="form.alarm_address" disabled></el-input>
         </el-form-item>
         <el-form-item label="姓名">
-          <el-input v-model="form.realame" disabled></el-input>
+          <el-input v-model="form.realname" disabled></el-input>
         </el-form-item>
         <el-form-item label="身份证号">
           <el-input v-model="form.certificate_code" disabled></el-input>
@@ -125,8 +133,7 @@
 </template>
 <script>
 import defaultSettings from '@/settings'
-import { items, item, create } from '@/api/earlywarn'
-import { formatDate } from '@/utils/index'
+import { items, item, update } from '@/api/earlywarn'
 export default {
   name: 'EarlyWarn',
   components: {},
@@ -150,7 +157,7 @@ export default {
         alarm_address: '',
         alarm_reason: '',
         state: -1,
-        dispose_user: '',
+        dispose_user: '', // TODO 获取当前用户
         dispose_time: '',
         dispose_msg: ''
       },
@@ -192,8 +199,12 @@ export default {
         this.queryForm.begindate = ''
         this.queryForm.enddate = ''
       }
+      const queryObj = { ...this.queryForm }
+      if (this.queryForm.state === -1) {
+        delete queryObj.state
+      }
       this.tableLoading = true
-      items(this.queryForm)
+      items(queryObj)
         .then(res => {
           if (res.code === 200) {
             this.tableData = res.data
@@ -212,7 +223,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           this.submitDisabled = true // 防止重复提交
-          create(this.form)
+          update(this.form)
             .then(res => {
               if (res.code === 200) {
                 if (res.data) {
@@ -247,6 +258,9 @@ export default {
       this.handleQuery()
     },
     handleView(index, row) {
+      this.form = { ...row }
+      this.detailDialogVisible = true
+      return
       item({
         keyid: row.keyid
       })
@@ -261,6 +275,9 @@ export default {
         })
     },
     handleDispose(index, row) {
+      this.form = { ...row }
+      this.disposeDialogVisible = true
+      return
       item({
         keyid: row.keyid
       })
