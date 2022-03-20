@@ -21,10 +21,8 @@
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" disabled>编辑</el-button>
-						<el-popconfirm title="确定删除该条信息吗？" icon="el-icon-info" icon-color="red" style="margin-left: 10px">
-							<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-						</el-popconfirm>
+						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+						<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -32,7 +30,7 @@
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
-		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh" :close-on-click-modal="false">
+		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" dest top="4vh" @close="addEditForm = {}" destroy-on-close :close-on-click-modal="false">
 			<el-form ref="addEditForm" :model="addEditForm" label-width="120px" :inline="true" :disabled="flag == 'detail'">
 				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
 					<el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
@@ -69,7 +67,7 @@ export default {
 				pageindex: 1,
 				pagesize: 10
 			},
-			queryForm: { enterprise :'' },
+			queryForm: { enterprise: '' },
 			formItems: [
 				{
 					key: 'trade_type',
@@ -131,17 +129,7 @@ export default {
 			pagesizes: defaultSettings.pageSizes,
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
-			tableData: new Array(10).fill({
-				agency: '测试数据',
-				enterpriseCode: '测试数据',
-				companyName: '测试数据',
-				signboardName: '测试数据',
-				legalPerson: '测试数据',
-				unifiedSocialCreditCode: '测试数据',
-				民族: '测试数据',
-				录入时间: '测试数据',
-				在职状态: '测试数据',
-			}),
+			tableData: [],
 			columns: [
 				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type[cell] },
 				{ prop: 'enterprise', label: '企业名称' },
@@ -196,7 +184,7 @@ export default {
 						key: 'is_front_operator', label: '是否前端操作员', type: 'select', options: [{ label: '是', value: true },
 						{ label: '否', value: false },]
 					},
-					{ key: 'employee_type', label: '人员类别', type: 'select',options: mapToArray(MAP.employee_type) },
+					{ key: 'employee_type', label: '人员类别', type: 'select', options: mapToArray(MAP.employee_type) },
 					{ key: 'induction_date', label: '入职日期', type: 'datePicker' },
 					{ key: 'telephone', label: '联系电话', type: 'input' },
 					{ key: 'urgent_telephone', label: '紧急联系人', type: 'input' },
@@ -255,9 +243,44 @@ export default {
 			this.pager.pageindex = 1
 			this.getList()
 		},
-		handleEdit() { },
+		handleEdit(index, row) {
+			this.flag = 'edit'
+			this.addEditForm = { ...row };
+			this.dialogVisible = true
+		},
 		handlePerson() { },
-		handleDelete() { },
+		handleDelete(idx, { domestic_employeeid }) {
+			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+				.then(() => {
+					API.delete({
+						domestic_employeeid
+					})
+						.then(res => {
+							if (res.code === 200) {
+								if (res.data) {
+									this.$message({
+										message: '操作成功!',
+										type: 'success'
+									})
+									this.getList()
+								} else {
+									this.$message({
+										message: '操作失败!',
+										type: 'warning'
+									})
+								}
+							}
+						})
+						.catch(e => {
+							console.error(e)
+						})
+				})
+				.catch(() => { })
+		},
 		handleSearch() {
 			this.getList()
 		},
@@ -267,14 +290,19 @@ export default {
 			this.dialogVisible = true
 		},
 		async handleSubmit() {
-			if(this.flag === 'add') {
+			if (this.flag === 'add') {
 				await API.add(this.addEditForm)
+				await this.getList()
+				this.$succ()
+			}
+			if (this.flag === 'edit') {
+				await API.update(this.addEditForm)
 				await this.getList()
 				this.$succ()
 			}
 			this.dialogVisible = false
 			this.addEditForm = {}
-			
+
 		},
 		handleCancel() {
 			this.dialogVisible = false;

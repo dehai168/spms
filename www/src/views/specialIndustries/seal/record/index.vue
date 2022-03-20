@@ -176,17 +176,7 @@ export default {
 					type: 'datePicker'
 				}
 			],
-			tableData: new Array(10).fill({
-				agency: '测试数据',
-				enterpriseCode: '测试数据',
-				companyName: '测试数据',
-				signboardName: '测试数据',
-				legalPerson: '测试数据',
-				unifiedSocialCreditCode: '测试数据',
-				phone: '测试数据',
-				checkStatus: '测试数据',
-				businessType: '测试数据',
-			}),
+			tableData: [],
 			columns: [
 				{ prop: 'seal_code', label: '印章编码', },
 				{ prop: 'enterprise', label: '使用单位名称', },

@@ -23,9 +23,8 @@
 						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row, 'detail')">详情</el-button>
 						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row, 'edit')">编辑</el-button>
 						<el-button type="text" size="small" @click="handlePerson(scope.$index, scope.row)">从业人员</el-button>
-						<el-popconfirm title="确定删除此旅馆吗？" icon="el-icon-info" icon-color="red" style="margin-left: 10px">
-							<el-button slot="reference" type="text" size="small" @click="handleRemove(scope.$index, scope.row)">删除</el-button>
-						</el-popconfirm>
+
+						<el-button slot="reference" type="text" size="small" @click="handleRemove(scope.$index, scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -132,23 +131,7 @@ export default {
 					options: mapToArray(MAP.business_state)
 				},
 			],
-			tableData: new Array(10).fill({
-				agency: 'xxxxxxx',
-				enterpriseCode: 'xxxxxxx',
-				companyName: 'xxxxxxx',
-				signboardName: 'xxxxxxx',
-				legalPerson: 'xxxxxxx',
-				unifiedSocialCreditCode: 'xxxxxxx',
-				phone: 'xxxxxxx',
-				checkStatus: 'xxxxxxx',
-				businessType: 'xxxxxxx',
-				businessStatus: 'xxxxxxx',
-				logout: 'xxxxxxx',
-				licenseStatus: 'xxxxxxx',
-				licenseIssueDate: 'xxxxxxx',
-				inputTime: 'xxxxxxx',
-				origin: 'xxxxxxx',
-			}),
+			tableData: [],
 			columns: [
 				{ prop: 'police_unit', label: '管辖单位', width: 180 },
 				{ prop: 'enterprise_code', label: '企业编码', width: 80 },
@@ -341,7 +324,7 @@ export default {
 
 		},
 		handleRemove(index, row) {
-			this.removeData(row.hotelid)
+			this.removeData(row.seal_engrave_unitid)
 		},
 		removeData(seal_engrave_unitid) {
 			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {

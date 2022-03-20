@@ -17,14 +17,12 @@
 		<div class="ktv-body">
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
 			<el-table :data="tableData" border>
-				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" />
+				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" :width="column.width" />
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" disabled>编辑</el-button>
-						<el-popconfirm title="确定删除此旅馆吗？" icon="el-icon-info" icon-color="red" style="margin-left: 10px">
-							<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-						</el-popconfirm>
+						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+						<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -32,36 +30,25 @@
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
-		<el-dialog title="详情" :visible.sync="dialogVisible" width="60%" top="10px">
-			<el-tabs type="card" :value="1">
-				<el-tab-pane label="场所信息" :name="1">
-					<el-descriptions title="场所基本信息" border size="medium" :column="4">
-						<el-descriptions-item v-for="(item, idx) in placeInfo.baseInfo" :label="item.label" :key="idx">
-							{{ item.map ? item.map[detail[item.value]] : detail[item.value] }}
-						</el-descriptions-item>
-					</el-descriptions>
-					<el-descriptions title="场地设备及人员情况" border size="medium" :column="4">
-						<el-descriptions-item v-for="(item, idx) in placeInfo.deviceInfo" :label="item.label" :key="idx">
-							{{ item.map ? item.map[detail[item.value]] : detail[item.value] }}
-						</el-descriptions-item>
-					</el-descriptions>
-				</el-tab-pane>
-				<el-tab-pane label="备案信息" :name="2">
-					<!-- <el-descriptions title="场所基本信息" border size="medium" :column="4">
-						<el-descriptions-item v-for="(item, idx) in placeInfo.baseInfo" :label="item.label" :key="idx">
-							{{ item.value }}
-						</el-descriptions-item>
-					</el-descriptions>
-					<el-descriptions title="场地设备及人员情况" border size="medium" :column="4">
-						<el-descriptions-item v-for="(item, idx) in placeInfo.deviceInfo" :label="item.label" :key="idx">
-							{{ item.value }}
-						</el-descriptions-item>
-					</el-descriptions> -->
-				</el-tab-pane>
-			</el-tabs>
+		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" dest top="4vh" @close="addEditForm = {}" destroy-on-close :close-on-click-modal="false">
+			<el-form ref="addEditForm" :model="addEditForm" label-width="120px" :inline="true" :disabled="flag == 'detail'">
+				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
+					<el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
+						<el-select v-if="formItem.type == 'select'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" style="width: 150px" placeholder="请选择">
+							<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
+						</el-select>
+						<el-input v-else-if="formItem.type == 'input'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" style="width: 150px" />
+						<el-input v-else-if="formItem.type == 'textarea'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" type="textarea" style="width: 500px" />
+						<el-date-picker v-else-if="formItem.type == 'datePicker'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" type="date" value-format="yyyy-MM-dd" format="yyyy-MM-dd" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+						<el-radio-group v-else-if="formItem.type == 'radio'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]">
+							<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
+						</el-radio-group>
+					</el-form-item>
+				</my-card>
+			</el-form>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+				<el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -80,68 +67,71 @@ export default {
 				pageindex: 1,
 				pagesize: 10
 			},
+			submitDisabled: false,
+			flag: '',
 			queryForm: {
 
 			},
 			detail: {},
-			placeInfo: {
-				baseInfo: [
-					{ label: 'ktv编号', value: 'ktvid'},
-					{ label: '行业类别', value: 'trade_type' ,map: MAP.entertainment_type},
-					{ label: '治安管理机构', value: 'security_manage_unit' },
-					{ label: '场所分类', value: 'place_main_type' },
-					{ label: '场所分类（副）', value: 'place_vice_type' },
-					{ label: '场所备案编号', value: 'record_code' },
-					{ label: '娱乐场所名称', value: 'recreation_place_name' },
-					{ label: '娱乐场所简称', value: 'recreation_place_short' },
-					{ label: '户外悬挂', value: 'outdoor_hang' },
-					{ label: '联系电话', value: 'telephone' },
-					{ label: '邮政编码', value: 'post_code' },
-					{ label: '传真', value: 'fax' },
-					{ label: '经济类型', value: 'economic_type',map: MAP.economic_type },
-					{ label: '注册资金（万元）', value: 'register_cost' },
-					{ label: '经营范围（主营）', value: 'operate_scale' },
-					{ label: '经营范围（兼营）', value: 'concurrently_scale' },
-					{ label: '经营面积', value: 'operate_area' },
-					{ label: '法定代表人姓名', value: 'legal_person' },
-					{ label: '法人证件类型', value: 'legal_certificate_type',map: MAP.legal_certificate_type },
-					{ label: '法人证件号码', value: 'legal_certificate_code' },
-					{ label: '法人联系方式', value: 'legal_telephone' },
-					{ label: '开业日期', value: 'open_date' },
-					{ label: '营业时间', value: 'operate_time' },
-					{ label: '单位负责人', value: 'chief_person' },
-					{ label: '单位负责人联系方式', value: 'chief_telephone' },
-					{ label: '单位负责人身份证号', value: 'chief_certificate_code' },
-					{ label: '娱乐服务场所治安级别', value: 'security_level',map: MAP.security_level },
-					{ label: '营业执照编号', value: 'license_code' ,},
-					{ label: '营业执照发证机关', value: 'license_org' },
-					{ label: '营业执照起始日期', value: 'license_begin' },
-					{ label: '营业执照截止日期', value: 'license_end' },
-					{ label: '营业执照登记日期', value: 'license_register_date' },
-					{ label: '组织机构代码', value: 'group_code' },
-					{ label: '是否有证', value: 'is_permit',map: {true: '是',false: '否'} },
-					{ label: '娱乐经营许可证号', value: 'permit_code', },
-					{ label: '娱乐经营许可证发证机关', value: 'permit_org' },
-					{ label: '娱乐经营许可证起始日期', value: 'permit_begin' },
-					{ label: '娱乐经营许可证截止日期', value: 'permit_end' },
-					{ label: '股东情况', value: 'shareholders' },
-					// { label: '娱乐项目内容', value: '营业性娱乐场所' },
+			addEditForm: {},
+			addEditformItems: {
+				'场所基本信息': [
+					{ label: 'ktv编号', key: 'ktvid', type: 'input',disabled: true },
+					{ label: '行业类别', key: 'trade_type', options: mapToArray(MAP.entertainment_type), type: 'select' },
+					{ label: '治安管理机构', key: 'security_manage_unit', type: 'input' },
+					{ label: '场所分类', key: 'place_main_type', type: 'input' },
+					{ label: '场所分类（副）', key: 'place_vice_type', type: 'input' },
+					{ label: '场所备案编号', key: 'record_code', type: 'input' },
+					{ label: '娱乐场所名称', key: 'recreation_place_name', type: 'input' },
+					{ label: '娱乐场所简称', key: 'recreation_place_short', type: 'input' },
+					{ label: '户外悬挂', key: 'outdoor_hang', type: 'input' },
+					{ label: '联系电话', key: 'telephone', type: 'input' },
+					{ label: '邮政编码', key: 'post_code', type: 'input' },
+					{ label: '传真', key: 'fax', type: 'input' },
+					{ label: '经济类型', key: 'economic_type', options: mapToArray(MAP.economic_type), type: 'select' },
+					{ label: '注册资金（万元）', key: 'register_cost', type: 'input' },
+					{ label: '经营范围（主营）', key: 'operate_scale', type: 'input' },
+					{ label: '经营范围（兼营）', key: 'concurrently_scale', type: 'input' },
+					{ label: '经营面积', key: 'operate_area', type: 'input' },
+					{ label: '法定代表人姓名', key: 'legal_person', type: 'input' },
+					{ label: '法人证件类型', key: 'legal_certificate_type', options: mapToArray(MAP.legal_certificate_type), type: 'select' },
+					{ label: '法人证件号码', key: 'legal_certificate_code', type: 'input' },
+					{ label: '法人联系方式', key: 'legal_telephone', type: 'input' },
+					{ label: '开业日期', key: 'open_date', type: 'input' },
+					{ label: '营业时间', key: 'operate_time', type: 'input' },
+					{ label: '单位负责人', key: 'chief_person', type: 'input' },
+					{ label: '单位负责人联系方式', key: 'chief_telephone', type: 'input' },
+					{ label: '单位负责人身份证号', key: 'chief_certificate_code', type: 'input' },
+					{ label: '娱乐服务场所治安级别', key: 'security_level', options: mapToArray(MAP.security_level), type: 'select' },
+					{ label: '营业执照编号', key: 'license_code', type: 'input' },
+					{ label: '营业执照发证机关', key: 'license_org', type: 'input' },
+					{ label: '营业执照起始日期', key: 'license_begin', type: 'input' },
+					{ label: '营业执照截止日期', key: 'license_end', type: 'input' },
+					{ label: '营业执照登记日期', key: 'license_register_date', type: 'input' },
+					{ label: '组织机构代码', key: 'group_code', type: 'input' },
+					{ label: '是否有证', key: 'is_permit', options: mapToArray({ true: '是', false: '否' }), type: 'select' },
+					{ label: '娱乐经营许可证号', key: 'permit_code', type: 'input' },
+					{ label: '娱乐经营许可证发证机关', key: 'permit_org', type: 'input' },
+					{ label: '娱乐经营许可证起始日期', key: 'permit_begin', type: 'input' },
+					{ label: '娱乐经营许可证截止日期', key: 'permit_end', type: 'input' },
+					{ label: '股东情况', key: 'shareholders', type: 'input' },
+					// { label: '娱乐项目内容', key: '营业性娱乐场所' ,type: 'input'},
 				],
-				deviceInfo: [
-					{ label: '消防合格证号', value: 'fire_qualify_code' },
-					{ label: '消防审核单位', value: 'fire_check_unit' },
-					{ label: '经度', value: 'lng' },
-					{ label: '纬度', value: 'lat' },
-					{ label: '核定消费者数量（人）', value: 'max_consumers' },
-					{ label: '安全出口数量（个）', value: 'exit_total' },
-					{ label: '包厢包间数量（个）', value: 'rooms' },
-					{ label: '总人数（人）', value: 'persons' },
-					{ label: '治安负责人', value: 'security_chief_person' },
-					{ label: '保安人数（人）', value: 'security_persons' },
-					{ label: '经岗位培训人数（人）', value: 'post_train_persons' },
-					{ label: '保安公司意见', value: 'security_unit_opinion' },
-					{ label: '备注', value: 'remark' },
-					{ label: '录入时间', value: 'input_time' },
+				'场地设备及人员情况': [
+					{ label: '消防合格证号', key: 'fire_qualify_code', type: 'input' },
+					{ label: '消防审核单位', key: 'fire_check_unit', type: 'input' },
+					{ label: '经度', key: 'lng', type: 'input' },
+					{ label: '纬度', key: 'lat', type: 'input' },
+					{ label: '核定消费者数量（人）', key: 'max_consumers', type: 'input' },
+					{ label: '安全出口数量（个）', key: 'exit_total', type: 'input' },
+					{ label: '包厢包间数量（个）', key: 'rooms', type: 'input' },
+					{ label: '总人数（人）', key: 'persons', type: 'input' },
+					{ label: '治安负责人', key: 'security_chief_person', type: 'input' },
+					{ label: '保安人数（人）', key: 'security_persons', type: 'input' },
+					{ label: '经岗位培训人数（人）', key: 'post_train_persons', type: 'input' },
+					{ label: '保安公司意见', key: 'security_unit_opinion', type: 'input' },
+					{ label: '备注', key: 'remark', type: 'input' },
+					{ label: '录入时间', key: 'input_time', type: 'input' },
 				]
 			},
 			formItems: [
@@ -239,15 +229,7 @@ export default {
 			pagesizes: defaultSettings.pageSizes,
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
-			tableData: new Array(10).fill({
-				agency: '测试数据',
-				enterpriseCode: '测试数据',
-				companyName: '测试数据',
-				signboardName: '测试数据',
-				legalPerson: '测试数据',
-				unifiedSocialCreditCode: '测试数据',
-				phone: '测试数据',
-			}),
+			tableData: [],
 			columns: [
 				{ prop: 'security_manage_unit', label: '治安管理机构', },
 				{ prop: 'record_code', label: '场所备案编号' },
@@ -262,6 +244,24 @@ export default {
 	},
 	created() {
 		this.getList()
+	},
+	computed: {
+		dialogTittle() {
+			let tittle = '';
+			switch (this.flag) {
+				case 'edit':
+					tittle = '编辑';
+					break;
+				case 'add':
+					tittle = '新增';
+					break;
+				case 'detail':
+					tittle = '详情';
+					break;
+			}
+
+			return tittle;
+		}
 	},
 	methods: {
 		async getList() {
@@ -282,12 +282,48 @@ export default {
 			this.tableDataCount = size
 		},
 		handleDetail(index, row) {
+			this.addEditForm = row
+			this.flag = 'detail'
 			this.dialogVisible = true
-			this.detail = row
 		},
-		handleEdit() { },
+		handleEdit(index, row) {
+			this.flag = 'edit'
+			this.addEditForm = { ...row };
+			this.dialogVisible = true
+		},
 		handlePerson() { },
-		handleDelete() { },
+		handleDelete(idx, { ktvid }) {
+			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+				.then(() => {
+					API.delete({
+						ktvid
+					})
+						.then(res => {
+							if (res.code === 200) {
+								if (res.data) {
+									this.$message({
+										message: '操作成功!',
+										type: 'success'
+									})
+									this.getList()
+								} else {
+									this.$message({
+										message: '操作失败!',
+										type: 'warning'
+									})
+								}
+							}
+						})
+						.catch(e => {
+							console.error(e)
+						})
+				})
+				.catch(() => { })
+		},
 		handleSearch() { },
 		handleReset() {
 			this.queryForm = {}
@@ -307,6 +343,21 @@ export default {
 		handleCurrentChange(pageindex) {
 			this.pager.pageindex = pageindex
 			this.getList()
+		},
+		async handleSubmit() {
+			if (this.flag === 'add') {
+				await API.add(this.addEditForm)
+				await this.getList()
+				this.$succ()
+			}
+			if (this.flag === 'edit') {
+				await API.update(this.addEditForm)
+				await this.getList()
+				this.$succ()
+			}
+			this.dialogVisible = false
+			this.addEditForm = {}
+
 		},
 
 	}

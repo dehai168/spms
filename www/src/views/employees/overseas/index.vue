@@ -21,10 +21,9 @@
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)" disabled>编辑</el-button>
-						<el-popconfirm title="确定删除该条信息吗？" icon="el-icon-info" icon-color="red" style="margin-left: 10px">
-							<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-						</el-popconfirm>
+						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+
+						<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -32,7 +31,7 @@
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
-		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh" :close-on-click-modal="false">
+		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh" @close="addEditForm = {}" destroy-on-close :close-on-click-modal="false">
 			<el-form ref="addEditForm" :model="addEditForm" label-width="120px" :inline="true" :disabled="flag == 'detail'">
 				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
 					<el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
@@ -139,21 +138,11 @@ export default {
 			pagesizes: defaultSettings.pageSizes,
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
-			tableData: new Array(10).fill({
-				agency: '测试数据',
-				enterpriseCode: '测试数据',
-				companyName: '测试数据',
-				signboardName: '测试数据',
-				legalPerson: '测试数据',
-				unifiedSocialCreditCode: '测试数据',
-				民族: '测试数据',
-				录入时间: '测试数据',
-				在职状态: '测试数据',
-			}),
+			tableData: [],
 			columns: [
 				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type[cell] },
 				{ prop: 'enterprise', label: '企业名称' },
-				{ prop: 'trade_type', label: '人员编号', },
+				{ prop: 'abroad_employeeid', label: '人员编号', },
 				{ prop: 'certificate_code', label: '证件号码' },
 				{ prop: 'last_name', label: '英文姓', },
 				{ prop: 'first_name', label: '英文名', },
@@ -265,9 +254,44 @@ export default {
 			this.pager.pageindex = 1
 			this.getList()
 		},
-		handleEdit() { },
+		handleEdit(idx,row) {
+			this.flag = 'edit'
+			this.addEditForm = { ...row };
+			this.dialogVisible = true
+		},
 		handlePerson() { },
-		handleDelete() { },
+		handleDelete(idx, { abroad_employeeid }) {
+			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+				.then(() => {
+					API.delete({
+						abroad_employeeid
+					})
+						.then(res => {
+							if (res.code === 200) {
+								if (res.data) {
+									this.$message({
+										message: '操作成功!',
+										type: 'success'
+									})
+									this.getList()
+								} else {
+									this.$message({
+										message: '操作失败!',
+										type: 'warning'
+									})
+								}
+							}
+						})
+						.catch(e => {
+							console.error(e)
+						})
+				})
+				.catch(() => { })
+		},
 		handleSearch() {
 			this.getList()
 		},
@@ -279,6 +303,11 @@ export default {
 		async handleSubmit() {
 			if (this.flag === 'add') {
 				await API.add(this.addEditForm)
+				await this.getList()
+				this.$succ()
+			}
+			if (this.flag === 'edit') {
+				await API.update(this.addEditForm)
 				await this.getList()
 				this.$succ()
 			}
