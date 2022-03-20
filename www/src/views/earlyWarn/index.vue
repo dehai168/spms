@@ -100,7 +100,7 @@
             <el-input v-model="form.alarm_address" disabled></el-input>
           </el-form-item>
           <el-form-item label="姓名">
-            <el-input v-model="form.realame" disabled></el-input>
+            <el-input v-model="form.realname" disabled></el-input>
           </el-form-item>
           <el-form-item label="身份证号">
             <el-input v-model="form.certificate_code" disabled></el-input>

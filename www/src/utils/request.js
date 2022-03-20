@@ -69,6 +69,17 @@ service.interceptors.response.use(
           })
         })
       }
+      if (res.code === 998) {
+        MessageBox.confirm('您的license已经过期!请联系供应商解决!', '提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+        }).catch(() => {
+
+        })
+      }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
       return res
