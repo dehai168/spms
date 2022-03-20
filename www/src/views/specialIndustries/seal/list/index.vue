@@ -58,7 +58,7 @@
 				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
 					<el-row v-for="(row, rowIndex) in cardItem" :key="rowIndex">
 						<el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
-							<el-form-item v-if="formItem.type !== 'standardAddress'" :label="formItem.label">
+							<el-form-item v-if="formItem.type !== 'standard_address'" :label="formItem.label">
 								<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 11vw" placeholder="请选择">
 									<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 								</el-select>
@@ -70,8 +70,8 @@
 								</el-radio-group>
 							</el-form-item>
 							<!-- 标准地址根据用户选择 显示   这里单独处理 -->
-							<el-form-item v-else-if="formItem.type == 'standardAddress' && addEditForm.is_standard_address == 1" :label="formItem.label">
-								<el-input v-model="addEditForm.standardAddress" style="width: 11vw" />
+							<el-form-item v-else-if="formItem.type == 'standard_address' && addEditForm.is_standard_address == 1" :label="formItem.label">
+								<el-input v-model="addEditForm.standard_address" style="width: 11vw" />
 							</el-form-item>
 						</el-col>
 					</el-row>
@@ -212,7 +212,7 @@ export default {
 								{ label: '否', value: 0 }
 							]
 						},
-						{ key: 'standard_address', label: '标准经营地址', type: 'standardAddress' },
+						{ key: 'standard_address', label: '标准经营地址', type: 'standard_address' },
 
 					]
 				],
