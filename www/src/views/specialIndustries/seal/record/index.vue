@@ -2,7 +2,7 @@
 	<div class="seal-list-container">
 		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 90px; margin-bottom: 10px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
-				<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
+				<el-form-item v-for="formItem in formItems" :key="formItem.key" style="width: 30%" :label="formItem.label">
 					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
 						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 					</el-select>
@@ -10,7 +10,7 @@
 					<el-date-picker v-else-if="formItem.type == 'datePicker'" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 				</el-form-item>
 
-				<el-form-item>
+				<el-form-item  style="width: 30%" >
 					<el-button type="primary" @click="getList" icon="el-icon-search">搜索</el-button>
 					<el-button @click="handleReset" icon="el-icon-delete">重置</el-button>
 				</el-form-item>
@@ -268,7 +268,7 @@ export default {
 		display: flex;
 		flex-wrap: wrap;
 		.el-form-item {
-			flex-basis: 25%;
+			// flex-basis: 25%;
 			.el-form-item__content > .el-input {
 				width: 78%;
 			}

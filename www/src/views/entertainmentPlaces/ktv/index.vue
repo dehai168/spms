@@ -2,7 +2,7 @@
 	<div class="ktv-container">
 		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 90px; margin-bottom: 10px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
-				<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
+				<el-form-item v-for="formItem in formItems" :key="formItem.key"  style="width: 30%"  :label="formItem.label">
 					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
 						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 					</el-select>
@@ -37,7 +37,7 @@
 		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" dest top="4vh" @close="addEditForm = {}" destroy-on-close :close-on-click-modal="false">
 			<el-form ref="addEditForm" :model="addEditForm" label-width="120px" :inline="true" :disabled="flag == 'detail'">
 				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
-					<el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
+					<el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label" style="margin-top: 10px">
 						<el-select v-if="formItem.type == 'select'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" style="width: 150px" placeholder="请选择">
 							<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 						</el-select>
@@ -113,7 +113,12 @@ export default {
 					{ label: '营业执照截止日期', key: 'license_end', type: 'input' },
 					{ label: '营业执照登记日期', key: 'license_register_date', type: 'input' },
 					{ label: '组织机构代码', key: 'group_code', type: 'input' },
-					{ label: '是否有证', key: 'is_permit', options: mapToArray({ true: '是', false: '否' }), type: 'select' },
+					{
+						label: '是否有证', key: 'is_permit', options: [
+							{ label: '是', value: true },
+							{ label: '否', value: false },
+						], type: 'select'
+					},
 					{ label: '娱乐经营许可证号', key: 'permit_code', type: 'input' },
 					{ label: '娱乐经营许可证发证机关', key: 'permit_org', type: 'input' },
 					{ label: '娱乐经营许可证起始日期', key: 'permit_begin', type: 'input' },
@@ -236,7 +241,7 @@ export default {
 			pageindex: 1,
 			tableData: [],
 			columns: [
-				{ prop: 'security_manage_unit', label: '娱乐场所名称', },
+				{ prop: 'recreation_place_name', label: '娱乐场所名称', },
 				{ prop: 'place_main_type', label: '场所主分类', },
 				{ prop: 'record_code', label: '备案登记号' },
 				{ prop: 'recreation_place_state', label: '场所状态', formatter: (row, col, cell) => MAP.recreation_place_state[cell] },
@@ -376,7 +381,7 @@ export default {
 		display: flex;
 		flex-wrap: wrap;
 		.el-form-item {
-			flex-basis: 25%;
+			// flex-basis: 25%;
 			.el-form-item__content > .el-input {
 				width: 78%;
 			}
@@ -388,5 +393,9 @@ export default {
 }
 .el-descriptions {
 	margin-top: 20px;
+}
+.el-form {
+	max-height: 600px;
+	overflow: auto;
 }
 </style>

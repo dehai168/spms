@@ -1,8 +1,8 @@
 <template>
 	<div class="seal-list-container">
-		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 90px">
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 150px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
-				<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
+				<el-form-item v-for="formItem in formItems" :key="formItem.key" style="width: 30%" :label="formItem.label">
 					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
 						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 					</el-select>
@@ -19,7 +19,7 @@
 
 		<div class="main">
 			<el-button @click="handleCreate" type="primary" icon="el-icon-plus" style="margin: 10px 0">新增</el-button>
-			<div style="height: calc(100vh - 300px)">
+			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border>
 					<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
@@ -60,7 +60,7 @@
 						<el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
 							<el-form-item v-if="formItem.type !== 'standardAddress'" :label="formItem.label">
 								<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 11vw" placeholder="请选择">
-									<el-option v-for="option in formItem.options" :key="option.value" :value="formItem.valueType == 'string' ? option.value : +option.value" :label="option.label" />
+									<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 								</el-select>
 								<el-input v-else-if="formItem.type == 'input'" v-model="addEditForm[formItem.key]" style="width: 11vw" />
 								<el-input v-else-if="formItem.type == 'textarea'" v-model="addEditForm[formItem.key]" type="textarea" style="width: 500px" />
@@ -71,7 +71,7 @@
 							</el-form-item>
 							<!-- 标准地址根据用户选择 显示   这里单独处理 -->
 							<el-form-item v-else-if="formItem.type == 'standardAddress' && addEditForm.is_standard_address == 1" :label="formItem.label">
-								<el-input v-model="addEditForm.standardAddress" style="width: 12vw" />
+								<el-input v-model="addEditForm.standardAddress" style="width: 11vw" />
 							</el-form-item>
 						</el-col>
 					</el-row>
@@ -108,7 +108,8 @@ export default {
 				{
 					key: 'police_unit',
 					label: '管辖派出所',
-					type: 'input',
+					type: 'select',
+					options: mapToArray(MAP.police_unit,'string')
 				},
 				{
 					key: 'enterprise',
@@ -187,10 +188,7 @@ export default {
 						{
 							key: 'record_police_unit',
 							label: '许可备案公安机关',
-							type: 'select',
-							options: [
-								{ label: '公安1', value: 1 }
-							]
+							type: 'input',
 						},
 
 					],
@@ -199,7 +197,8 @@ export default {
 						{
 							key: 'police_unit',
 							label: '管辖单位',
-							type: 'input',
+							type: 'select',
+							options: mapToArray(MAP.police_unit),
 						},
 						{ key: 'actual_address', label: '实际经营地址', type: 'input' },
 					],
@@ -213,7 +212,7 @@ export default {
 								{ label: '否', value: 0 }
 							]
 						},
-						{ key: 'standard_address', label: '标准经营地址', type: 'standard_address' },
+						{ key: 'standard_address', label: '标准经营地址', type: 'standardAddress' },
 
 					]
 				],
@@ -225,7 +224,7 @@ export default {
 							key: 'district',
 							label: '行政区域',
 							type: 'select',
-							options: mapToArray(MAP.district)
+							options: mapToArray(MAP.district,'string')
 						},
 					],
 					[

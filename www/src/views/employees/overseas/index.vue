@@ -2,7 +2,7 @@
 	<div class="ktv-container">
 		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 140px; margin-bottom: 10px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
-				<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
+				<el-form-item v-for="formItem in formItems"  style="width: 30%"  :key="formItem.key" :label="formItem.label">
 					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
 						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 					</el-select>
@@ -120,7 +120,7 @@ export default {
 					key: 'nationality',
 					label: '国籍',
 					type: 'select',
-					options: mapToArray(MAP.nationality)
+					options: mapToArray(MAP.nationality,'string')
 				},
 
 				// {
@@ -184,7 +184,7 @@ export default {
 						]
 					},
 					{ key: 'birthday', label: '出生日期', type: 'datePicker' },
-					{ key: 'nationality', label: '国籍', type: 'select', options: mapToArray(MAP.nationality) },
+					{ key: 'nationality', label: '国籍', type: 'select', options: mapToArray(MAP.nationality,'string') },
 					{ key: 'province_city', label: '户籍省县', type: 'input' },
 					{ key: 'detail_address', label: '户籍地详细地址', type: 'input' },
 
@@ -342,7 +342,7 @@ export default {
 		display: flex;
 		flex-wrap: wrap;
 		.el-form-item {
-			flex-basis: 25%;
+			// flex-basis: 25%;
 			.el-form-item__content > .el-input {
 				width: 78%;
 			}
