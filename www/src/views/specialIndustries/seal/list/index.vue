@@ -32,50 +32,99 @@
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
-		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh" :close-on-click-modal="false">
-			<el-form ref="addEditForm" :model="addEditForm" label-width="8.5vw" :inline="true" label-suffix=":" :disabled="flag == 'detail'">
-				<div style="display: flex; justify-content: space-around">
-					<el-form-item label="申报方式" required>
-						<el-radio-group v-model="addEditForm.declare_type">
-							<el-radio :label="0">告知承诺制</el-radio>
-							<el-radio :label="1">一般审批制</el-radio>
-						</el-radio-group>
-					</el-form-item>
-					<el-form-item label="工商类型" required>
-						<el-radio-group v-model="addEditForm.business_type">
-							<el-radio :label="0">个体工商户</el-radio>
-							<el-radio :label="1">工商企业</el-radio>
-						</el-radio-group>
-					</el-form-item>
-				</div>
+    <el-dialog
+      class="hotel-base-add"
+      :title="dialogTittle"
+      :visible.sync="dialogVisible"
+      width="70%"
+      top="4vh"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="addEditForm"
+        :model="addEditForm"
+        label-width="10vw"
+        :inline="true"
+        label-suffix=":"
+        :disabled="flag == 'detail'"
+      >
+        <div style="display:flex;justify-content:space-around;">
+          <el-form-item label="申报方式" required>
+            <el-radio-group v-model="addEditForm.declare_type">
+              <el-radio :label="0">告知承诺制</el-radio>
+              <el-radio :label="1">一般审批制</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="工商类型" required>
+            <el-radio-group v-model="addEditForm.business_type">
+              <el-radio :label="0">个体工商户</el-radio>
+              <el-radio :label="2">工商企业</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </div>
 
-				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
-					<el-row v-for="(row, rowIndex) in cardItem" :key="rowIndex">
-						<el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
-							<el-form-item v-if="formItem.type !== 'standard_address'" :label="formItem.label">
-								<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 12vw" placeholder="请选择">
-									<el-option v-for="option in formItem.options" :key="option.value" :value="formItem.key == 'district' ? option.value : +option.value" :label="option.label" />
-								</el-select>
-								<el-input v-else-if="formItem.type == 'input'" v-model="addEditForm[formItem.key]" style="width: 12vw" />
-								<el-input v-else-if="formItem.type == 'textarea'" v-model="addEditForm[formItem.key]" type="textarea" style="width: 500px" />
-								<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="addEditForm[formItem.key]" style="width: 12vw" type="date" placeholder="请选择日期" />
-								<el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
-									<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
-								</el-radio-group>
-							</el-form-item>
-							<!-- 标准地址根据用户选择 显示   这里单独处理 -->
-							<el-form-item v-else-if="formItem.type == 'standard_address' && addEditForm.is_standard_address == 1" :label="formItem.label">
-								<el-input v-model="addEditForm.standard_address" style="width: 12vw" />
-							</el-form-item>
-						</el-col>
-					</el-row>
-				</my-card>
-			</el-form>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
-			</span>
-		</el-dialog>
+        <my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
+          <el-row v-for="(row, rowIndex) in cardItem" :key="rowIndex">
+            <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
+              <el-form-item v-if="formItem.type !== 'standardAddress'" :label="formItem.label">
+                <el-select
+                  v-if="formItem.type == 'select'"
+                  v-model="addEditForm[formItem.key]"
+                  style="width:11vw"
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="option in formItem.options"
+                    :key="option.value"
+                    :value="formItem.valueType == 'string' ? option.value : +option.value"
+                    :label="option.label"
+                  />
+                </el-select>
+                <el-input
+                  v-else-if="formItem.type == 'input'"
+                  v-model="addEditForm[formItem.key]"
+                  style="width:11vw"
+                />
+                <el-input
+                  v-else-if="formItem.type == 'textarea'"
+                  v-model="addEditForm[formItem.key]"
+                  type="textarea"
+                  style="width:500px"
+                />
+                <el-date-picker
+                  v-else-if="formItem.type == 'datePicker'"
+                  v-model="addEditForm[formItem.key]"
+                  style="width:11vw"
+                  type="date"
+                  placeholder="请选择日期"
+                />
+                <el-radio-group
+                  v-else-if="formItem.type == 'radio'"
+                  v-model="addEditForm[formItem.key]"
+                >
+                  <el-radio
+                    v-for="option in formItem.options"
+                    :key="option.value"
+                    :label="option.value"
+                  >{{ option.label }}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <!-- 标准地址根据用户选择 显示   这里单独处理 -->
+              <el-form-item
+                v-else-if="formItem.type == 'standardAddress' && addEditForm.is_standard_address == 1"
+                :label="formItem.label"
+              >
+                <el-input v-model="addEditForm.standardAddress" style="width:12vw" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </my-card>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
 	</div>
 </template>
 
@@ -465,7 +514,7 @@ export default {
 		display: flex;
 		flex-wrap: wrap;
 		.el-form-item {
-			flex-basis: 25%;
+			// flex-basis: 25%;
 			.el-form-item__content > .el-input {
 				width: 78%;
 			}
@@ -474,5 +523,26 @@ export default {
 
 	.seal-list-body {
 	}
+}
+.seal-list-container {
+  height: calc(100vh - 120px);
+  width: 100%;
+  .main {
+    height: calc(100% - 184px);
+    width: 100%;
+    padding: 5px;
+    > button {
+      margin-bottom: 5px;
+    }
+    .el-table {
+      height: calc(100% - 36px);
+    }
+  }
+}
+.hotel-base-add {
+  .el-form {
+    max-height: 600px;
+    overflow: auto;
+  }
 }
 </style>
