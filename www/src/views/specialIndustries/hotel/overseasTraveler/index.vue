@@ -34,8 +34,8 @@
                 end-placeholder="结束日期"
               />
               <div v-else-if="formItem.type == 'btn'">
-                <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button @click="handleReset">重置</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -141,6 +141,22 @@ export default {
 
         ],
         [
+          { key: 'birthday', label: '出生日期', type: 'datePicker' },
+          { key: 'certificate_code', label: '证件号码', type: 'input' },
+          {
+            key: 'security_manage_org',
+            label: '管辖单位',
+            type: 'select',
+            options: mapToArray(map.police_unit)
+          },
+        ],
+        [
+          { key: 'sign_name', label: '招牌名称', type: 'input' },
+          { key: 'enterprise', label: '企业名称', type: 'input' },
+          { key: 'chinese_name', label: '中文姓名', type: 'input' },
+
+        ], [
+          { key: 'nationality', label: '国籍', type: 'input' },
           {
             key: 'sex',
             label: '性别',
@@ -150,41 +166,25 @@ export default {
               { label: '女', value: '女' }
             ]
           },
-          { key: 'birthday', label: '出生日期', type: 'datePicker' },
-          { key: 'certificate_code', label: '证件号码', type: 'input' },
-
-        ],
-        [
-          {
-            key: 'security_manage_org',
-            label: '管辖单位',
-            type: 'select',
-            options: mapToArray(map.police_unit)
-          },
-          { key: 'sign_name', label: '招牌名称', type: 'input' },
-          { key: 'enterprise', label: '企业名称', type: 'input' },
-        ], [
-          { key: 'chinese_name', label: '中文名', type: 'input' },
-          { key: 'nationality', label: '国家/地区', type: 'input' },
           { key: 'btn', type: 'btn' },
         ]
       ],
       columns: [
         { label: '序号', width: 80, type: 'index' },
-        { prop: 'first_name', label: '英文名', width: 80 },
-        { prop: 'last_name', label: '英文姓', width: 80 },
-        { prop: 'chinese_name', label: '中文名称', width: 80 },
-        { prop: 'nationality', label: '国家/地区', width: 80 },
+        { prop: 'last_name', label: '英文姓', minWidth: 120 },
+        { prop: 'first_name', label: '英文名', minWidth: 120 },
+        { prop: 'chinese_name', label: '中文姓名', width: 80 },
         { prop: 'sex', label: '性别', width: 80 },
+        { prop: 'nationality', label: '国籍', width: 80 },
         { prop: 'birthday', label: '出生日期', width: 120 },
         { prop: 'certificate_code', label: '证件号码', width: 180 },
         { prop: 'telephone', label: '联系电话', minWidth: 180 },
         { prop: 'in_room', label: '房间号', minWidth: 120 },
         { prop: 'in_time', label: '入住时间', width: 150 },
         { prop: 'out_time', label: '退房时间', width: 150 },
-        { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
-        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] }
+        { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
+        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
       ],
       dialogVisible: false,
       detailData: {},

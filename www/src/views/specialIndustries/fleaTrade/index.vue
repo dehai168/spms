@@ -34,8 +34,8 @@
                 end-placeholder="结束日期"
               />
               <div v-else-if="formItem.type == 'btn'">
-                <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button @click="handleReset">重置</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -43,7 +43,7 @@
       </el-form>
     </el-header>
     <el-main class="main">
-      <el-button @click="handleCreate">新增</el-button>
+      <el-button icon="el-icon-plus" type="primary" @click="handleCreate">新增</el-button>
       <el-table
         v-loading="tableLoading"
         :data="tableData"
@@ -199,11 +199,11 @@ export default {
           },
           {
             key: 'police_unit',
-            label: '派出所名称',
+            label: '管辖派出所',
             type: 'select',
             options: mapToArray(map.police_unit)
           },
-          { key: 'record_code', label: '备案编号', type: 'input' },
+          { key: 'record_code', label: '备案登记号', type: 'input' },
           { key: 'enterprise', label: '企业名称', type: 'input' },
         ],
         [
@@ -213,24 +213,24 @@ export default {
           { key: 'junk_type', label: '分类', type: 'select', options: mapToArray(map.trade_type) },
         ],
         [
-          { key: 'legal_person', label: '法定代表人姓名', type: 'input' },
-          { key: 'special_license', label: '特种行业许可证编号', type: 'input', labelWidth: '11vw', span: 8 },
+          { key: 'legal_person', label: '法人姓名', type: 'input' },
+          { key: 'special_license', label: '特殊行业许可证', type: 'input'},
           { key: 'btn', type: 'btn' },
         ]
       ],
       columns: [
         { type: 'index', label: '序号', width: 80 },
         { prop: 'district', label: '行政区划', width: 180, formatter: (r, c, value) => map.district[value] },
-        { prop: 'police_unit', label: '派出所名称', minWidth: 200, formatter: (r, c, value) => map.police_unit[value] },
-        { prop: 'record_code', label: '备案编号', width: 120 },
         { prop: 'enterprise', label: '企业名称', minWidth: 180 },
+        { prop: 'record_code', label: '备案登记号', width: 120 },
         { prop: 'enterprise_address', label: '企业地址', minWidth: 180 },
         { prop: 'enterprise_build_no', label: '企业门楼牌号', width: 100 },
         { prop: 'enterprise_detail_address', label: '企业详址', minWidth: 180 },
         { prop: 'junk_type', label: '分类', width: 150, formatter: (r, c, value) => map.trade_type[value] },
-        { prop: 'special_license', label: '特种行业许可证编号', width: 180 },
-        { prop: 'legal_person', label: '法定代表人姓名', width: 120 },
-        { prop: 'legal_telephone', label: '法定代表人联系电话', minWidth: 180 }
+        { prop: 'special_license', label: '特殊行业许可证', width: 180 },
+        { prop: 'legal_person', label: '法人姓名', width: 120 },
+        { prop: 'legal_telephone', label: '法人联系电话', minWidth: 180 },
+        { prop: 'police_unit', label: '管辖派出所', minWidth: 200, formatter: (r, c, value) => map.police_unit[value] },
       ],
       dialogVisible: false,
       submitDisabled: false,

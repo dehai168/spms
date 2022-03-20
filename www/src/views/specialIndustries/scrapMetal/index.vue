@@ -1,6 +1,6 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 180px">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 140px">
       <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="9.5vw">
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
@@ -33,8 +33,8 @@
                 end-placeholder="结束日期"
               />
               <div v-else-if="formItem.type == 'btn'">
-                <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button @click="handleReset">重置</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -42,7 +42,7 @@
       </el-form>
     </el-header>
     <el-main class="main">
-      <el-button @click="handleCreate">新增</el-button>
+      <el-button icon="el-icon-plus" type="primary" @click="handleCreate">新增</el-button>
       <el-table
         v-loading="tableLoading"
         :data="tableData"
@@ -188,22 +188,22 @@ export default {
           },
           {
             key: 'police_unit',
-            label: '派出所名称',
+            label: '管辖派出所',
             type: 'select',
             options: mapToArray(map.police_unit)
           },
           { key: 'enterprise', label: '企业名称', type: 'input' },
-          { key: 'enterprise_address', label: '企业地址', type: 'input' },
-        ],
-        [
           { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
-          { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
-          { key: 'economic_type', label: '经济类型', type: 'select', options: mapToArray(map.economic_type) },
-          { key: 'security_level', label: '治安级别', type: 'select', options: mapToArray(map.security_level) },
 
         ],
         [
-          { key: 'legal_certificate_code', label: '法人代表证据号码', type: 'input' },
+          { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
+          { key: 'economic_type', label: '经济类型', type: 'select', options: mapToArray(map.economic_type) },
+          { key: 'security_level', label: '治安级别', type: 'select', options: mapToArray(map.security_level) },
+          { key: 'legal_certificate_code', label: '法人证件号码', type: 'input' },
+
+        ],
+        [
           { key: 'chief_person', label: '单位负责人', type: 'input' },
           { key: 'chief_certificate_code', label: '负责人证件号码', type: 'input' },
           {
@@ -212,16 +212,23 @@ export default {
               { label: '否', value: 0 }
             ]
           },
+          { key: 'btn', type: 'btn' }
+          // { key: 'enterprise_address', label: '企业地址', type: 'input' },
         ],
-        [{ key: 'btn', type: 'btn' },]
       ],
       columns: [
         { type: 'index', label: '序号', },
         { prop: 'district', label: '行政区划', formatter: (r, c, value) => map.district[value] },
-        { prop: 'police_unit', label: '派出所名称', formatter: (r, c, value) => map.police_unit[value] },
         { prop: 'enterprise', label: '企业名称', },
+        { prop: 'police_unit', label: '管辖派出所', minWidth: 120, formatter: (r, c, value) => map.police_unit[value] },
+        { prop: 'enterprise_build_no', label: '企业门楼牌号', minWidth: 120, },
+        { prop: 'enterprise_detail_address', label: '企业详址' },
+        { prop: 'economic_type', label: '经济类型', formatter: (r, c, value) => map.economic_type[value] },
         { prop: 'security_level', label: '治安级别', formatter: (r, c, value) => map.security_level[value] },
-        { prop: 'is_record_register', label: '是否备案登记', formatter: (r, c, value) => value ? '是' : '否' },
+        { prop: 'legal_certificate_code', label: '法人证件号码', minWidth: 120, },
+        { prop: 'chief_certificate_code', label: '负责人证件号码', minWidth: 120, },
+        { prop: 'chief_person', label: '单位负责人', minWidth: 120, },
+        { prop: 'is_record_register', label: '是否备案登记', minWidth: 120, formatter: (r, c, value) => value ? '是' : '否' },
       ],
       dialogVisible: false,
       submitDisabled: false,
@@ -234,6 +241,7 @@ export default {
           key: 'district',
           label: '行政区划',
           type: 'select',
+          valueType: 'string',
           options: mapToArray(map.district)
         },
         {
@@ -501,7 +509,7 @@ export default {
   height: calc(100vh - 120px);
   width: 100%;
   .main {
-    height: calc(100% - 224px);
+    height: calc(100% - 184px);
     width: 100%;
     padding: 5px;
     > button {

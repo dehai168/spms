@@ -1,9 +1,9 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 188px">
-      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="8.5vw">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 140px">
+      <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="10vw">
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
-          <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
+          <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
             <el-form-item :label="formItem.label">
               <el-select
                 v-if="formItem.type == 'select'"
@@ -34,8 +34,8 @@
                 end-placeholder="结束日期"
               />
               <div v-else-if="formItem.type == 'btn'">
-                <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button @click="handleReset">重置</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -43,7 +43,7 @@
       </el-form>
     </el-header>
     <el-main class="main">
-      <el-button @click="handleCreate">新增</el-button>
+      <el-button @click="handleCreate" icon="el-icon-plus" type="primary">新增</el-button>
       <el-table
         v-loading="tableLoading"
         :data="tableData"
@@ -233,99 +233,102 @@ export default {
             type: 'select',
             options: mapToArray(map.police_unit)
           },
-          {
-            key: 'trade_type',
-            label: '行业分类',
-            type: 'select',
-            options: mapToArray(map.hotel_trade_type)
-          },
-          {
-            key: 'logout',
-            label: '注销状态',
-            type: 'select',
-            options: [
-              { label: '未注销', value: 1 },
-              { label: '已注销', value: 2 }
-            ]
-          },
+
           { key: 'enterprise_code', label: '企业编码', type: 'input' },
-        ],
-        [
           { key: 'legal_person', label: '法人姓名', type: 'input' },
-          {
-            key: 'checkStatus',
-            label: '核查状态',
-            type: 'select',
-            options: [
-              { label: '变更待核查', value: 1 },
-              { label: '关停', value: 2 },
-              { label: '已保存安保信息', value: 3 },
-              { label: '待核查', value: 4 },
-              { label: '核查通过', value: 5 },
-              { label: '核查失败', value: 6 },
-              { label: '变更核查成功', value: 7 },
-              { label: '变更保存', value: 8 },
-              { label: '撤销许可', value: 9 },
-              { label: '已保存基本信息', value: 10 },
-              { label: '已保存电子材料', value: 11 },
-              { label: '变更核查失败', value: 12 },
-              { label: '限期整改', value: 13 }
-            ]
-          },
-          {
-            key: 'licenseStatus',
-            label: '许可证状态',
-            type: 'select',
-            options: [
-              { label: '未发放', value: 1 },
-              { label: '已发放', value: 2 },
-              { label: '已吊销', value: 3 }
-            ]
-          },
-          { key: 'enterprise', label: '企业名称', type: 'input' },
         ],
         [
-          {
-            key: 'business_type',
-            label: '工商类型',
-            type: 'select',
-            options: [
-              { label: '个体工商户', value: 0 },
-              { label: '工商企业', value: 2 }
-            ]
-          },
+          { key: 'enterprise', label: '企业名称', type: 'input' },
           { key: 'sign_name', label: '招牌名称', type: 'input' },
-          { key: 'credit_code', label: '社会信用代码', type: 'input' },
+          { key: 'credit_code', label: '社会统一信用代码', type: 'input' },
+        ],
+        [
           {
             key: 'business_state',
             label: '营业状态',
             type: 'select',
             options: mapToArray(map.business_state)
           },
-        ],
-        [
-          { key: 'inputTime', label: '录入时间', type: 'datePicker', width: '14vw', span: 8 },
-          { key: 'licenseIssueDate', label: '许可证发证日期', type: 'datePicker', width: '14vw', span: 8 },
+          { key: 'inputTime', label: '录入时间', type: 'datePicker', width: '14vw' },
           { key: 'btn', type: 'btn' }
         ]
+        // [
+        // {
+        //   key: 'business_type',
+        //   label: '工商类型',
+        //   type: 'select',
+        //   options: [
+        //     { label: '个体工商户', value: 0 },
+        //     { label: '工商企业', value: 2 }
+        //   ]
+        // },
+        // {
+        //   key: 'trade_type',
+        //   label: '行业分类',
+        //   type: 'select',
+        //   options: mapToArray(map.hotel_trade_type)
+        // },
+        // {
+        //   key: 'logout',
+        //   label: '注销状态',
+        //   type: 'select',
+        //   options: [
+        //     { label: '未注销', value: 1 },
+        //     { label: '已注销', value: 2 }
+        //   ]
+        // },
+        // {
+        //   key: 'checkStatus',
+        //   label: '核查状态',
+        //   type: 'select',
+        //   options: [
+        //     { label: '变更待核查', value: 1 },
+        //     { label: '关停', value: 2 },
+        //     { label: '已保存安保信息', value: 3 },
+        //     { label: '待核查', value: 4 },
+        //     { label: '核查通过', value: 5 },
+        //     { label: '核查失败', value: 6 },
+        //     { label: '变更核查成功', value: 7 },
+        //     { label: '变更保存', value: 8 },
+        //     { label: '撤销许可', value: 9 },
+        //     { label: '已保存基本信息', value: 10 },
+        //     { label: '已保存电子材料', value: 11 },
+        //     { label: '变更核查失败', value: 12 },
+        //     { label: '限期整改', value: 13 }
+        //   ]
+        // },
+        // {
+        //   key: 'licenseStatus',
+        //   label: '许可证状态',
+        //   type: 'select',
+        //   options: [
+        //     { label: '未发放', value: 1 },
+        //     { label: '已发放', value: 2 },
+        //     { label: '已吊销', value: 3 }
+        //   ]
+        // },
+        // { key: 'licenseIssueDate', label: '许可证发证日期', type: 'datePicker', width: '14vw', span: 8 },
+        // ],
+
       ],
       columns: [
         { type: 'index', label: '序号', width: 80 },
-        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
-        { prop: 'enterprise_code', label: '企业编码', width: 80 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
-        { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
+        { prop: 'credit_code', label: '社会统一信用代码', width: 180 },
+        { prop: 'enterprise_code', label: '企业编码', width: 80 },
         { prop: 'legal_person', label: '法人姓名', width: 80 },
-        { prop: 'credit_code', label: '社会信用代码', width: 100 },
-        { prop: 'enterprise_telephone', label: '联系电话', width: 100 },
-        { prop: 'checkStatus', label: '核查状态', width: 80 },
-        { prop: 'trade_type', label: '行业类别', width: 120, formatter: (row, column, cellValue, index) => map.hotel_trade_type[cellValue] },
+        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
+        { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
+        { prop: 'enterprise_telephone', label: '联系电话', width: 180 },
         { prop: 'business_state', label: '营业状态', width: 80, formatter: (row, column, cellValue, index) => map.business_state[cellValue] },
-        { prop: 'logout', label: '注销状态', width: 80 },
-        { prop: 'licenseStatus', label: '许可证状态', width: 120 },
-        { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
         { prop: 'input_time', label: '录入时间', width: 180 },
-        { prop: 'origin', label: '数据来源', width: 120 }
+
+        // { prop: 'checkStatus', label: '核查状态', width: 80 },
+        // { prop: 'trade_type', label: '行业类别', width: 120, formatter: (row, column, cellValue, index) => map.hotel_trade_type[cellValue] },
+        // { prop: 'logout', label: '注销状态', width: 80 },
+        // { prop: 'licenseStatus', label: '许可证状态', width: 120 },
+        // { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
+        // { prop: 'origin', label: '数据来源', width: 120 }
       ],
       dialogVisible: false,
       submitDisabled: false,
@@ -653,7 +656,7 @@ export default {
   height: calc(100vh - 120px);
   width: 100%;
   .main {
-    height: calc(100% - 184px);
+    height: calc(100% - 136px);
     width: 100%;
     padding: 5px;
     > button {

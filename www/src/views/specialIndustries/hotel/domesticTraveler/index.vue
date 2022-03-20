@@ -34,8 +34,8 @@
                 end-placeholder="结束日期"
               />
               <div v-else-if="formItem.type == 'btn'">
-                <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button @click="handleReset">重置</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+                <el-button @click="handleReset" icon="el-icon-delete">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -172,7 +172,6 @@ export default {
       ],
       columns: [
         { label: '序号', width: 80, type: 'index' },
-        { prop: '行业类型', label: '行业类型', width: 180 },
         { prop: 'realname', label: '姓名', width: 120 },
         { prop: 'sex', label: '性别', width: 80 },
         { prop: 'certificate_code', label: '证件号码', width: 180 },
@@ -182,9 +181,10 @@ export default {
         { prop: 'in_room', label: '房间号', width: 120 },
         { prop: 'in_time', label: '入住时间', width: 150 },
         { prop: 'out_time', label: '退房时间', width: 150 },
-        { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
+        { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
         { prop: 'security_manage_org', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
+        // { prop: '行业类型', label: '行业类型', width: 180 },
       ],
       dialogVisible: false,
       detailData: {},

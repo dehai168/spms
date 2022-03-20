@@ -34,8 +34,8 @@
                 end-placeholder="结束日期"
               />
               <div v-else-if="formItem.type == 'btn'">
-                <el-button type="primary" @click="handleQuery">搜索</el-button>
-                <el-button @click="handleReset">重置</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -43,7 +43,7 @@
       </el-form>
     </el-header>
     <el-main class="main">
-      <el-button @click="handleCreate">新增</el-button>
+      <el-button icon="el-icon-plus" type="primary" @click="handleCreate">新增</el-button>
       <el-table
         v-loading="tableLoading"
         :data="tableData"
@@ -203,11 +203,7 @@ export default {
             type: 'select',
             options: mapToArray(map.police_unit)
           },
-          { key: 'enterprise_code', label: '企业编码', type: 'input' },
-          { key: 'credit_code', label: '社会信用代码', type: 'input' },
           { key: 'legal_person', label: '法人姓名', type: 'input' },
-        ],
-        [
           { key: 'enterprise', label: '企业名称', type: 'input' },
           {
             key: 'business_state',
@@ -215,23 +211,29 @@ export default {
             type: 'select',
             options: mapToArray(map.business_state)
           },
+        ],
+        [
           { key: 'inputTime', label: '录入时间', type: 'datePicker', span: 8, width: '13vw' },
           { key: 'btn', type: 'btn', span: 4 },
+          // { key: 'enterprise_code', label: '企业编码', type: 'input' },
+          // { key: 'credit_code', label: '社会信用代码', type: 'input' },
         ],
       ],
       columns: [
         { type: 'index', label: '序号', width: 80 },
-        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
-        { prop: 'enterprise_code', label: '企业编码', width: 120 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'legal_person', label: '法人姓名', width: 100 },
-        { prop: 'credit_code', label: '社会信用代码', minWidth: 120 },
+        { prop: 'district', label: '行政区划', minWidth: 140, formatter: (r, c, cellValue) => map.district[cellValue] },
+        { prop: 'enterprise_address', label: '企业地址', minWidth: 160 },
         { prop: 'enterprise_telephone', label: '联系电话', minWidth: 180 },
         {
           prop: 'business_state',
           label: '营业状态', width: 100,
           formatter: (r, c, value) => map.business_state[value]
         },
+        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
+        // { prop: 'enterprise_code', label: '企业编码', width: 120 },
+        // { prop: 'credit_code', label: '社会信用代码', minWidth: 120 },
         { prop: 'input_time', label: '录入时间', width: 180 }
       ],
       dialogVisible: false,
