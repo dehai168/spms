@@ -2,17 +2,17 @@
   <el-container class="container">
     <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 42px">
       <el-row>
-        <el-col :span="21">
+        <el-col :span="20">
           <el-form ref="queryForm" :inline="true" :model="queryForm">
             <el-row>
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-form-item prop="daterange" label="预警时间">
                   <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="max-width: 220px"> </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="4">
                 <el-form-item prop="state" label="状态">
-                  <el-select v-model="queryForm.state" placeholder="请选择">
+                  <el-select v-model="queryForm.state" placeholder="请选择" style="width:100px;">
                     <el-option v-for="item in stateList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                   </el-select>
                 </el-form-item>
@@ -24,13 +24,13 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item prop="certificate_code" label="证件号码">
-                  <el-input v-model="queryForm.certificate_code" maxlength="20"></el-input>
+                  <el-input v-model="queryForm.certificate_code" maxlength="20" style="width:150px;"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
         </el-col>
-        <el-col :span="3">
+        <el-col :span="4">
           <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
         </el-col>
@@ -38,7 +38,7 @@
     </el-header>
     <el-main class="main">
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%">
-        <el-table-column prop="alarm_time" label="预警时间"> </el-table-column>
+        <el-table-column prop="alarm_time" label="预警时间" width="135"> </el-table-column>
         <el-table-column prop="alarm_address" label="预警地点"> </el-table-column>
         <el-table-column prop="alarm_reason" label="预警原因"> </el-table-column>
         <el-table-column prop="realname" label="姓名"> </el-table-column>
@@ -52,7 +52,7 @@
         <el-table-column prop="dispose_user" label="处理人" width="80"> </el-table-column>
         <el-table-column prop="dispose_time" label="处理时间" width="135"> </el-table-column>
         <el-table-column prop="dispose_msg" label="处理结果"> </el-table-column>
-        <el-table-column fixed="right" label="操作" width="120">
+        <el-table-column fixed="right" label="操作" width="60">
           <template slot-scope="scope">
             <el-button v-if="scope.row.state !== 0" type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
             <el-button v-if="scope.row.state === 0" type="text" @click="handleDispose(scope.$index, scope.row)">处理</el-button>
@@ -63,7 +63,7 @@
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
     </el-footer>
-    <el-dialog title="处理" :visible.sync="disposeDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog title="处理" :visible.sync="disposeDialogVisible" width="45%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
         <el-form-item label="预警时间">
           <el-input v-model="form.alarm_time" disabled></el-input>
@@ -89,7 +89,7 @@
         <el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="详情" :visible.sync="detailDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog title="详情" :visible.sync="detailDialogVisible" width="45%" :close-on-click-modal="false">
       <fieldset>
         <legend>预警信息</legend>
         <el-form ref="form" :model="form" :rules="formRules" label-width="120px">

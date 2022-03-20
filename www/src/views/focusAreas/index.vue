@@ -1,6 +1,6 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 82px">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 92px;">
       <el-form ref="queryForm" :inline="true" :model="queryForm">
         <el-row>
           <el-col :span="6">
@@ -54,12 +54,12 @@
         <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
         <el-table-column prop="important_fence" label="重点地区名称"> </el-table-column>
         <el-table-column prop="fence_name" label="区划名称"> </el-table-column>
-        <el-table-column prop="sex" label="性别" width="60"> </el-table-column>
-        <el-table-column prop="nation" label="名族" width="60"> </el-table-column>
-        <el-table-column prop="begin_age" label="年龄段从" width="80"> </el-table-column>
-        <el-table-column prop="end_age" label="年龄段至" width="80"> </el-table-column>
-        <el-table-column prop="begin_date" label="开始日期" width="135"> </el-table-column>
-        <el-table-column prop="end_date" label="结束日期" width="135"> </el-table-column>
+        <el-table-column prop="sex" label="性别" width="50"> </el-table-column>
+        <el-table-column prop="nation" label="名族" width="50"> </el-table-column>
+        <el-table-column prop="begin_age" label="年龄段从" width="70"> </el-table-column>
+        <el-table-column prop="end_age" label="年龄段至" width="70"> </el-table-column>
+        <el-table-column prop="begin_date" label="开始日期" width="90"> </el-table-column>
+        <el-table-column prop="end_date" label="结束日期" width="90"> </el-table-column>
         <el-table-column prop="register_unit" label="登记单位"> </el-table-column>
         <el-table-column prop="input_time" label="登记时间" width="135"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
@@ -74,7 +74,7 @@
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.size" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
     </el-footer>
-    <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="45%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
         <el-form-item prop="important_fence" label="重点地区名称">
           <el-input v-model="form.important_fence" maxlength="50" :disabled="isView"></el-input>
@@ -113,7 +113,7 @@
         <el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="导入" :visible.sync="importDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog title="导入" :visible.sync="importDialogVisible" width="45%" :close-on-click-modal="false">
       <el-form label-width="80px">
         <el-form-item label="参考模板">
           <el-link type="primary" :href="templeteUrl" target="_blank">下载</el-link>
@@ -555,7 +555,7 @@ export default {
   width: 100%;
 }
 .main {
-  height: calc(100vh - 192px);
+  height: calc(100vh - 202px);
   width: 100%;
   padding: 5px;
 }
