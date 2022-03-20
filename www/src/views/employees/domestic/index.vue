@@ -1,31 +1,35 @@
 <template>
 	<div class="ktv-container">
-		<el-form ref="form" :model="queryForm" label-width="140px">
-			<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-				<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
-					<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
-				</el-select>
-				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
-				<el-date-picker v-else-if="formItem.type == 'datePicker'" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
-			</el-form-item>
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 90px; margin-bottom: 10px">
+			<el-form ref="form" :model="queryForm" label-width="140px">
+				<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
+					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
+						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
+					</el-select>
+					<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
+					<el-date-picker v-else-if="formItem.type == 'datePicker'" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				</el-form-item>
 
-			<el-form-item>
-				<el-button type="primary" @click="handleSearch">搜索</el-button>
-				<el-button @click="handleReset">重置</el-button>
-			</el-form-item>
-		</el-form>
+				<el-form-item>
+					<el-button type="primary" @click="getList" icon="el-icon-search">搜索</el-button>
+					<el-button @click="handleReset" icon="el-icon-delete">重置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-header>
 		<div class="ktv-body">
-			<el-button @click="handleAdd">新增</el-button>
-			<el-table :data="tableData" border>
-				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" :formatter="column.formatter" />
-				<el-table-column prop="operate" label="操作" width="200" fixed="right">
-					<template slot-scope="scope">
-						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-						<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
+			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px"  type="primary">新增</el-button>
+			<div style="height: calc(100vh - 310px)">
+				<el-table :data="tableData" border>
+					<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" :formatter="column.formatter" />
+					<el-table-column prop="operate" label="操作" width="200" fixed="right">
+						<template slot-scope="scope">
+							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
+							<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+							<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</div>
 			<el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
@@ -91,11 +95,11 @@ export default {
 					label: '证件号码',
 					type: 'input'
 				},
-				{
-					key: 'birthday',
-					label: '出生日期',
-					type: 'datePicker'
-				},
+				// {
+				// 	key: 'birthday',
+				// 	label: '出生日期',
+				// 	type: 'datePicker'
+				// },
 				{
 					key: 'sex',
 					label: '性别',
@@ -105,25 +109,25 @@ export default {
 						{ label: '女', value: '女' },
 					]
 				},
-				{
-					key: 'province_city',
-					label: '户籍省市县',
-					type: 'input'
-				},
+				// {
+				// 	key: 'province_city',
+				// 	label: '户籍省市县',
+				// 	type: 'input'
+				// },
 				{
 					key: 'input',
 					label: '录入时间',
 					type: 'datePicker'
 				},
-				{
-					key: 'is_front_operator',
-					label: '是否前端操作员',
-					type: 'select',
-					options: [
-						{ label: '是', value: true },
-						{ label: '否', value: false },
-					]
-				},
+				// {
+				// 	key: 'is_front_operator',
+				// 	label: '是否前端操作员',
+				// 	type: 'select',
+				// 	options: [
+				// 		{ label: '是', value: true },
+				// 		{ label: '否', value: false },
+				// 	]
+				// },
 			],
 			tableDataCount: 0,
 			pagesizes: defaultSettings.pageSizes,
@@ -133,13 +137,14 @@ export default {
 			columns: [
 				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type[cell] },
 				{ prop: 'enterprise', label: '企业名称' },
-				{ prop: 'domestic_employeeid', label: '人员编号', },
+				// { prop: 'domestic_employeeid', label: '人员编号', },
 				{ prop: 'realname', label: '姓名', },
 				{ prop: 'certificate_code', label: '证件号码' },
 				{ prop: 'sex', label: '性别', },
 				{ prop: 'nation', label: '民族', },
-				{ prop: 'input_time', label: '录入时间', },
 				{ prop: 'state', label: '在职状态', formatter: (row, col, cell) => MAP.employeeState[cell] },
+				{ prop: 'input_time', label: '录入时间', },
+
 			],
 			dialogVisible: false,
 			submitDisabled: false,

@@ -1,29 +1,33 @@
 <template>
 	<div class="seal-list-container">
-		<el-form ref="form" :model="queryForm" label-width="140px">
-			<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-				<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
-					<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
-				</el-select>
-				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
-				<el-date-picker v-else-if="formItem.type == 'datePicker'" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
-			</el-form-item>
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 90px; margin-bottom: 10px">
+			<el-form ref="form" :model="queryForm" label-width="140px">
+				<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
+					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
+						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
+					</el-select>
+					<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
+					<el-date-picker v-else-if="formItem.type == 'datePicker'" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				</el-form-item>
 
-			<el-form-item>
-				<el-button type="primary" @click="getList">搜索</el-button>
-				<el-button @click="handleReset">重置</el-button>
-			</el-form-item>
-		</el-form>
+				<el-form-item>
+					<el-button type="primary" @click="getList" icon="el-icon-search">搜索</el-button>
+					<el-button @click="handleReset" icon="el-icon-delete">重置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-header>
 		<div class="seal-list-body">
 			<!-- <el-button @click="dialogFormVisible = true">新增</el-button> -->
-			<el-table :data="tableData" border>
-				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
-				<el-table-column prop="operate" label="操作" fixed="right">
-					<template slot-scope="scope">
-						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
+			<div style="height: calc(100vh - 270px)">
+				<el-table :data="tableData" border>
+					<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
+					<el-table-column prop="operate" label="操作" fixed="right">
+						<template slot-scope="scope">
+							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</div>
 			<el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
@@ -68,12 +72,12 @@ export default {
 					{ label: '使用单位英文缩写', value: 'enterprise_english' },
 					{ label: '使用单位少数民族文字名', value: 'minority_character' },
 					{ label: '统一社会信用代码', value: 'credit_code' },
-					{ label: '法人/负责人国籍', value: 'legal_nationality',map: MAP.nationality },
+					{ label: '法人/负责人国籍', value: 'legal_nationality', map: MAP.nationality },
 					{ label: '法人/负责人姓名', value: 'legal_person' },
-					{ label: '法人/负责人证件类型', value: 'legal_certificate_type' ,map: MAP.certificate_type },
+					{ label: '法人/负责人证件类型', value: 'legal_certificate_type', map: MAP.certificate_type },
 					{ label: '法人/负责人证件号码', value: 'legal_certificate_code' },
 					{ label: '法人/负责人联系电话', value: 'legal_telephone' },
-					{ label: '行政区划', value: 'district',map: MAP.district  },
+					{ label: '行政区划', value: 'district', map: MAP.district },
 					{ label: '单位注册地址', value: 'register_address' },
 					{ label: '成立日期', value: 'create_date' },
 					{ label: '注册资本（万元）', value: 'register_cost' },
@@ -108,18 +112,18 @@ export default {
 				],
 				operatorInfo: [
 					{ label: '经办人姓名', value: 'operator_name' },
-					{ label: '经办人证件类型', value: 'operator_certificate_type',map: MAP.certificate_type },
+					{ label: '经办人证件类型', value: 'operator_certificate_type', map: MAP.certificate_type },
 					{ label: '经办人证件号码', value: 'operator_certificate_code' },
 					{ label: '经办人联系电话', value: 'operator_telephone' },
 					{ label: '实际居住地址', value: 'operator_actual_address' },
-					
+
 					{ label: '证件照', value: 'operator_certificate_image', type: 'img' },
 					{ label: '现场照', value: 'operator_scene_image', type: 'img' },
 				],
 				deliveryInfo: [
-					{ label: '取章方式', value: 'get_seal_type',map: MAP.get_seal_type  },
+					{ label: '取章方式', value: 'get_seal_type', map: MAP.get_seal_type },
 					{ label: '取章人姓名', value: 'get_seal_name' },
-					{ label: '取章人证件类型', value: 'get_seal_certificate_type',map: MAP.certificate_type  },
+					{ label: '取章人证件类型', value: 'get_seal_certificate_type', map: MAP.certificate_type },
 					{ label: '取章人证件号码', value: 'get_seal_certificate_code' },
 					{ label: '取章时间', value: 'get_seal_time' },
 					{ label: '证件照', value: 'get_seal_certificate_image', type: 'img' },
@@ -184,7 +188,7 @@ export default {
 				{ prop: 'submit_record_time', label: '提交备案时间', },
 				{ prop: 'record_confirm_time', label: '备案时间', },
 				{ prop: 'seal_state', label: '印章状态', },
-				{ prop: 'record_result', label: '备案状态', formatter: (row, col, cell) => MAP.record_result[cell]  },
+				{ prop: 'record_result', label: '备案状态', formatter: (row, col, cell) => MAP.record_result[cell] },
 				// { prop: 'checkStatus', label: '消息来源', },
 				{ prop: 'input_time', label: '录入时间', },
 			],

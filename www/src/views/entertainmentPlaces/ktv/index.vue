@@ -1,31 +1,35 @@
 <template>
 	<div class="ktv-container">
-		<el-form ref="form" :model="queryForm" label-width="140px">
-			<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
-				<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
-					<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
-				</el-select>
-				<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
-				<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
-			</el-form-item>
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 90px; margin-bottom: 10px">
+			<el-form ref="form" :model="queryForm" label-width="140px">
+				<el-form-item v-for="formItem in formItems" :key="formItem.key" :label="formItem.label">
+					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
+						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
+					</el-select>
+					<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
+					<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+				</el-form-item>
 
-			<el-form-item>
-				<el-button type="primary" @click="getList">搜索</el-button>
-				<el-button @click="handleReset">重置</el-button>
-			</el-form-item>
-		</el-form>
+				<el-form-item>
+					<el-button type="primary" @click="getList" icon="el-icon-search">搜索</el-button>
+					<el-button @click="handleReset" icon="el-icon-delete">重置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-header>
 		<div class="ktv-body">
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
-			<el-table :data="tableData" border>
-				<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" :width="column.width" />
-				<el-table-column prop="operate" label="操作" width="200" fixed="right">
-					<template slot-scope="scope">
-						<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-						<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-						<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
+			<div style="height: calc(100vh - 270px)">
+				<el-table :data="tableData" border>
+					<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" :width="column.width" />
+					<el-table-column prop="operate" label="操作" width="200" fixed="right">
+						<template slot-scope="scope">
+							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
+							<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+							<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</div>
 			<el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
@@ -76,7 +80,7 @@ export default {
 			addEditForm: {},
 			addEditformItems: {
 				'场所基本信息': [
-					{ label: 'ktv编号', key: 'ktvid', type: 'input',disabled: true },
+					{ label: 'KTV编号', key: 'ktvid', type: 'input', disabled: true },
 					{ label: '行业类别', key: 'trade_type', options: mapToArray(MAP.entertainment_type), type: 'select' },
 					{ label: '治安管理机构', key: 'security_manage_unit', type: 'input' },
 					{ label: '场所分类', key: 'place_main_type', type: 'input' },
@@ -135,12 +139,12 @@ export default {
 				]
 			},
 			formItems: [
-				{
-					key: 'trade_type',
-					label: '场所分类',
-					type: 'select',
-					options: mapToArray(MAP.entertainment_type)
-				},
+				// {
+				// 	key: 'trade_type',
+				// 	label: '场所分类',
+				// 	type: 'select',
+				// 	options: mapToArray(MAP.entertainment_type)
+				// },
 				{
 					key: 'security_manage_unit',
 					label: '治安管理机构',
@@ -151,27 +155,27 @@ export default {
 					label: '场所名称',
 					type: 'input'
 				},
-				{
-					key: 'license_code',
-					label: '营业执照号',
-					type: 'input'
-				},
-				{
-					key: 'legal_person',
-					label: '法人姓名',
-					type: 'input'
-				},
-				{
-					key: 'operate_address',
-					label: '经营地址',
-					type: 'input'
-				},
-				{
-					key: 'economic_type',
-					label: '经济类型',
-					type: 'select',
-					options: mapToArray(MAP.economic_type)
-				},
+				// {
+				// 	key: 'license_code',
+				// 	label: '营业执照号',
+				// 	type: 'input'
+				// },
+				// {
+				// 	key: 'legal_person',
+				// 	label: '法人姓名',
+				// 	type: 'input'
+				// },
+				// {
+				// 	key: 'operate_address',
+				// 	label: '经营地址',
+				// 	type: 'input'
+				// },
+				// {
+				// 	key: 'economic_type',
+				// 	label: '经济类型',
+				// 	type: 'select',
+				// 	options: mapToArray(MAP.economic_type)
+				// },
 				{
 					key: 'recreation_place_state',
 					label: '场所状态',
@@ -184,30 +188,31 @@ export default {
 					type: 'select',
 					options: mapToArray(MAP.security_level)
 				},
+				// {
+				// 	key: 'reg',
+				// 	label: '登记日期',
+				// 	type: 'datePicker'
+				// },
+				// {
+				// 	key: 'legalPerson',
+				// 	label: '装机状态',
+				// 	type: 'input'
+				// }, 
 				{
-					key: 'reg',
-					label: '登记日期',
-					type: 'datePicker'
-				},
-				{
-					key: 'legalPerson',
-					label: '装机状态',
-					type: 'input'
-				}, {
 					key: 'input',
 					label: '录入时间',
 					type: 'datePicker'
 				},
-				{
-					key: 'recreation_place_short',
-					label: '娱乐场所简称',
-					type: 'input'
-				},
-				{
-					key: 'outdoor_hang',
-					label: '户外悬挂',
-					type: 'input'
-				},
+				// {
+				// 	key: 'recreation_place_short',
+				// 	label: '娱乐场所简称',
+				// 	type: 'input'
+				// },
+				// {
+				// 	key: 'outdoor_hang',
+				// 	label: '户外悬挂',
+				// 	type: 'input'
+				// },
 				// {
 				// 	key: 'businessType',
 				// 	label: '娱乐项目内容',
@@ -231,13 +236,13 @@ export default {
 			pageindex: 1,
 			tableData: [],
 			columns: [
-				{ prop: 'security_manage_unit', label: '治安管理机构', },
-				{ prop: 'record_code', label: '场所备案编号' },
-				{ prop: 'persons', label: '总人数', width: 100 },
-				{ prop: 'trade_type', label: '场所类别', formatter: (row, col, cell) => MAP.entertainment_type[cell] },
+				{ prop: 'security_manage_unit', label: '娱乐场所名称', },
+				{ prop: 'place_main_type', label: '场所主分类', },
+				{ prop: 'record_code', label: '备案登记号' },
 				{ prop: 'recreation_place_state', label: '场所状态', formatter: (row, col, cell) => MAP.recreation_place_state[cell] },
-				// { prop: 'unifiedSocialCreditCode', label: '装机状态', },
 				{ prop: 'security_level', label: '治安级别', formatter: (row, col, cell) => MAP.security_level[cell] },
+				{ prop: 'persons', label: '总人数', width: 100 },
+				{ prop: 'security_manage_unit', label: '治安管理机构', },
 			],
 			dialogVisible: false
 		};
