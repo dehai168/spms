@@ -312,7 +312,9 @@ export default {
 			this.tableDataCount = size
 		},
 
-		handlePerson() { },
+		handlePerson(index, row) {
+			this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+		},
 		handleDelete() { },
 		handleSearch() { },
 		handleReset() {
