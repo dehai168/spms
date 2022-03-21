@@ -16,7 +16,7 @@
 				</el-form-item>
 			</el-form>
 		</el-header>
-		<div class="ktv-body">
+		<div class="ktv-body"  style="padding: 5px;">
 			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px"  type="primary">新增</el-button>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border>
