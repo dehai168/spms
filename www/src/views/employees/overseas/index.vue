@@ -75,7 +75,7 @@ export default {
 			queryForm: {},
 			formItems: [
 				{
-					key: 'trade_type2',
+					key: 'trade_type',
 					label: '行业类别',
 					type: 'select',
 					options: mapToArray(MAP.trade_type2)
@@ -144,7 +144,7 @@ export default {
 			pageindex: 1,
 			tableData: [],
 			columns: [
-				{ prop: 'trade_type2', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell] },
+				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell] },
 				{ prop: 'enterprise', label: '企业名称' },
 				// { prop: 'abroad_employeeid', label: '人员编号', },
 				{ prop: 'last_name', label: '英文姓', },
@@ -195,7 +195,7 @@ export default {
 					{ key: 'actual_live_address', label: '现住址', type: 'input' },
 				],
 				'管理信息': [
-					{ key: 'trade_type2', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type2) },
+					{ key: 'trade_type', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type2) },
 					{ key: 'enterprise', label: '企业名称', type: 'input' },
 					{
 						key: 'is_front_operator', label: '是否前端操作员', type: 'select', options: [{ label: '是', value: true },
