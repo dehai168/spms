@@ -249,7 +249,7 @@ export default {
     columns() {
       return [
         { type: 'index', label: '序号', },
-        { prop: 'district', label: '行政区划', minWidth: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
+       
         { prop: 'enterprise', label: '企业名称', minWidth: 180},
         { prop: 'police_unit', label: '管辖派出所', minWidth: 120, formatter: (r, c, value) => this.enumData[1].find(i => i.value === value)?.label },
         { prop: 'enterprise_build_no', label: '企业门楼牌号', minWidth: 120, },
@@ -260,6 +260,7 @@ export default {
         { prop: 'chief_certificate_code', label: '负责人证件号码', minWidth: 120, },
         { prop: 'chief_person', label: '单位负责人', minWidth: 120, },
         { prop: 'is_record_register', label: '是否备案登记', minWidth: 120, formatter: (r, c, value) => value ? '是' : '否' },
+         { prop: 'district', label: '行政区划', minWidth: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
       ]
     },
     addEditformItems() {
