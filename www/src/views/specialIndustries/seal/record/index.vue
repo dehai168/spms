@@ -19,7 +19,7 @@
 		<div class="seal-list-body"  style="padding: 5px;">
 			<!-- <el-button @click="dialogFormVisible = true">新增</el-button> -->
 			<div style="height: calc(100vh - 270px)">
-				<el-table :data="tableData" border>
+				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns"  :show-overflow-tooltip="true" :width="column.width"   :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
 					<el-table-column prop="operate" label="操作" fixed="right">
 						<template slot-scope="scope">
@@ -147,7 +147,7 @@ export default {
 			},
 			pager: {
 				pageindex: 1,
-				pagesize: 10
+				pagesize: 20
 			},
 			queryForm: {
 

@@ -19,7 +19,7 @@
 		<div class="ktv-body"  style="padding: 5px;">
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
 			<div style="height: calc(100vh - 270px)">
-				<el-table :data="tableData" border>
+				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" :width="200" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
@@ -69,7 +69,7 @@ export default {
 		return {
 			pager: {
 				pageindex: 1,
-				pagesize: 10
+				pagesize: 20
 			},
 			submitDisabled: false,
 			flag: '',

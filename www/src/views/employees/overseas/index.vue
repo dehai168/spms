@@ -19,7 +19,7 @@
 		<div class="ktv-body"  style="padding: 5px;">
 			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px" type="primary">新增</el-button>
 			<div style="height: calc(100vh - 360px)">
-				<el-table :data="tableData" border>
+				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :key="column.prop" :show-overflow-tooltip="true" :width="200" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
@@ -70,7 +70,7 @@ export default {
 		return {
 			pager: {
 				pageindex: 1,
-				pagesize: 10
+				pagesize: 20
 			},
 			queryForm: {},
 			formItems: [
