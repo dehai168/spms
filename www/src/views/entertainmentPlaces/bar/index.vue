@@ -82,7 +82,7 @@ export default {
 				'场所基本信息': [
 					{ label: '酒吧编号', key: 'barid', type: 'input', disabled: true },
 					{ label: '行业类别', key: 'trade_type', options: mapToArray(MAP.entertainment_type), type: 'select' },
-					{ label: '治安管理机构', key: 'security_manage_unit', type: 'select', options: mapToArray(MAP.police_unit,'string')},
+					{ label: '治安管理机构', key: 'security_manage_unit', type: 'select', options: mapToArray(MAP.jurisdiction_unit,'string')},
 					{ label: '场所分类', key: 'place_main_type', type: 'input' },
 					{ label: '场所分类（副）', key: 'place_vice_type', type: 'input' },
 					{ label: '场所备案编号', key: 'record_code', type: 'input' },
@@ -154,7 +154,7 @@ export default {
 					key: 'security_manage_unit',
 					label: '治安管理机构',
 					type: 'select', 
-					options: mapToArray(MAP.police_unit,'string')
+					options: mapToArray(MAP.jurisdiction_unit,'string')
 				},
 				{
 					key: 'recreation_place_name',
@@ -248,7 +248,7 @@ export default {
 				{ prop: 'recreation_place_state', label: '场所状态', formatter: (row, col, cell) => MAP.recreation_place_state[cell] },
 				{ prop: 'security_level', label: '治安级别', formatter: (row, col, cell) => MAP.security_level[cell] },
 				{ prop: 'persons', label: '总人数', width: 100 },
-				{ prop: 'security_manage_unit', label: '治安管理机构', },
+				{ prop: 'security_manage_unit', label: '治安管理机构' , formatter: (row, col, cell) => MAP.jurisdiction_unit[cell]},
 			],
 			dialogVisible: false
 		};

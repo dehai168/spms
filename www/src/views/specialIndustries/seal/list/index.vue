@@ -109,7 +109,7 @@ export default {
 					key: 'police_unit',
 					label: '管辖派出所',
 					type: 'select',
-					options: mapToArray(MAP.police_unit,'string')
+					options: mapToArray(MAP.jurisdiction_unit,'string')
 				},
 				{
 					key: 'enterprise',
@@ -147,7 +147,7 @@ export default {
 				{ prop: 'sign_name', label: '招牌名称', width: 180 },
 				{ prop: 'enterprise_telephone', label: '联系电话', width: 100 },
 				{ prop: 'business_state', label: '营业状态', width: 80, formatter: (row, col, cell) => MAP.business_state[cell] },
-				{ prop: 'police_unit', label: '管辖单位', width: 180 },
+				{ prop: 'police_unit', label: '管辖单位', width: 180, formatter: (row, col, cell) => MAP.jurisdiction_unit[cell] },
 				// { prop: 'logout', label: '注销状态', width: 80 },
 				// { prop: 'licenseStatus', label: '许可证状态', width: 80 },
 				// { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
@@ -198,7 +198,7 @@ export default {
 							key: 'police_unit',
 							label: '管辖单位',
 							type: 'select',
-							options: mapToArray(MAP.police_unit),
+							options: mapToArray(MAP.jurisdiction_unit),
 						},
 						{ key: 'actual_address', label: '实际经营地址', type: 'input' },
 					],
