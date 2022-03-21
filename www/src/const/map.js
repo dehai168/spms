@@ -107,6 +107,7 @@ export default {
     5: '合装',
   },
   security_level: {
+    0: '待定',
     1: 'A级',
     2: 'B级',
     3: 'C级',
