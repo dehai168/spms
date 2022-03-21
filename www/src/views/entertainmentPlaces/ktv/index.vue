@@ -2,7 +2,7 @@
 	<div class="ktv-container">
 		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 90px; margin-bottom: 10px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
-				<el-form-item v-for="formItem in formItems" :key="formItem.key"  style="width: 30%"  :label="formItem.label">
+				<el-form-item v-for="formItem in formItems" :key="formItem.key" style="width: 30%" :label="formItem.label">
 					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
 						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 					</el-select>
@@ -16,7 +16,7 @@
 				</el-form-item>
 			</el-form>
 		</el-header>
-		<div class="ktv-body"  style="padding: 5px;">
+		<div class="ktv-body" style="padding: 5px">
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
 			<div style="height: calc(100vh - 270px)">
 				<el-table :data="tableData" border height="100%">
@@ -25,6 +25,7 @@
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
 							<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+							<el-button type="text" size="small" @click="handlePerson(scope.$index, scope.row)">从业人员</el-button>
 							<el-button slot="reference" type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 						</template>
 					</el-table-column>
@@ -82,7 +83,7 @@ export default {
 				'场所基本信息': [
 					{ label: 'KTV编号', key: 'ktvid', type: 'input', disabled: true },
 					{ label: '行业类别', key: 'trade_type', options: mapToArray(MAP.entertainment_type), type: 'select' },
-					{ label: '治安管理机构', key: 'security_manage_unit', type: 'select', options: mapToArray(MAP.jurisdiction_unit,'string') },
+					{ label: '治安管理机构', key: 'security_manage_unit', type: 'select', options: mapToArray(MAP.jurisdiction_unit, 'string') },
 					{ label: '场所分类', key: 'place_main_type', type: 'input' },
 					{ label: '场所分类（副）', key: 'place_vice_type', type: 'input' },
 					{ label: '场所备案编号', key: 'record_code', type: 'input' },
@@ -153,8 +154,8 @@ export default {
 				{
 					key: 'security_manage_unit',
 					label: '治安管理机构',
-					type: 'select', 
-					options: mapToArray(MAP.jurisdiction_unit,'string')
+					type: 'select',
+					options: mapToArray(MAP.jurisdiction_unit, 'string')
 				},
 				{
 					key: 'recreation_place_name',
@@ -275,6 +276,9 @@ export default {
 		}
 	},
 	methods: {
+		handlePerson(index, row) {
+			this.$router.push({ path: '/employees/domestic', query: { enterprise: row.recreation_place_name } });
+		},
 		async getList() {
 			const params = { ...this.queryForm }
 			this.formItems.forEach(v => {
@@ -302,7 +306,6 @@ export default {
 			this.addEditForm = { ...row };
 			this.dialogVisible = true
 		},
-		handlePerson() { },
 		handleDelete(idx, { ktvid }) {
 			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
 				confirmButtonText: '确定',

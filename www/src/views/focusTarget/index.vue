@@ -181,8 +181,8 @@ export default {
         interest_reason: ''
       },
       formRules: {
-        realname: [{ required: true, trigger: 'blur', message: '该项是必填项' }],
-        certificate_code: [{ required: true, trigger: 'blur', message: '该项是必填项' }]
+        // realname: [{ required: true, trigger: 'blur', message: '该项是必填项' }],
+        // certificate_code: [{ required: true, trigger: 'blur', message: '该项是必填项' }]
       },
       sexList: [
         { value: '男', label: '男' },
