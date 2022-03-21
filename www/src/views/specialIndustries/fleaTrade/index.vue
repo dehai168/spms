@@ -122,7 +122,7 @@
             <el-option
               v-for="option in formItem.options"
               :key="option.value"
-              :value="formItem.valueType == 'string' ? option.value : +option.value"
+              :value="option.value"
               :label="option.label"
             />
           </el-select>
@@ -195,13 +195,13 @@ export default {
             key: 'district',
             label: '行政区划',
             type: 'select',
-            options: mapToArray(map.district)
+            options: mapToArray(map.district, 'string')
           },
           {
             key: 'police_unit',
             label: '管辖派出所',
             type: 'select',
-            options: mapToArray(map.police_unit)
+            options: mapToArray(map.police_unit, 'string')
           },
           { key: 'record_code', label: '备案登记号', type: 'input' },
           { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -244,14 +244,14 @@ export default {
           label: '行政区划',
           type: 'select',
           valueType: 'string',
-          options: mapToArray(map.district)
+          options: mapToArray(map.district, 'string')
         },
         {
           key: 'police_unit',
           label: '派出所名称',
           type: 'select',
           valueType: 'string',
-          options: mapToArray(map.police_unit)
+          options: mapToArray(map.police_unit, 'string')
         },
         { key: 'record_code', label: '备案编号', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -261,8 +261,7 @@ export default {
           key: 'junk_type',
           label: '分类',
           type: 'select',
-          valueType: 'string',
-          options: mapToArray(map.trade_type)
+          options: mapToArray(map.trade_type, 'string')
         },
         { key: 'chief_telephone', label: '经营负责人电话', type: 'input' },
         { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },

@@ -121,7 +121,7 @@
             <el-option
               v-for="option in formItem.options"
               :key="option.value"
-              :value="formItem.valueType == 'string' ? option.value : +option.value"
+              :value="option.value"
               :label="option.label"
             />
           </el-select>
@@ -184,13 +184,13 @@ export default {
             key: 'district',
             label: '行政区划',
             type: 'select',
-            options: mapToArray(map.district)
+            options: mapToArray(map.district, 'string')
           },
           {
             key: 'police_unit',
             label: '管辖派出所',
             type: 'select',
-            options: mapToArray(map.police_unit)
+            options: mapToArray(map.police_unit, 'string')
           },
           { key: 'enterprise', label: '企业名称', type: 'input' },
           { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
@@ -241,15 +241,13 @@ export default {
           key: 'district',
           label: '行政区划',
           type: 'select',
-          valueType: 'string',
-          options: mapToArray(map.district)
+          options: mapToArray(map.district, 'string')
         },
         {
           key: 'police_unit',
           label: '派出所名称',
           type: 'select',
-          valueType: 'string',
-          options: mapToArray(map.police_unit)
+          options: mapToArray(map.police_unit, 'string')
         },
         { key: 'enterprise_vice_class', label: '企业副分类', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -272,7 +270,7 @@ export default {
         { key: 'concurrently_scale', label: '经营范围（主营）', type: 'input' },
         { key: '经营范围', label: '经营范围（兼营）', type: 'input' },
         { key: 'operate_area', label: '经营面积（平方米）', type: 'input' },
-        { key: 'security_level', label: '治安级别', type: 'select', options: mapToArray(map.security_level), valueType: 'string' },
+        { key: 'security_level', label: '治安级别', type: 'select', options: mapToArray(map.security_level, 'string') },
         { key: 'business_state', label: '营业状态', type: 'select', options: mapToArray(map.my_business_state) },
         { key: 'legal_person', label: '法定代表人姓名', type: 'input' },
         { key: 'legal_certificate_type', label: '法定代表证件类型', type: 'select', options: mapToArray(map.legal_certificate_type) },

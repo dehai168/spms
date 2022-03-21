@@ -163,7 +163,7 @@ export default {
             key: 'security_manage_org',
             label: '管辖单位',
             type: 'select',
-            options: mapToArray(map.police_unit)
+            options: mapToArray(map.police_unit, 'string')
           },
           { key: 'sign_name', label: '招牌名称', type: 'input' },
           { key: 'enterprise', label: '企业名称', type: 'input' },

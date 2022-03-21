@@ -137,7 +137,7 @@
                   <el-option
                     v-for="option in formItem.options"
                     :key="option.value"
-                    :value="formItem.valueType == 'string' ? option.value : +option.value"
+                    :value="option.value"
                     :label="option.label"
                   />
                 </el-select>
@@ -231,7 +231,7 @@ export default {
             key: 'jurisdiction_unit',
             label: '管辖单位',
             type: 'select',
-            options: mapToArray(map.police_unit)
+            options: mapToArray(map.police_unit, 'string')
           },
 
           { key: 'enterprise_code', label: '企业编码', type: 'input' },
@@ -383,8 +383,7 @@ export default {
               key: 'jurisdiction_unit',
               label: '管辖单位',
               type: 'select',
-              options: mapToArray(map.police_unit),
-              valueType: 'string'
+              options: mapToArray(map.police_unit, 'string'),
             },
             { key: 'actual_address', label: '实际经营地址', type: 'input' },
           ],
@@ -410,7 +409,7 @@ export default {
               key: 'district',
               label: '行政区域',
               type: 'select',
-              options: mapToArray(map.district)
+              options: mapToArray(map.district, 'string')
             },
           ],
           [
