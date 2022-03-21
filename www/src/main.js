@@ -10,7 +10,7 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
-
+import {getDynamicMap} from './const/map'
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -35,6 +35,11 @@ Vue.prototype.$error = () => {
     type: 'error'
   })
 }
+Vue.prototype.$map = getDynamicMap
+getDynamicMap().then(res => {
+  console.log(res)
+  Vue.prototype.$map = res
+})
 new Vue({
   el: '#app',
   router,
