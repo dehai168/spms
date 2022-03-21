@@ -20,7 +20,7 @@
 			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px"  type="primary">新增</el-button>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border>
-					<el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label" :width="column.width" :formatter="column.formatter" />
+					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :width="200" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
