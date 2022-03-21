@@ -1,6 +1,6 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 92px;">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 92px">
       <el-form ref="queryForm" :inline="true" :model="queryForm">
         <el-row>
           <el-col :span="6">
@@ -82,29 +82,29 @@
         <el-form-item prop="fence_name_temp" label="区划名称">
           <el-cascader v-model="form.fence_name_temp" :options="zoneList" style="width: 100%" :disabled="isView"></el-cascader>
         </el-form-item>
-        <el-form-item  prop="nation" label="名族">
+        <el-form-item prop="nation" label="名族">
           <el-select v-model="form.nation" placeholder="请选择" style="width: 100%" :disabled="isView">
             <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item  prop="sex" label="性别">
+        <el-form-item prop="sex" label="性别">
           <el-select v-model="form.sex" placeholder="请选择" style="width: 100%" :disabled="isView">
             <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item  prop="begin_age" label="年龄范围从">
+        <el-form-item prop="begin_age" label="年龄范围从">
           <el-input-number v-model="form.begin_age" :max="120" :min="0" style="width: 100%" :disabled="isView"></el-input-number>
         </el-form-item>
-        <el-form-item  prop="end_age" label="年龄范围至">
+        <el-form-item prop="end_age" label="年龄范围至">
           <el-input-number v-model="form.end_age" :max="120" :min="0" style="width: 100%" :disabled="isView"></el-input-number>
         </el-form-item>
-        <el-form-item  prop="begin_date" label="起始时间">
+        <el-form-item prop="begin_date" label="起始时间">
           <el-date-picker v-model="form.begin_date" type="date" value-format="yyyy-MM-dd" placeholder="选择日期" style="width: 100%" :disabled="isView"> </el-date-picker>
         </el-form-item>
-        <el-form-item  prop="end_date" label="结束时间">
+        <el-form-item prop="end_date" label="结束时间">
           <el-date-picker v-model="form.end_date" type="date" value-format="yyyy-MM-dd" placeholder="选择日期" style="width: 100%" :disabled="isView"> </el-date-picker>
         </el-form-item>
-        <el-form-item  prop="register_unit" label="登记单位">
+        <el-form-item prop="register_unit" label="登记单位">
           <el-input v-model="form.register_unit" maxlength="150" :disabled="isView"></el-input>
         </el-form-item>
       </el-form>
@@ -137,6 +137,10 @@
 import defaultSettings from '@/settings'
 import { items, item, create, update, remove, batchremove, importexcel, exportexcel, exist, templeteUrl, uploadUrl, download } from '@/api/focusareas'
 import Cookies from 'js-cookie'
+import provinces from './provinces'
+import areas from './areas'
+import cities from './cities'
+
 export default {
   name: 'FocusAreas',
   components: {},
@@ -201,31 +205,63 @@ export default {
         { value: '男', label: '男' },
         { value: '女', label: '女' }
       ],
-      zoneList: [
-        {
-          value: '北京市',
-          label: '北京市',
-          children: [
-            {
-              value: '北京市',
-              label: '北京市',
-              children: [
-                {
-                  value: '东城区',
-                  label: '东城区'
-                }
-              ]
-            }
-          ]
-        }
-      ],
       nationalList: [
         { value: '汉族', label: '汉族' },
         { value: '蒙古族', label: '蒙古族' },
         { value: '回族', label: '回族' },
         { value: '藏族', label: '藏族' },
         { value: '维吾尔族', label: '维吾尔族' },
-        { value: '苗族', label: '苗族' }
+        { value: '苗族', label: '苗族' },
+        { value: '彝族', label: '彝族' },
+        { value: '壮族', label: '壮族' },
+        { value: '布依族', label: '布依族' },
+        { value: '朝鲜族', label: '朝鲜族' },
+        { value: '满族', label: '满族' },
+        { value: '侗族', label: '侗族' },
+        { value: '瑶族', label: '瑶族' },
+        { value: '白族', label: '白族' },
+        { value: '土家族', label: '土家族' },
+        { value: '哈尼族', label: '哈尼族' },
+        { value: '哈萨克族', label: '哈萨克族' },
+        { value: '傣族', label: '傣族' },
+        { value: '黎族', label: '黎族' },
+        { value: '僳僳族', label: '僳僳族' },
+        { value: '佤族', label: '佤族' },
+        { value: '畲族', label: '畲族' },
+        { value: '高山族', label: '高山族' },
+        { value: '拉祜族', label: '拉祜族' },
+        { value: '水族', label: '水族' },
+        { value: '东乡族', label: '东乡族' },
+        { value: '纳西族', label: '纳西族' },
+        { value: '景颇族', label: '景颇族' },
+        { value: '柯尔克孜族', label: '柯尔克孜族' },
+        { value: '土族', label: '土族' },
+        { value: '达斡尔族', label: '达斡尔族' },
+        { value: '仫佬族', label: '仫佬族' },
+        { value: '羌族', label: '羌族' },
+        { value: '布朗族', label: '布朗族' },
+        { value: '撒拉族', label: '撒拉族' },
+        { value: '毛南族', label: '毛南族' },
+        { value: '仡佬族', label: '仡佬族' },
+        { value: '锡伯族', label: '锡伯族' },
+        { value: '阿昌族', label: '阿昌族' },
+        { value: '普米族', label: '普米族' },
+        { value: '塔吉克族', label: '塔吉克族' },
+        { value: '怒族', label: '怒族' },
+        { value: '乌孜别克族', label: '乌孜别克族' },
+        { value: '俄罗斯族', label: '俄罗斯族' },
+        { value: '鄂温克族', label: '鄂温克族' },
+        { value: '德昂族', label: '德昂族' },
+        { value: '保安族', label: '保安族' },
+        { value: '裕固族', label: '裕固族' },
+        { value: '京族', label: '京族' },
+        { value: '塔塔尔族', label: '塔塔尔族' },
+        { value: '独龙族', label: '独龙族' },
+        { value: '鄂伦春族', label: '鄂伦春族' },
+        { value: '赫哲族', label: '赫哲族' },
+        { value: '门巴族', label: '门巴族' },
+        { value: '珞巴族', label: '珞巴族' },
+        { value: '基诺族', label: '基诺族' },
       ],
       uploadHeader: {},
       addflag: true,
@@ -247,6 +283,34 @@ export default {
     },
     uploadUrl() {
       return uploadUrl()
+    },
+    zoneList(){
+      const result=[];
+      provinces.provinces.forEach((province) => {
+        const cityArray=[];
+        const cityList=cities.cities.filter(v=>{return v.provinceCode===province.code});
+        cityList.forEach(city => {
+            const areaList=areas.areas.filter(v=>{return v.cityCode===city.code});
+            const areaArray=[];
+            areaList.forEach(area => {
+              areaArray.push({
+                value:area.name,
+                label:area.name,
+              });
+            });
+            cityArray.push({
+              value:city.name,
+              label:city.name,
+              children:areaArray
+            })
+        });
+        result.push({
+          value:province.name,
+          label:province.name,
+          children:cityArray
+        })
+      });
+      return result;
     }
   },
   created() {
