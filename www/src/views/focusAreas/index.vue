@@ -136,6 +136,7 @@
 <script>
 import defaultSettings from '@/settings'
 import { items, item, create, update, remove, batchremove, importexcel, exportexcel, exist, templeteUrl, uploadUrl, download } from '@/api/focusareas'
+import {formatDate} from '@/utils/index'
 import Cookies from 'js-cookie'
 import provinces from './provinces'
 import areas from './areas'
@@ -169,6 +170,9 @@ export default {
         }
       }
     }
+    const now=new Date();
+    const yestoday=new Date();
+    yestoday.setTime(now.getTime()-3600*24*1000);
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
@@ -193,13 +197,12 @@ export default {
         sex: '男',
         begin_age: '',
         end_age: '',
-        begin_date: '',
-        end_date: '',
+        begin_date: formatDate('date',yestoday),
+        end_date: formatDate('date',now),
         register_unit: ''
       },
       formRules: {
         important_fence: [{ required: true, trigger: 'blur', message: '该项为必填项' }],
-        fence_name_temp: [{ required: true, trigger: 'blur', message: '该项为必填项' }]
       },
       sexList: [
         { value: '男', label: '男' },

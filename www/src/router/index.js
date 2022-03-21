@@ -181,7 +181,7 @@ export const constantRoutes = [
         meta: { title: '国内从业人员', icon: 'el-icon-school' },
       },
       {
-        path: '/employees/bar',
+        path: '/employees/overseas',
         component: () => import('@/views/employees/overseas/index'),
         meta: { title: '境外从业人员', icon: 'el-icon-school' },
       },
