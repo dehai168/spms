@@ -16,7 +16,7 @@
 				</el-form-item>
 			</el-form>
 		</el-header>
-		<div class="ktv-body">
+		<div class="ktv-body"  style="padding: 5px;">
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
 			<div style="height: calc(100vh - 270px)">
 				<el-table :data="tableData" border>
