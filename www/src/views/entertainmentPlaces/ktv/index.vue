@@ -82,7 +82,7 @@ export default {
 				'场所基本信息': [
 					{ label: 'KTV编号', key: 'ktvid', type: 'input', disabled: true },
 					{ label: '行业类别', key: 'trade_type', options: mapToArray(MAP.entertainment_type), type: 'select' },
-					{ label: '治安管理机构', key: 'security_manage_unit', type: 'input' },
+					{ label: '治安管理机构', key: 'security_manage_unit', type: 'select', options: mapToArray(MAP.police_unit,'string') },
 					{ label: '场所分类', key: 'place_main_type', type: 'input' },
 					{ label: '场所分类（副）', key: 'place_vice_type', type: 'input' },
 					{ label: '场所备案编号', key: 'record_code', type: 'input' },
@@ -153,7 +153,8 @@ export default {
 				{
 					key: 'security_manage_unit',
 					label: '治安管理机构',
-					type: 'input'
+					type: 'select', 
+					options: mapToArray(MAP.police_unit,'string')
 				},
 				{
 					key: 'recreation_place_name',
