@@ -192,7 +192,9 @@
 <script>
 import defaultSettings from '@/settings'
 import { items, create, update, remove } from '@/api/hotelBase'
+import { enumsItems } from '@/api/common'
 import mapToArray from '@/utils/mapToArray';
+import handleEnum from '@/utils/handleEnum';
 import map from '@/const/map';
 import { formatDate } from '@/utils/index'
 import MyCard from './MyCard.vue';
@@ -225,13 +227,42 @@ export default {
       tableData: [],
       tableDataCount: 0,
       tableSelected: [],
-      formItems: [
+      enumData: {},
+      dialogVisible: false,
+      submitDisabled: false,
+      flag: 'add',
+      addEditForm: {
+        declare_type: '0',
+        business_type: '0'
+      },
+    }
+  },
+  computed: {
+    dialogTittle() {
+      let tittle = '';
+      switch (this.flag) {
+        case 'edit':
+          tittle = '编辑旅馆信息';
+          break;
+        case 'add':
+          tittle = '新增旅馆信息';
+          break;
+        case 'detail':
+          tittle = '旅馆信息详情';
+          break;
+      }
+
+      return tittle;
+    },
+    formItems() {
+
+      return [
         [
           {
             key: 'jurisdiction_unit',
             label: '管辖单位',
             type: 'select',
-            options: mapToArray(map.police_unit, 'string')
+            options: this.enumData[2]
           },
 
           { key: 'enterprise_code', label: '企业编码', type: 'input' },
@@ -310,8 +341,10 @@ export default {
         // { key: 'licenseIssueDate', label: '许可证发证日期', type: 'datePicker', width: '14vw', span: 8 },
         // ],
 
-      ],
-      columns: [
+      ]
+    },
+    columns() {
+      return [
         { type: 'index', label: '序号', width: 80 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'credit_code', label: '社会统一信用代码', width: 180 },
@@ -329,15 +362,10 @@ export default {
         // { prop: 'licenseStatus', label: '许可证状态', width: 120 },
         // { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
         // { prop: 'origin', label: '数据来源', width: 120 }
-      ],
-      dialogVisible: false,
-      submitDisabled: false,
-      flag: 'add',
-      addEditForm: {
-        declare_type: '0',
-        business_type: '0'
-      },
-      addEditformItems: {
+      ];
+    },
+    addEditformItems() {
+      return {
         '基础信息': [
           [
             {
@@ -409,7 +437,7 @@ export default {
               key: 'district',
               label: '行政区域',
               type: 'select',
-              options: mapToArray(map.district, 'string')
+              options: this.enumData[3]
             },
           ],
           [
@@ -455,24 +483,6 @@ export default {
           [{ key: 'remark', label: '备注', type: 'textarea', span: 24 }]
         ]
       }
-    };
-  },
-  computed: {
-    dialogTittle() {
-      let tittle = '';
-      switch (this.flag) {
-        case 'edit':
-          tittle = '编辑旅馆信息';
-          break;
-        case 'add':
-          tittle = '新增旅馆信息';
-          break;
-        case 'detail':
-          tittle = '旅馆信息详情';
-          break;
-      }
-
-      return tittle;
     }
   },
   created() {
@@ -484,7 +494,16 @@ export default {
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
-      callback()
+      enumsItems({ types: [3, 2] })
+        .then(res => {
+          if (res.code === 200) {
+            this.enumData = handleEnum(res.data);
+            callback();
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
     },
     handleQuery() {
       this.tableLoading = true
