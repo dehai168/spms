@@ -165,6 +165,8 @@ import defaultSettings from '@/settings'
 import { items, create, update, remove } from '@/api/scrapMetal'
 import mapToArray from '@/utils/mapToArray';
 import map from '@/const/map';
+import handleEnum from '@/utils/handleEnum';
+import { enumsItems } from '@/api/common'
 import { formatDate } from '@/utils/index'
 export default {
   data() {
@@ -178,19 +180,46 @@ export default {
       tableData: [],
       tableDataCount: 0,
       tableSelected: [],
-      formItems: [
+
+      dialogVisible: false,
+      submitDisabled: false,
+      flag: 'add',
+      addEditForm: {},
+      enumData: {},
+
+    };
+  },
+  computed: {
+    dialogTittle() {
+      let tittle = '';
+      switch (this.flag) {
+        case 'edit':
+          tittle = '编辑废旧金属交易信息';
+          break;
+        case 'add':
+          tittle = '新增废旧金属交易信息';
+          break;
+        case 'detail':
+          tittle = '废旧金属交易详情';
+          break;
+      }
+
+      return tittle;
+    },
+    formItems() {
+      return [
         [
           {
             key: 'district',
             label: '行政区划',
             type: 'select',
-            options: mapToArray(map.district, 'string')
+            options: this.enumData[3]
           },
           {
             key: 'police_unit',
             label: '管辖派出所',
             type: 'select',
-            options: mapToArray(map.police_unit, 'string')
+            options: this.enumData[1]
           },
           { key: 'enterprise', label: '企业名称', type: 'input' },
           { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
@@ -215,12 +244,14 @@ export default {
           { key: 'btn', type: 'btn' }
           // { key: 'enterprise_address', label: '企业地址', type: 'input' },
         ],
-      ],
-      columns: [
+      ]
+    },
+    columns() {
+      return [
         { type: 'index', label: '序号', },
-        { prop: 'district', label: '行政区划', formatter: (r, c, value) => map.district[value] },
-        { prop: 'enterprise', label: '企业名称', },
-        { prop: 'police_unit', label: '管辖派出所', minWidth: 120, formatter: (r, c, value) => map.police_unit[value] },
+        { prop: 'district', label: '行政区划', minWidth: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
+        { prop: 'enterprise', label: '企业名称', minWidth: 180},
+        { prop: 'police_unit', label: '管辖派出所', minWidth: 120, formatter: (r, c, value) => this.enumData[1].find(i => i.value === value)?.label },
         { prop: 'enterprise_build_no', label: '企业门楼牌号', minWidth: 120, },
         { prop: 'enterprise_detail_address', label: '企业详址' },
         { prop: 'economic_type', label: '经济类型', formatter: (r, c, value) => map.economic_type[value] },
@@ -229,25 +260,21 @@ export default {
         { prop: 'chief_certificate_code', label: '负责人证件号码', minWidth: 120, },
         { prop: 'chief_person', label: '单位负责人', minWidth: 120, },
         { prop: 'is_record_register', label: '是否备案登记', minWidth: 120, formatter: (r, c, value) => value ? '是' : '否' },
-      ],
-      dialogVisible: false,
-      submitDisabled: false,
-      flag: 'add',
-      addEditForm: {
-
-      },
-      addEditformItems: [
+      ]
+    },
+    addEditformItems() {
+      return [
         {
           key: 'district',
           label: '行政区划',
           type: 'select',
-          options: mapToArray(map.district, 'string')
+          options: this.enumData[3]
         },
         {
           key: 'police_unit',
           label: '派出所名称',
           type: 'select',
-          options: mapToArray(map.police_unit, 'string')
+          options: this.enumData[1]
         },
         { key: 'enterprise_vice_class', label: '企业副分类', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -255,7 +282,6 @@ export default {
         { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
         { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
         { key: 'county_police_unit_code', label: '公安机关代码', type: 'input' },
-        { key: 'jurisdiction_unit', label: '管辖单位', type: 'input' },
         { key: '企业组织机构代码', label: '企业组织机构代码', type: 'input' },
         { key: '联系电话', label: '联系电话', type: 'input' },
 
@@ -299,26 +325,7 @@ export default {
         { key: 'save_time', label: '保存时间', type: 'datePicker' },
         { key: 'input_time', label: '录入时间', type: 'datePicker' },
         { key: 'annual_check_date', label: '年审日期', type: 'datePicker' },
-
       ]
-    };
-  },
-  computed: {
-    dialogTittle() {
-      let tittle = '';
-      switch (this.flag) {
-        case 'edit':
-          tittle = '编辑废旧金属交易信息';
-          break;
-        case 'add':
-          tittle = '新增废旧金属交易信息';
-          break;
-        case 'detail':
-          tittle = '废旧金属交易详情';
-          break;
-      }
-
-      return tittle;
     }
   },
   created() {
@@ -330,7 +337,16 @@ export default {
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
-      callback()
+      enumsItems({ types: [1, 3] })
+        .then(res => {
+          if (res.code === 200) {
+            this.enumData = handleEnum(res.data);
+            callback();
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
     },
     handleQuery() {
       this.tableLoading = true

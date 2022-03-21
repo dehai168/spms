@@ -166,22 +166,14 @@ import defaultSettings from '@/settings'
 import { items, create, update, remove } from '@/api/fleaTrade'
 import map from '@/const/map'
 import mapToArray from '@/utils/mapToArray'
+import handleEnum from '@/utils/handleEnum';
+import { enumsItems } from '@/api/common'
 import { formatDate } from '@/utils/index'
 export default {
   data() {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        // district: '',
-        // police_unit: '',
-        // record_code: '',
-        // enterprise: '',
-        // enterprise_address: '',
-        // enterprise_build_no: '',
-        // enterprise_detail_address: '',
-        // junk_type: '',
-        // special_license: '',
-        // legal_person: '',
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -189,19 +181,48 @@ export default {
       tableData: [],
       tableDataCount: 0,
       tableSelected: [],
-      formItems: [
+
+      dialogVisible: false,
+      submitDisabled: false,
+      flag: 'add',
+      addEditForm: {
+
+      },
+      enumData: {},
+
+    };
+  },
+  computed: {
+    dialogTittle() {
+      let tittle = '';
+      switch (this.flag) {
+        case 'edit':
+          tittle = '编辑旧货交易信息';
+          break;
+        case 'add':
+          tittle = '新增旧货交易信息';
+          break;
+        case 'detail':
+          tittle = '旧货交易详情';
+          break;
+      }
+
+      return tittle;
+    },
+    formItems() {
+      return [
         [
           {
             key: 'district',
             label: '行政区划',
             type: 'select',
-            options: mapToArray(map.district, 'string')
+            options: this.enumData[3]
           },
           {
             key: 'police_unit',
             label: '管辖派出所',
             type: 'select',
-            options: mapToArray(map.police_unit, 'string')
+            options: this.enumData[1]
           },
           { key: 'record_code', label: '备案登记号', type: 'input' },
           { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -214,13 +235,15 @@ export default {
         ],
         [
           { key: 'legal_person', label: '法人姓名', type: 'input' },
-          { key: 'special_license', label: '特殊行业许可证', type: 'input'},
+          { key: 'special_license', label: '特殊行业许可证', type: 'input' },
           { key: 'btn', type: 'btn' },
         ]
-      ],
-      columns: [
+      ]
+    },
+    columns() {
+      return [
         { type: 'index', label: '序号', width: 80 },
-        { prop: 'district', label: '行政区划', width: 180, formatter: (r, c, value) => map.district[value] },
+        { prop: 'district', label: '行政区划', width: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
         { prop: 'enterprise', label: '企业名称', minWidth: 180 },
         { prop: 'record_code', label: '备案登记号', width: 120 },
         { prop: 'enterprise_address', label: '企业地址', minWidth: 180 },
@@ -230,28 +253,25 @@ export default {
         { prop: 'special_license', label: '特殊行业许可证', width: 180 },
         { prop: 'legal_person', label: '法人姓名', width: 120 },
         { prop: 'legal_telephone', label: '法人联系电话', minWidth: 180 },
-        { prop: 'police_unit', label: '管辖派出所', minWidth: 200, formatter: (r, c, value) => map.police_unit[value] },
-      ],
-      dialogVisible: false,
-      submitDisabled: false,
-      flag: 'add',
-      addEditForm: {
+        { prop: 'police_unit', label: '管辖派出所', minWidth: 200, formatter: (r, c, value) => this.enumData[1].find(i => i.value === value)?.label },
+      ]
+    },
+    addEditformItems() {
 
-      },
-      addEditformItems: [
+      return [
         {
           key: 'district',
           label: '行政区划',
           type: 'select',
           valueType: 'string',
-          options: mapToArray(map.district, 'string')
+          options: this.enumData[3]
         },
         {
           key: 'police_unit',
           label: '派出所名称',
           type: 'select',
           valueType: 'string',
-          options: mapToArray(map.police_unit, 'string')
+          options: this.enumData[1]
         },
         { key: 'record_code', label: '备案编号', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -323,26 +343,7 @@ export default {
         { key: '操作时间', label: '操作时间', type: 'datePicker' },
         { key: '填表日期', label: '填表日期', type: 'datePicker' },
         { key: '备注', label: '备注', type: 'textarea' },
-
       ]
-    };
-  },
-  computed: {
-    dialogTittle() {
-      let tittle = '';
-      switch (this.flag) {
-        case 'edit':
-          tittle = '编辑旧货交易信息';
-          break;
-        case 'add':
-          tittle = '新增旧货交易信息';
-          break;
-        case 'detail':
-          tittle = '旧货交易详情';
-          break;
-      }
-
-      return tittle;
     }
   },
   created() {
@@ -354,7 +355,16 @@ export default {
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
-      callback()
+      enumsItems({ types: [1, 3] })
+        .then(res => {
+          if (res.code === 200) {
+            this.enumData = handleEnum(res.data);
+            callback();
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
     },
     handleQuery() {
       this.tableLoading = true

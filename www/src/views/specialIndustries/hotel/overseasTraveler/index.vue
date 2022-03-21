@@ -116,6 +116,8 @@ import defaultSettings from '@/settings'
 import { items } from '@/api/overseasTraveler'
 import mapToArray from '@/utils/mapToArray';
 import map from '@/const/map';
+import handleEnum from '@/utils/handleEnum';
+import { enumsItems } from '@/api/common'
 import { formatDate } from '@/utils/index'
 import MyCard from './MyCard.vue'
 export default {
@@ -133,7 +135,14 @@ export default {
       tableData: [],
       tableDataCount: 0,
       tableSelected: [],
-      formItems: [
+      dialogVisible: false,
+      detailData: {},
+      enumData: {},
+    };
+  },
+  computed: {
+    formItems() {
+      return [
         [
           { key: 'inTime', label: '入住时间', type: 'datePicker' },
           { key: 'lastname', label: '英文姓', type: 'input' },
@@ -147,7 +156,7 @@ export default {
             key: 'security_manage_org',
             label: '管辖单位',
             type: 'select',
-            options: mapToArray(map.police_unit, 'string')
+            options: this.enumData[2]
           },
         ],
         [
@@ -168,8 +177,10 @@ export default {
           },
           { key: 'btn', type: 'btn' },
         ]
-      ],
-      columns: [
+      ]
+    },
+    columns() {
+      return [
         { label: '序号', width: 80, type: 'index' },
         { prop: 'last_name', label: '英文姓', minWidth: 120 },
         { prop: 'first_name', label: '英文名', minWidth: 120 },
@@ -184,11 +195,11 @@ export default {
         { prop: 'out_time', label: '退房时间', width: 150 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
-        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
-      ],
-      dialogVisible: false,
-      detailData: {},
-      detailItems: {
+        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => this.enumData[2].find(i => i.value === cellValue)?.label },
+      ]
+    },
+    detailItems() {
+      return {
         '旅客证件信息': {
           width: '40%',
           items: [
@@ -234,7 +245,7 @@ export default {
           ]
         },
       }
-    };
+    }
   },
   created() {
     const that = this
@@ -245,7 +256,16 @@ export default {
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
-      callback()
+      enumsItems({ types: [2] })
+        .then(res => {
+          if (res.code === 200) {
+            this.enumData = handleEnum(res.data);
+            callback();
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
     },
     handleQuery() {
       this.tableLoading = true

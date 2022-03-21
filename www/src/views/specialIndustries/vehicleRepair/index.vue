@@ -172,6 +172,8 @@ import { items, create, update, remove } from '@/api/vehicleRepair'
 import { formatDate } from '@/utils/index'
 import map from '@/const/map'
 import mapToArray from '@/utils/mapToArray'
+import handleEnum from '@/utils/handleEnum';
+import { enumsItems } from '@/api/common'
 import MyCard from './MyCard.vue';
 export default {
   components: {
@@ -181,13 +183,6 @@ export default {
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        // jurisdiction_unit: '',
-        // enterprise_code: '',
-        // credit_code: '',
-        // legal_person: '',
-        // enterprise: '',
-        // inputTime: '',
-        // business_state: '',
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -195,13 +190,39 @@ export default {
       tableData: [],
       tableDataCount: 0,
       tableSelected: [],
-      formItems: [
+
+      dialogVisible: false,
+      submitDisabled: false,
+      flag: 'add',
+      addEditForm: {},
+      enumData: {},
+    };
+  },
+  computed: {
+    dialogTittle() {
+      let tittle = '';
+      switch (this.flag) {
+        case 'edit':
+          tittle = '编辑机动车修理业信息';
+          break;
+        case 'add':
+          tittle = '新增机动车修理业信息';
+          break;
+        case 'detail':
+          tittle = '机动车修理业详情';
+          break;
+      }
+
+      return tittle;
+    },
+    formItems() {
+      return [
         [
           {
             key: 'jurisdiction_unit',
             label: '管辖单位',
             type: 'select',
-            options: mapToArray(map.police_unit, 'string')
+            options: this.enumData[2]
           },
           { key: 'legal_person', label: '法人姓名', type: 'input' },
           { key: 'enterprise', label: '企业名称', type: 'input' },
@@ -218,12 +239,14 @@ export default {
           // { key: 'enterprise_code', label: '企业编码', type: 'input' },
           // { key: 'credit_code', label: '社会信用代码', type: 'input' },
         ],
-      ],
-      columns: [
+      ]
+    },
+    columns() {
+      return [
         { type: 'index', label: '序号', width: 80 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'legal_person', label: '法人姓名', width: 100 },
-        { prop: 'district', label: '行政区划', minWidth: 140, formatter: (r, c, cellValue) => map.district[cellValue] },
+        { prop: 'district', label: '行政区划', minWidth: 140, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
         { prop: 'enterprise_address', label: '企业地址', minWidth: 160 },
         { prop: 'enterprise_telephone', label: '联系电话', minWidth: 180 },
         {
@@ -231,18 +254,14 @@ export default {
           label: '营业状态', width: 100,
           formatter: (r, c, value) => map.business_state[value]
         },
-        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => map.police_unit[cellValue] },
+        { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, value) => this.enumData[2].find(i => i.value === value)?.label },
         // { prop: 'enterprise_code', label: '企业编码', width: 120 },
         // { prop: 'credit_code', label: '社会信用代码', minWidth: 120 },
         { prop: 'input_time', label: '录入时间', width: 180 }
-      ],
-      dialogVisible: false,
-      submitDisabled: false,
-      flag: 'add',
-      addEditForm: {
-
-      },
-      addEditformItems: {
+      ]
+    },
+    addEditformItems() {
+      return {
         '基础信息': [
           [
             {
@@ -259,7 +278,7 @@ export default {
               key: 'jurisdiction_unit',
               label: '管辖单位',
               type: 'select',
-              options: mapToArray(map.police_unit, 'string')
+              options: this.enumData[2]
             },
             { key: 'register_date', label: '企业登记日期', type: 'datePicker' },
           ],
@@ -273,7 +292,7 @@ export default {
               key: 'district',
               label: '行政区域',
               type: 'select',
-              options: mapToArray(map.district, 'string')
+              options: this.enumData[3]
             },
           ],
           [
@@ -312,24 +331,6 @@ export default {
           [{ key: '备注', label: '备注', type: 'textarea', span: 24 }],
         ]
       }
-    };
-  },
-  computed: {
-    dialogTittle() {
-      let tittle = '';
-      switch (this.flag) {
-        case 'edit':
-          tittle = '编辑机动车修理业信息';
-          break;
-        case 'add':
-          tittle = '新增机动车修理业信息';
-          break;
-        case 'detail':
-          tittle = '机动车修理业详情';
-          break;
-      }
-
-      return tittle;
     }
   },
   created() {
@@ -341,7 +342,16 @@ export default {
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
-      callback()
+      enumsItems({ types: [2, 3] })
+        .then(res => {
+          if (res.code === 200) {
+            this.enumData = handleEnum(res.data);
+            callback();
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
     },
     handleQuery() {
       this.tableLoading = true
