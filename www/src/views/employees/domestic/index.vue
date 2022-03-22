@@ -2,7 +2,7 @@
 	<div class="ktv-container">
 		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 150px; margin-bottom: 10px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
-				<el-form-item v-for="formItem in formItems"  style="width: 30%"  :key="formItem.key" :label="formItem.label">
+				<el-form-item v-for="formItem in formItems" style="width: 30%" :key="formItem.key" :label="formItem.label">
 					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
 						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 					</el-select>
@@ -16,8 +16,9 @@
 				</el-form-item>
 			</el-form>
 		</el-header>
-		<div class="ktv-body"  style="padding: 5px;">
-			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px"  type="primary">新增</el-button>
+		<div class="ktv-body" style="padding: 5px">
+			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px" type="primary">新增</el-button>
+			<el-button @click="handleBack" icon="el-icon-back" style="margin-bottom: 10px" v-if="showBack" >返回</el-button>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :width="200" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
@@ -67,6 +68,7 @@ import mapToArray from '../../../utils/mapToArray'
 export default {
 	data() {
 		return {
+			showBack: false,
 			pager: {
 				pageindex: 1,
 				pagesize: 20
@@ -172,7 +174,7 @@ export default {
 						]
 					},
 					{ key: 'birthday', label: '出生日期', type: 'datePicker' },
-					{ key: 'nation', label: '民族', type: 'select', options: mapToArray(MAP.nation,'string') },
+					{ key: 'nation', label: '民族', type: 'select', options: mapToArray(MAP.nation, 'string') },
 					{ key: 'province_city', label: '户籍省县', type: 'input' },
 					{ key: 'detail_address', label: '户籍地详细地址', type: 'input' },
 
@@ -199,7 +201,10 @@ export default {
 	},
 	created() {
 		// 其他页面跳转过来 填充企业名称
-		this.$route.query.enterprise && (this.queryForm.enterprise = this.$route.query.enterprise);
+		if (this.$route.query.enterprise) {
+			this.queryForm.enterprise = this.$route.query.enterprise
+			this.showBack = true
+		}
 		this.getList()
 	},
 	computed: {
@@ -221,6 +226,9 @@ export default {
 		}
 	},
 	methods: {
+		handleBack() {
+			this.$router.go(-1)
+		},
 		async getList() {
 			const params = { ...this.queryForm }
 			this.formItems.forEach(v => {
