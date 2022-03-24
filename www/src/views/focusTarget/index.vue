@@ -15,14 +15,14 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="sex" label="性别">
-              <el-select v-model="queryForm.sex" placeholder="请选择">
+              <el-select v-model="queryForm.sex" placeholder="请选择" clearable>
                 <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="nation" label="民族">
-              <el-select v-model="queryForm.nation" placeholder="请选择">
+              <el-select v-model="queryForm.nation" placeholder="请选择" clearable>
                 <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
@@ -77,12 +77,12 @@
           <el-input v-model="form.certificate_code" maxlength="20" :disabled="isView"></el-input>
         </el-form-item>
         <el-form-item prop="nation" label="名族">
-          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%" :disabled="isView">
+          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%" :disabled="isView" clearable>
             <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="sex" label="性别">
-          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%" :disabled="isView">
+          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%" :disabled="isView" clearable>
             <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
@@ -128,6 +128,7 @@
 import defaultSettings from '@/settings'
 import { items, item, create, update, remove, batchremove, importexcel, exportexcel, exist, templeteUrl, uploadUrl, download } from '@/api/focustarget'
 import Cookies from 'js-cookie'
+import {formatDate} from '@/utils/index'
 export default {
   name: 'FocusTarget',
   components: {},
@@ -156,6 +157,9 @@ export default {
         }
       }
     }
+    const now=new Date();
+    const yestoday=new Date();
+    yestoday.setTime(now.getTime()-3600*24*1000);
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
@@ -174,10 +178,10 @@ export default {
         important_interest_personid: -1,
         certificate_code: '',
         realname: '',
-        sex: '男',
-        nation: '汉族',
-        interest_begin: null,
-        interest_end: null,
+        sex: '',
+        nation: '',
+        interest_begin: formatDate('date',yestoday),
+        interest_end: formatDate('date',now),
         interest_reason: ''
       },
       formRules: {

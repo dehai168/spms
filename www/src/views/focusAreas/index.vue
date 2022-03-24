@@ -15,14 +15,14 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="sex" label="性别">
-              <el-select v-model="queryForm.sex" placeholder="请选择">
+              <el-select v-model="queryForm.sex" placeholder="请选择" clearable>
                 <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item prop="nation" label="民族">
-              <el-select v-model="queryForm.nation" placeholder="请选择">
+              <el-select v-model="queryForm.nation" placeholder="请选择" clearable>
                 <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
@@ -83,12 +83,12 @@
           <el-cascader v-model="form.fence_name_temp" :options="zoneList" style="width: 100%" :disabled="isView"></el-cascader>
         </el-form-item>
         <el-form-item prop="nation" label="名族">
-          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%" :disabled="isView">
+          <el-select v-model="form.nation" placeholder="请选择" style="width: 100%" :disabled="isView" clearable>
             <el-option v-for="item in nationalList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="sex" label="性别">
-          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%" :disabled="isView">
+          <el-select v-model="form.sex" placeholder="请选择" style="width: 100%" :disabled="isView" clearable>
             <el-option v-for="item in sexList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
@@ -193,8 +193,8 @@ export default {
         important_fence: '',
         fence_name: '',
         fence_name_temp: [],
-        nation: '汉族',
-        sex: '男',
+        nation: '',
+        sex: '',
         begin_age: '',
         end_age: '',
         begin_date: formatDate('date',yestoday),
