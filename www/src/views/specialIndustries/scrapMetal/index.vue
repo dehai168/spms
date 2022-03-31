@@ -222,18 +222,18 @@ export default {
             options: this.enumData[1]
           },
           { key: 'enterprise', label: '企业名称', type: 'input' },
-          { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
-
+          // { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
+          { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
         ],
         [
-          { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
+          
           { key: 'economic_type', label: '经济类型', type: 'select', options: mapToArray(map.economic_type) },
           { key: 'security_level', label: '治安级别', type: 'select', options: mapToArray(map.security_level) },
           { key: 'legal_certificate_code', label: '法人证件号码', type: 'input' },
-
+          { key: 'chief_person', label: '单位负责人', type: 'input' },
         ],
         [
-          { key: 'chief_person', label: '单位负责人', type: 'input' },
+          
           { key: 'chief_certificate_code', label: '负责人证件号码', type: 'input' },
           {
             key: 'is_record_register', label: '是否备案登记', type: 'select', options: [
@@ -252,7 +252,7 @@ export default {
        
         { prop: 'enterprise', label: '企业名称', minWidth: 180},
         { prop: 'police_unit', label: '管辖派出所', minWidth: 120, formatter: (r, c, value) => this.enumData[1].find(i => i.value === value)?.label },
-        { prop: 'enterprise_build_no', label: '企业门楼牌号', minWidth: 120, },
+        // { prop: 'enterprise_build_no', label: '企业门楼牌号', minWidth: 120, },
         { prop: 'enterprise_detail_address', label: '企业详址' },
         { prop: 'economic_type', label: '经济类型', formatter: (r, c, value) => map.economic_type[value] },
         { prop: 'security_level', label: '治安级别', formatter: (r, c, value) => map.security_level[value] },
@@ -279,8 +279,8 @@ export default {
         },
         { key: 'enterprise_vice_class', label: '企业副分类', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
-        { key: 'enterprise_street', label: '企业街路巷', type: 'input' },
-        { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
+        // { key: 'enterprise_street', label: '企业街路巷', type: 'input' },
+        // { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
         { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
         { key: 'county_police_unit_code', label: '公安机关代码', type: 'input' },
         { key: '企业组织机构代码', label: '企业组织机构代码', type: 'input' },

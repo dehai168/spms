@@ -228,14 +228,15 @@ export default {
           { key: 'enterprise', label: '企业名称', type: 'input' },
         ],
         [
-          { key: 'enterprise_address', label: '企业地址', type: 'input' },
-          { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
+          // { key: 'enterprise_address', label: '企业地址', type: 'input' },
+          // { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
           { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
           { key: 'junk_type', label: '分类', type: 'select', options: mapToArray(map.trade_type) },
-        ],
-        [
           { key: 'legal_person', label: '法人姓名', type: 'input' },
           { key: 'special_license', label: '特殊行业许可证', type: 'input' },
+        ],
+        [
+          
           { key: 'btn', type: 'btn' },
         ]
       ]
@@ -246,8 +247,8 @@ export default {
         
         { prop: 'enterprise', label: '企业名称', minWidth: 180 },
         { prop: 'record_code', label: '备案登记号', width: 120 },
-        { prop: 'enterprise_address', label: '企业地址', minWidth: 180 },
-        { prop: 'enterprise_build_no', label: '企业门楼牌号', width: 100 },
+        // { prop: 'enterprise_address', label: '企业地址', minWidth: 180 },
+        // { prop: 'enterprise_build_no', label: '企业门楼牌号', width: 100 },
         { prop: 'enterprise_detail_address', label: '企业详址', minWidth: 180 },
         { prop: 'junk_type', label: '分类', width: 150, formatter: (r, c, value) => map.trade_type[value] },
         { prop: 'special_license', label: '特殊行业许可证', width: 180 },
@@ -276,8 +277,8 @@ export default {
         },
         { key: 'record_code', label: '备案编号', type: 'input' },
         { key: 'enterprise', label: '企业名称', type: 'input' },
-        { key: 'enterprise_address', label: '企业地址', type: 'input' },
-        { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
+        // { key: 'enterprise_address', label: '企业地址', type: 'input' },
+        // { key: 'enterprise_build_no', label: '企业门楼牌号', type: 'input' },
         {
           key: 'junk_type',
           label: '分类',
