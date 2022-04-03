@@ -1,0 +1,1 @@
+http://121.36.99.212:35001/mapdemo/index.htm#core/map

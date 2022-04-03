@@ -10,16 +10,16 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
-import {getDynamicMap} from './const/map'
+import { getDynamicMap } from './const/map'
 import '@/icons' // icon
 import '@/permission' // permission control
 
 import MyCard from './views/specialIndustries/hotel/hotelBase/MyCard.vue'
 
-Vue.use(ElementUI,{
+Vue.use(ElementUI, {
   size: 'mini',
 })
-Vue.component('my-card',MyCard)
+Vue.component('my-card', MyCard)
 Vue.config.productionTip = false
 Vue.prototype.$succ = () => {
   ElementUI.Notification({

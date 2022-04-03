@@ -9,5 +9,5 @@ module.exports = {
   /**
    *
    */
-  csrfTokenName: 'x-csrf-token'
+  csrfTokenName: 'x-csrf-token',
 }
