@@ -226,7 +226,7 @@ export default {
       margin: 0;
       float: left;
       text-align: center;
-      width: 150px;
+      width: 185px;
       font-weight: 600;
       line-height: 60px;
       font-size: 20px;

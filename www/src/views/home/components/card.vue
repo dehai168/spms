@@ -52,10 +52,11 @@ export default {
   font-size: 38px;
   color: #409eff;
   text-align: center;
+  margin-right: 10px;
 }
 .text {
   font-size: 14px;
-  max-width: 130px;
+  min-width: 100px;
   text-align: left;
   line-height: 22px;
 }

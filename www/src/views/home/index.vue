@@ -7,18 +7,18 @@
       <fieldset>
         <legend>特殊行业</legend>
         <ul>
-          <li><el-checkbox v-model="checkList[0]" @change="handleCheck" class="marginRight">旅馆业</el-checkbox>图例<img :src="imgList[0]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[4]" @change="handleCheck" class="marginRight">公章刻制业</el-checkbox>图例<img :src="imgList[1]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[1]" @change="handleCheck" class="marginRight">旧货交易</el-checkbox>图例<img :src="imgList[2]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[2]" @change="handleCheck" class="marginRight">机动车维修</el-checkbox>图例<img :src="imgList[3]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[3]" @change="handleCheck" class="marginRight">废旧金属回收</el-checkbox>图例<img :src="imgList[4]" alt="" srcset="" /></li>
+          <li><el-checkbox v-model="checkList[0]" @change="handleCheck" class="marginRight">旅馆业</el-checkbox></li>
+          <li><el-checkbox v-model="checkList[4]" @change="handleCheck" class="marginRight">公章刻制业</el-checkbox></li>
+          <li><el-checkbox v-model="checkList[1]" @change="handleCheck" class="marginRight">旧货交易</el-checkbox></li>
+          <li><el-checkbox v-model="checkList[2]" @change="handleCheck" class="marginRight">机动车维修</el-checkbox></li>
+          <li><el-checkbox v-model="checkList[3]" @change="handleCheck" class="marginRight">废旧金属回收</el-checkbox></li>
         </ul>
       </fieldset>
       <fieldset>
         <legend>娱乐场所</legend>
         <ul>
-          <li><el-checkbox v-model="checkList[6]" @change="handleCheck" class="marginRight">酒吧</el-checkbox>图例<img :src="imgList[5]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[5]" @change="handleCheck" class="marginRight">KTV</el-checkbox>图例<img :src="imgList[6]" alt="" srcset="" /></li>
+          <li><el-checkbox v-model="checkList[6]" @change="handleCheck" class="marginRight">酒吧</el-checkbox></li>
+          <li><el-checkbox v-model="checkList[5]" @change="handleCheck" class="marginRight">KTV</el-checkbox></li>
         </ul>
       </fieldset>
     </el-card>
@@ -51,6 +51,7 @@ import location_5 from '@/assets/map/location_5.png'
 import location_6 from '@/assets/map/location_6.png'
 import location_7 from '@/assets/map/location_7.png'
 import card from './components/card.vue'
+import gcoodrd from 'gcoord'
 export default {
   name: 'Home',
   components: {
@@ -134,10 +135,10 @@ export default {
         this.map = new mapabcgl.Map({
           container: 'spms_map',
           style: 'mapabc://style/mapabc79w',
-          zoom: 16,
+          zoom: 13,
           maxZoom: 23,
           minZoom: 10,
-          center: [106.54, 29.59],
+          center: [106.5450302501726, 29.55581955753103],
           pitch: 0
         })
         this.map.addControl(new mapabcgl.NavControl({ showCompass: true, position: 'bottom-right' }))
@@ -171,11 +172,19 @@ export default {
       const that = this
       const features = []
       list.forEach(element => {
-        features.push({
-          type: 'Feature',
-          properties: element,
-          geometry: { type: 'Point', coordinates: [element.lng, element.lat, 0.0] }
-        })
+        // 纠偏
+        const transform = gcoodrd.transform([element.lng, element.lat], gcoodrd.WGS84, gcoodrd.GCJ02)
+        element.lng = transform[0]
+        element.lat = transform[1]
+        // 按勾选过滤
+        if (that.checkList[element.type - 1]) {
+          features.push({
+            type: 'Feature',
+            properties: element,
+            geometry: { type: 'Point', coordinates: [element.lng, element.lat, 0.0] }
+          })
+        }
+
         const index = that.countList.findIndex(v => {
           return v.id === element.type
         })
@@ -186,6 +195,78 @@ export default {
         }
         this.infoList.push(element)
       })
+      this.map.addSource('earthquakes', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features
+        },
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50
+      })
+
+      this.map.addLayer({
+        id: 'clusters',
+        type: 'circle',
+        source: 'earthquakes',
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
+          'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+        }
+      })
+      this.map.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: 'earthquakes',
+        filter: ['has', 'point_count'],
+        layout: {
+          'text-field': '{point_count_abbreviated}',
+          'text-font': ['sourcehansanscn-normal'],
+          'text-size': 12
+        }
+      })
+      this.map.addLayer({
+        id: 'unclustered-point',
+        type: 'symbol',
+        source: 'earthquakes',
+        filter: ['!has', 'point_count'],
+        layout: {
+          'icon-image': 'location_1',
+          'icon-size': 1
+        }
+      })
+      this.map.on('click', 'unclustered-point', function (e) {
+        // TODO 如果知道点击了那个点
+        console.log(e)
+        that.loadPopup(834, 1)
+      })
+      this.map.on('mouseenter', 'unclustered-point', function () {
+        that.map.getCanvas().style.cursor = 'pointer'
+      })
+      this.map.on('mouseleave', 'unclustered-point', function () {
+        that.map.getCanvas().style.cursor = ''
+      })
+    },
+    refreshCluster() {
+      const that = this
+      const features = []
+      this.infoList.forEach(element => {
+        if (that.checkList[element.type - 1]) {
+          features.push({
+            type: 'Feature',
+            properties: element,
+            geometry: { type: 'Point', coordinates: [element.lng, element.lat, 0.0] }
+          })
+        }
+      })
+
+      this.map.removeLayer('unclustered-point')
+      this.map.removeLayer('cluster-count')
+      this.map.removeLayer('clusters')
+      this.map.removeSource('earthquakes')
+
       this.map.addSource('earthquakes', {
         type: 'geojson',
         data: {
@@ -372,7 +453,7 @@ export default {
       }
     },
     handleCheck() {
-      console.log(this.checkList)
+      this.refreshCluster()
     }
   }
 }
@@ -389,7 +470,7 @@ export default {
   left: 0;
   right: 0;
   top: 10px;
-  width: 1045px;
+  width: 1110px;
   height: 90px;
   z-index: 9999;
   margin: auto;
@@ -413,7 +494,7 @@ export default {
   z-index: 9999;
 }
 .el-select-dropdown__item {
-    height: 100px;
+  height: 100px;
 }
 .el-card >>> .el-card__body {
   padding: 5px;
