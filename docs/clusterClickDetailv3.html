@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'/>
+    <title>点聚合</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link rel="stylesheet" type="text/css"
+          href="http://121.36.99.212:35001/mapdemo/apidemos/sourceLinks/css/style.css">
+    <script type="text/javascript"
+            src="http://121.36.99.212:35001/webglapi/lib?n=mapabc-gl-api-min&v=0.54.0-beta.1&ak=ec85d3648154874552835438ac6a02b2"></script>
+
+</head>
+<body>
+
+
+<div class="map-container" id='map'></div>
+    <div id="pannel" class="control_panel position_lb">
+        <span class="button" onclick="addCluster()">渲染</span>
+        <span class="button" onclick="removeCluster()">移除</span>
+    </div> 
+<script>
+    mapabcgl.accessToken = 'ec85d3648154874552835438ac6a02b2';
+    var map = new mapabcgl.Map({
+        container: 'map',
+        style: 'mapabc://style/mapabc80',
+        zoom: 11,
+        maxZoom: 18,
+        minZoom: 3,
+        center: [116.397862, 39.908687]
+    });
+    // map.on('load', function () {
+    //     addCluster();
+    // });
+
+    function addCluster() {
+
+
+        map.addSource("earthquakes", {
+            type: "geojson",
+
+            // data: "http://115.28.145.254:35001/mapdemo/apidemos/sourceLinks/data/earthquakes.geojson",
+            data: {
+                "type": "FeatureCollection",
+                "features": [
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak16994521",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862, 39.908687, 0.0]}
+                    },
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak16994522",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862, 39.908687, 0.0]}
+                    },
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak16994523",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862 + 0.01, 39.908687, 0.0]}
+                    },
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak1699444",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862 + 0.02, 39.908687, 0.0]}
+                    },
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak16995521",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862, 39.908687, 0.0]}
+                    },
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak16966521",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862, 39.908687, 0.0]}
+                    },
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak16977521",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862, 39.908687, 0.0]}
+                    },
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak16988521",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862, 39.908687, 0.0]}
+                    },
+                    {"type": "Feature",
+                        "properties": {
+                            "id": "ak1696664521",
+                            "mag": 2.3,
+                            "time": 1507425650893,
+                            "felt": null,
+                            "tsunami": 0
+                        },
+                        "geometry": {"type": "Point", "coordinates": [116.397862, 39.908687 + 0.01, 0.0]}
+                    }]
+            },
+
+            cluster: true,
+            clusterMaxZoom: 14,
+            clusterRadius: 50
+        });
+
+        map.addLayer({
+            id: "clusters",
+            type: "circle",
+            source: "earthquakes",
+            filter: ["has", "point_count"],
+            paint: {
+
+                "circle-color": [
+                    "step",
+                    ["get", "point_count"],
+                    "#51bbd6",
+                    100,
+                    "#f1f075",
+                    750,
+                    "#f28cb1"
+                ],
+                "circle-radius": [
+                    "step",
+                    ["get", "point_count"],
+                    20,
+                    100,
+                    30,
+                    750,
+                    40
+                ]
+            }
+        });
+
+        map.addLayer({
+            id: "cluster-count",
+            type: "symbol",
+            source: "earthquakes",
+            filter: ["has", "point_count"],
+            layout: {
+                "text-field": "{point_count_abbreviated}",
+                "text-font": ["sourcehansanscn-normal"],
+                "text-size": 12
+            }
+        });
+
+        map.addLayer({
+            id: "unclustered-point",
+            type: "circle",
+            source: "earthquakes",
+            filter: ["!has", "point_count"],
+            paint: {
+                "circle-color": "#11b4da",
+                "circle-radius": 4,
+                "circle-stroke-width": 1,
+                "circle-stroke-color": "#fff"
+            }
+        });
+
+        // inspect a cluster on click
+        map.on('click', 'clusters', function (e) {
+            var features = map.queryRenderedFeatures(e.point, {layers: ['clusters']});
+            var clusterId = features[0].properties.cluster_id;
+
+            map.getSource('earthquakes').getClusterChildren(clusterId, function (err, children) {
+                if (err)
+                    return;
+                console.log(children);
+            });
+
+            map.getSource('earthquakes').getClusterLeaves(clusterId, 1000000, 0, function (err, leaves) {
+                if (err)
+                    return;
+
+                console.log(leaves);
+
+            });
+            // map.getSource('earthquakes').getClusterExpansionZoom(clusterId, function (err, zoom) {
+            //     if (err)
+            //         return;
+            //
+            //     map.easeTo({
+            //         center: features[0].geometry.coordinates,
+            //         zoom: zoom
+            //     });
+            // });
+        });
+
+        let popup = new mapabcgl.Popup({className: 'my-class'});
+        // 未聚合图层鼠标移入pop框显示 mouseenter click
+        map.on('click', 'unclustered-point', function (e) {
+            console.log(e)
+            // 改变鼠标样式
+            //map.getCanvas().style.cursor = 'pointer';
+            let features = e.features[0].properties;
+            popup.setLngLat(e.lngLat)
+            popup.setHTML(`<h3>id: ${features.id}</h3><h3>time: ${features.time}</h3>`)
+            popup.setMaxWidth("300px")
+            popup.addTo(map);
+        });
+
+    };
+
+
+    function removeCluster(){
+            map.removeLayer("clusters")
+            map.removeLayer("cluster-count")
+            map.removeLayer("unclustered-point")
+            map.removeSource("earthquakes")
+    }
+    
+
+</script>
+
+</body>
+</html>

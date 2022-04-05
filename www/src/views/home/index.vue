@@ -238,9 +238,10 @@ export default {
         }
       })
       this.map.on('click', 'unclustered-point', function (e) {
+        let features = e.features[0].properties
         // TODO 如果知道点击了那个点
-        console.log(e)
-        that.loadPopup(834, 1)
+        console.log(features)
+        that.loadPopup(features.id, features.type)
       })
       this.map.on('mouseenter', 'unclustered-point', function () {
         that.map.getCanvas().style.cursor = 'pointer'
@@ -310,8 +311,8 @@ export default {
         }
       })
       this.map.on('click', 'unclustered-point', function (e) {
-        // TODO 如果知道点击了那个点
-        that.loadPopup(834, 1)
+        let features = e.features[0].properties
+        that.loadPopup(features.id, features.type)
       })
       this.map.on('mouseenter', 'unclustered-point', function () {
         that.map.getCanvas().style.cursor = 'pointer'
