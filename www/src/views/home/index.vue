@@ -124,11 +124,12 @@ export default {
     this.initMap()
   },
   created() {
-    this.loadMarker()
+    const that = this
   },
   methods: {
     init() {},
     initMap() {
+      mapabcgl.accessToken = 'ec85d3648154874552835438ac6a02b2'
       if (!mapabcgl.supported()) {
         alert('您的浏览器不支持Mapabc GL')
       } else {
@@ -145,16 +146,18 @@ export default {
         const that = this
         this.map.on('load', function () {
           that.loadMarkerImage()
+          that.loadMarker()
         })
       }
     },
     loadMarkerImage() {
+      const that = this
       for (let index = 0; index < 7; index++) {
-        const img = new Image()
-        img.src = this.imgList[index]
-        img.width = 32
-        img.height = 32
-        this.map.addImage('location_' + (index + 1), img)
+        ;(function (index) {
+          that.map.loadImage(that.imgList[index], function (error, image) {
+            that.map.addImage('location_' + index, image)
+          })
+        })(index)
       }
     },
     loadMarker() {
@@ -239,8 +242,6 @@ export default {
       })
       this.map.on('click', 'unclustered-point', function (e) {
         let features = e.features[0].properties
-        // TODO 如果知道点击了那个点
-        console.log(features)
         that.loadPopup(features.id, features.type)
       })
       this.map.on('mouseenter', 'unclustered-point', function () {
@@ -325,7 +326,7 @@ export default {
       const htmlArray = []
       htmlArray.push("<div style='width:400px;'>")
       htmlArray.push("<ul style='list-style: none;line-height: 20px;padding: 0;margin: 0;'>")
-      htmlArray.push("<li><span style='font-weight:bold;font-size:16px;color:#409EFF'>" + object.enterprise + '</span></li>')
+      htmlArray.push("<li><span style='font-weight:bold;font-size:16px;color:#409EFF'>" + (object.enterprise || object.recreation_place_name) + '</span></li>')
       htmlArray.push("<li><span style='font-weight:bold'>社会统一信用代码</span>:<span style='color:#909399'>" + (object.credit_code || '') + '</span></li>')
       htmlArray.push("<li><span style='font-weight:bold'>企业电话</span>:<span style='color:#909399'>" + (object.enterprise_telephone || '') + '</span></li>')
       htmlArray.push("<li><span style='font-weight:bold'>经济类型</span>:<span style='color:#909399'>" + (object.economic_type || '') + '</span></li>')
@@ -389,6 +390,11 @@ export default {
             })
             if (item) {
               this.openPopup(item, component.$el.outerHTML)
+            } else {
+              this.$message({
+                message: '该企业没有定位信息',
+                type: 'warning'
+              })
             }
           }
         })
@@ -397,18 +403,24 @@ export default {
         })
     },
     openPopup(lnglat, html) {
-      if (lnglat.lng === 0 && lnglat.lat === 0) return
-      if (this.popup) {
-        this.popup.remove()
+      if (lnglat.lng === 0 && lnglat.lat === 0) {
+        this.$message({
+          message: '该企业没有定位信息',
+          type: 'warning'
+        })
+      } else {
+        if (this.popup) {
+          this.popup.remove()
+        }
+        var popupOption = {
+          closeOnClick: true,
+          closeButton: true,
+          anchor: 'bottom-left',
+          offset: [0, 0]
+        }
+        this.popup = new mapabcgl.Popup(popupOption).setLngLat(new mapabcgl.LngLat(lnglat.lng, lnglat.lat)).setHTML(html).addTo(this.map)
+        this.map.setCenter([lnglat.lng, lnglat.lat])
       }
-      var popupOption = {
-        closeOnClick: true,
-        closeButton: true,
-        anchor: 'bottom-left',
-        offset: [0, 0]
-      }
-      this.popup = new mapabcgl.Popup(popupOption).setLngLat(new mapabcgl.LngLat(lnglat.lng, lnglat.lat)).setHTML(html).addTo(this.map)
-      this.map.setCenter([lnglat.lng, lnglat.lat])
     },
     // search() {
     //   if (this.keywords.length > 0) {
@@ -446,11 +458,14 @@ export default {
       }
     },
     handleSelect(id) {
+      console.log(id)
       const item = this.searchResultList.find(v => {
         return v.systemid === id
       })
       if (item) {
         this.loadPopup(item.systemid, item.type)
+      } else {
+        console.log(item)
       }
     },
     handleCheck() {
