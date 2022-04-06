@@ -173,7 +173,7 @@ export const constantRoutes = [
   {
     path: '/employees',
     component: Layout,
-    meta: { title: '从业人员', icon: 'el-icon-school' },
+    meta: { title: '要素采集', icon: 'el-icon-school' },
     children: [
       {
         path: '/employees/domestic',

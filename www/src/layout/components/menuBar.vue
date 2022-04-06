@@ -14,7 +14,7 @@
           <app-link to="/entertainment-places"> <i class="el-icon-mic"></i> 娱乐场所 </app-link>
         </li>
         <li :class="{ active: activeMenu.indexOf('/employees/') > -1 }">
-          <app-link to="/employees"><i class="el-icon-s-custom"></i> 从业人员 </app-link>
+          <app-link to="/employees"><i class="el-icon-s-custom"></i> 要素采集 </app-link>
         </li>
         <li :class="{ active: activeMenu.indexOf('/analysis/') > -1 }">
           <app-link to="/analysis"><i class="el-icon-s-data"></i> 智能研判分析 </app-link>
