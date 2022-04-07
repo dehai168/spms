@@ -243,21 +243,22 @@ export default {
     },
     columns() {
       return [
-        { type: 'index', label: '序号', width: 80 },
+        { type: 'index', label: '序号', width: 50 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'legal_person', label: '法人姓名', width: 100 },
         { prop: 'district', label: '行政区划', minWidth: 140, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
-        { prop: 'enterprise_address', label: '企业地址', minWidth: 160 },
-        { prop: 'enterprise_telephone', label: '联系电话', minWidth: 180 },
+        { prop: 'enterprise_telephone', label: '联系电话', minWidth: 140 },
         {
           prop: 'business_state',
           label: '营业状态', width: 100,
           formatter: (r, c, value) => map.business_state[value]
         },
         { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, value) => this.enumData[2].find(i => i.value === value)?.label },
+        { prop: 'enterprise_address', label: '企业地址', minWidth: 160 },
+
         // { prop: 'enterprise_code', label: '企业编码', width: 120 },
         // { prop: 'credit_code', label: '社会信用代码', minWidth: 120 },
-        { prop: 'input_time', label: '录入时间', width: 180 }
+        { prop: 'input_time', label: '录入时间', width: 140 }
       ]
     },
     addEditformItems() {

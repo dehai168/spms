@@ -20,7 +20,7 @@
 			<!-- <el-button @click="dialogFormVisible = true">新增</el-button> -->
 			<div style="height: calc(100vh - 270px)">
 				<el-table :data="tableData" border height="100%">
-					<el-table-column v-for="column in columns"  :show-overflow-tooltip="true" :width="column.width"   :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
+					<el-table-column v-for="column in columns"  :show-overflow-tooltip="true"  v-bind="column"  :key="column.prop" />
 					<el-table-column prop="operate" label="操作" fixed="right">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
@@ -183,12 +183,12 @@ export default {
 			tableData: [],
 			columns: [
 				{ prop: 'seal_code', label: '印章编码',width: 150 },
-				{ prop: 'enterprise', label: '使用单位名称',width: 250 },
-				{ prop: 'legal_person', label: '法人姓名', width: 200},
+				{ prop: 'enterprise', label: '使用单位名称',minWidth: 250 },
+				{ prop: 'legal_person', label: '法人姓名', width: 90},
+				{ prop: 'seal_state', label: '印章状态',width: 100 },
+				{ prop: 'record_result', label: '备案状态', formatter: (row, col, cell) => MAP.record_result[cell], width: 100},
 				{ prop: 'submit_record_time', label: '提交备案时间',width: 150 },
 				{ prop: 'record_confirm_time', label: '备案时间', width: 150},
-				{ prop: 'seal_state', label: '印章状态',width: 150 },
-				{ prop: 'record_result', label: '备案状态', formatter: (row, col, cell) => MAP.record_result[cell], width: 150},
 				// { prop: 'checkStatus', label: '消息来源', },
 				{ prop: 'input_time', label: '录入时间', width: 150},
 			],

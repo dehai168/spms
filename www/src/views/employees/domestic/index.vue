@@ -21,7 +21,7 @@
 			<el-button @click="handleBack" icon="el-icon-back" style="margin-bottom: 10px" v-if="showBack" >返回</el-button>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
-					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :width="200" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
+					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop"  v-bind="column"/>
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
@@ -137,15 +137,15 @@ export default {
 			pageindex: 1,
 			tableData: [],
 			columns: [
-				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell] },
+				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
 				{ prop: 'enterprise', label: '企业名称' },
 				// { prop: 'domestic_employeeid', label: '人员编号', },
-				{ prop: 'realname', label: '姓名', },
-				{ prop: 'certificate_code', label: '证件号码' },
-				{ prop: 'sex', label: '性别', },
-				{ prop: 'nation', label: '民族', },
-				{ prop: 'state', label: '在职状态', formatter: (row, col, cell) => MAP.employeeState[cell] },
-				{ prop: 'input_time', label: '录入时间', },
+				{ prop: 'realname', label: '姓名', width: 80},
+				{ prop: 'certificate_code', label: '证件号码', width: 160 },
+				{ prop: 'sex', label: '性别', width: 60},
+				{ prop: 'nation', label: '民族', width: 100},
+				{ prop: 'state', label: '在职状态', formatter: (row, col, cell) => MAP.employeeState[cell], width: 100 },
+				{ prop: 'input_time', label: '录入时间', width: 140},
 
 			],
 			dialogVisible: false,

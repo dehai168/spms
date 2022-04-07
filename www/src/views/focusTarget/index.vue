@@ -165,8 +165,8 @@ export default {
       queryForm: {
         realname: '',
         certificate_code: '',
-        sex: '男',
-        nation: '汉族',
+        sex: '',
+        nation: '',
         daterange: [],
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1

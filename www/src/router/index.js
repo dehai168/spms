@@ -194,7 +194,7 @@ export const constantRoutes = [
       },
       {
         path: 'employees',
-        meta: { title: '从业人员', icon: 'el-icon-s-custom' },
+        meta: { title: '要素采集', icon: 'el-icon-s-custom' },
         component: SubLayout,
         redirect: '/basicinfo/employees/domestic',
         children: [

@@ -179,8 +179,8 @@ export default {
         important_fence: '',
         fence_name_temp: [],
         fence_name: '',
-        sex: '男',
-        nation: '汉族',
+        sex: '',
+        nation: '',
         daterange: [],
         size: defaultSettings.pageSizes[0],
         index: 1

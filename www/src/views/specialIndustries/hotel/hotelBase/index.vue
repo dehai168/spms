@@ -331,16 +331,16 @@ export default {
     },
     columns() {
       return [
-        { type: 'index', label: '序号', width: 80 },
+        { type: 'index', label: '序号', width: 50 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'credit_code', label: '社会统一信用代码', width: 180 },
-        { prop: 'enterprise_code', label: '企业编码', width: 80 },
+        { prop: 'enterprise_code', label: '企业编码', width: 100 },
         { prop: 'legal_person', label: '法人姓名', width: 80 },
         { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => this.enumData[2].find(i => i.value === cellValue)?.label },
-        { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
-        { prop: 'enterprise_telephone', label: '联系电话', width: 180 },
+        { prop: 'sign_name', label: '招牌名称', minWidth: 120 },
+        { prop: 'enterprise_telephone', label: '联系电话', width: 140 },
         { prop: 'business_state', label: '营业状态', width: 80, formatter: (row, column, cellValue, index) => map.business_state[cellValue] },
-        { prop: 'input_time', label: '录入时间', width: 180 },
+        { prop: 'input_time', label: '录入时间', width: 140 },
 
         // { prop: 'checkStatus', label: '核查状态', width: 80 },
         // { prop: 'trade_type', label: '行业类别', width: 120, formatter: (row, column, cellValue, index) => map.hotel_trade_type[cellValue] },

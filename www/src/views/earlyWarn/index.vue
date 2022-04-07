@@ -38,7 +38,7 @@
     </el-header>
     <el-main class="main">
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%">
-        <el-table-column prop="alarm_time" label="预警时间" width="135"> </el-table-column>
+        <el-table-column prop="alarm_time" label="入住时间" width="135"> </el-table-column>
         <el-table-column prop="alarm_address" label="预警地点"> </el-table-column>
         <el-table-column prop="alarm_reason" label="预警原因"> </el-table-column>
         <el-table-column prop="realname" label="姓名"> </el-table-column>
@@ -49,7 +49,7 @@
             <el-tag type="danger" v-else>未处理</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="dispose_user" label="处理人" width="80"> </el-table-column>
+        <!-- <el-table-column prop="dispose_user" label="处理人" width="80"> </el-table-column> -->
         <el-table-column prop="dispose_time" label="处理时间" width="135"> </el-table-column>
         <el-table-column prop="dispose_msg" label="处理结果"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="60">
