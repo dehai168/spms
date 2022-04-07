@@ -243,7 +243,7 @@ export default {
     },
     columns() {
       return [
-        { type: 'index', label: '序号', width: 80 },
+        { type: 'index', label: '序号', width: 50 },
         
         { prop: 'enterprise', label: '企业名称', minWidth: 180 },
         { prop: 'record_code', label: '备案登记号', width: 120 },
@@ -251,11 +251,11 @@ export default {
         // { prop: 'enterprise_build_no', label: '企业门楼牌号', width: 100 },
         { prop: 'enterprise_detail_address', label: '企业详址', minWidth: 180 },
         { prop: 'junk_type', label: '分类', width: 150, formatter: (r, c, value) => map.trade_type[value] },
-        { prop: 'special_license', label: '特殊行业许可证', width: 180 },
         { prop: 'legal_person', label: '法人姓名', width: 120 },
-        { prop: 'legal_telephone', label: '法人联系电话', minWidth: 180 },
-        { prop: 'police_unit', label: '管辖派出所', minWidth: 200, formatter: (r, c, value) => this.enumData[1].find(i => i.value === value)?.label },
         { prop: 'district', label: '行政区划', width: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
+        { prop: 'police_unit', label: '管辖派出所', minWidth: 200, formatter: (r, c, value) => this.enumData[1].find(i => i.value === value)?.label },
+        { prop: 'legal_telephone', label: '法人联系电话', minWidth: 180 },
+        { prop: 'special_license', label: '特殊行业许可证', width: 180 },
       ]
     },
     addEditformItems() {

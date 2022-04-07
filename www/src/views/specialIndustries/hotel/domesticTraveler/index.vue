@@ -183,7 +183,7 @@ export default {
     },
     columns() {
       return [
-        { label: '序号', width: 80, type: 'index' },
+        { label: '序号', width: 50, type: 'index' },
         { prop: 'realname', label: '姓名', width: 120 },
         { prop: 'sex', label: '性别', width: 80 },
         { prop: 'certificate_code', label: '证件号码', width: 180 },

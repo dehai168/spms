@@ -181,7 +181,7 @@ export default {
     },
     columns() {
       return [
-        { label: '序号', width: 80, type: 'index' },
+        { label: '序号', width: 50, type: 'index' },
         { prop: 'last_name', label: '英文姓', minWidth: 120 },
         { prop: 'first_name', label: '英文名', minWidth: 120 },
         { prop: 'chinese_name', label: '中文姓名', width: 80 },
