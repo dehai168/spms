@@ -20,7 +20,7 @@
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
 			<div style="height: calc(100vh - 270px)">
 				<el-table :data="tableData" border height="100%">
-					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :width="200" :key="column.prop" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
+					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop"  v-bind="column" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
@@ -246,9 +246,9 @@ export default {
 				{ prop: 'recreation_place_name', label: '娱乐场所名称', },
 				{ prop: 'place_main_type', label: '场所主分类', },
 				{ prop: 'record_code', label: '备案登记号' },
-				{ prop: 'recreation_place_state', label: '场所状态', formatter: (row, col, cell) => MAP.recreation_place_state[cell] },
-				{ prop: 'security_level', label: '治安级别', formatter: (row, col, cell) => MAP.security_level[cell] },
-				{ prop: 'persons', label: '总人数', width: 100 },
+				{ prop: 'recreation_place_state', label: '场所状态', formatter: (row, col, cell) => MAP.recreation_place_state[cell], width: 100 },
+				{ prop: 'security_level', label: '治安级别', formatter: (row, col, cell) => MAP.security_level[cell], width: 100 },
+				{ prop: 'persons', label: '总人数', width: 80 },
 				{ prop: 'security_manage_unit', label: '治安管理机构', formatter: (row, col, cell) => MAP.jurisdiction_unit[cell] },
 			],
 			dialogVisible: false

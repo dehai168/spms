@@ -49,7 +49,7 @@
             <el-tag type="danger" v-else>未处理</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="dispose_user" label="处理人" width="80"> </el-table-column>
+        <!-- <el-table-column prop="dispose_user" label="处理人" width="80"> </el-table-column> -->
         <el-table-column prop="dispose_time" label="处理时间" width="135"> </el-table-column>
         <el-table-column prop="dispose_msg" label="处理结果"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="60">

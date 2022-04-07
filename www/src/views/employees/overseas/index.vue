@@ -20,7 +20,7 @@
 			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px" type="primary">新增</el-button>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
-					<el-table-column v-for="column in columns" :key="column.prop" :show-overflow-tooltip="true" :width="200" :prop="column.prop" :label="column.label" :formatter="column.formatter" />
+					<el-table-column v-for="column in columns" :key="column.prop" :show-overflow-tooltip="true" v-bind="column"/>
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
@@ -144,17 +144,17 @@ export default {
 			pageindex: 1,
 			tableData: [],
 			columns: [
-				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell] },
+				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
 				{ prop: 'enterprise', label: '企业名称' },
 				// { prop: 'abroad_employeeid', label: '人员编号', },
-				{ prop: 'last_name', label: '英文姓', },
-				{ prop: 'first_name', label: '英文名', },
-				{ prop: 'chinese_name', label: '中文姓名', },
-				{ prop: 'certificate_code', label: '证件号码' },
-				{ prop: 'sex', label: '性别', },
+				{ prop: 'last_name', label: '英文姓', width: 80},
+				{ prop: 'first_name', label: '英文名', width: 80},
+				{ prop: 'chinese_name', label: '中文姓名', width: 80},
+				{ prop: 'certificate_code', label: '证件号码', width: 140 },
+				{ prop: 'sex', label: '性别', width: 60},
 				{ prop: 'nationality', label: '国籍', },
-				{ prop: 'state', label: '在职状态', formatter: (row, col, cell) => MAP.employeeState[cell] },
-				{ prop: 'input_time', label: '录入时间', },
+				{ prop: 'state', label: '在职状态', formatter: (row, col, cell) => MAP.employeeState[cell], width: 80 },
+				{ prop: 'input_time', label: '录入时间', width: 140},
 			],
 			dialogVisible: false,
 			submitDisabled: false,
