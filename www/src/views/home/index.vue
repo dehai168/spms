@@ -268,6 +268,9 @@ export default {
       this.map.removeLayer('cluster-count')
       this.map.removeLayer('clusters')
       this.map.removeSource('earthquakes')
+      if (this.popup) {
+        this.popup.remove()
+      }
 
       this.map.addSource('earthquakes', {
         type: 'geojson',
@@ -418,7 +421,7 @@ export default {
           anchor: 'bottom-left',
           offset: [0, 0]
         }
-        this.popup = new mapabcgl.Popup(popupOption).setLngLat(new mapabcgl.LngLat(lnglat.lng, lnglat.lat)).setHTML(html).addTo(this.map)
+        this.popup = new mapabcgl.Popup(popupOption).setLngLat(new mapabcgl.LngLat(lnglat.lng, lnglat.lat)).setHTML(html).setMaxWidth('300px').addTo(this.map)
         this.map.setCenter([lnglat.lng, lnglat.lat])
       }
     },
