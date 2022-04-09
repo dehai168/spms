@@ -277,7 +277,7 @@ export default {
 	},
 	methods: {
 		handlePerson(index, row) {
-			this.$router.push({ path: '/employees/domestic', query: { enterprise: row.recreation_place_name } });
+			this.$router.push({ path: '/employees/domestic', query: { enterprise: row.recreation_place_name, enterprise_id: row.ktvid } });
 		},
 		async getList() {
 			const params = { ...this.queryForm }

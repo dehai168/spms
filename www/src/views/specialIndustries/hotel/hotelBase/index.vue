@@ -518,7 +518,7 @@ export default {
       this.dialogVisible = true;
     },
     handlePerson(index, row) {
-      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.hotelid } });
     },
     handleRemove(index, row) {
       this.removeData(row.hotelid)

@@ -226,14 +226,14 @@ export default {
           { key: 'enterprise_detail_address', label: '企业详址', type: 'input' },
         ],
         [
-          
+
           { key: 'economic_type', label: '经济类型', type: 'select', options: mapToArray(map.economic_type) },
           { key: 'security_level', label: '治安级别', type: 'select', options: mapToArray(map.security_level) },
           { key: 'legal_certificate_code', label: '法人证件号码', type: 'input' },
           { key: 'chief_person', label: '单位负责人', type: 'input' },
         ],
         [
-          
+
           { key: 'chief_certificate_code', label: '负责人证件号码', type: 'input' },
           {
             key: 'is_record_register', label: '是否备案登记', type: 'select', options: [
@@ -249,18 +249,18 @@ export default {
     columns() {
       return [
         { type: 'index', label: '序号', },
-       
-        { prop: 'enterprise', label: '企业名称', minWidth: 180},
+
+        { prop: 'enterprise', label: '企业名称', minWidth: 180 },
         { prop: 'police_unit', label: '管辖派出所', minWidth: 120, formatter: (r, c, value) => this.enumData[1].find(i => i.value === value)?.label },
         // { prop: 'enterprise_build_no', label: '企业门楼牌号', minWidth: 120, },
         { prop: 'enterprise_detail_address', label: '企业详址', minWidth: 160 },
-        { prop: 'economic_type', label: '经济类型',minWidth: 120, formatter: (r, c, value) => map.economic_type[value] },
+        { prop: 'economic_type', label: '经济类型', minWidth: 120, formatter: (r, c, value) => map.economic_type[value] },
         { prop: 'security_level', label: '治安级别', formatter: (r, c, value) => map.security_level[value] },
         { prop: 'legal_certificate_code', label: '法人证件号码', minWidth: 160, },
         { prop: 'chief_certificate_code', label: '负责人证件号码', minWidth: 160, },
         { prop: 'chief_person', label: '单位负责人', minWidth: 90, },
         { prop: 'is_record_register', label: '是否备案登记', minWidth: 100, formatter: (r, c, value) => value ? '是' : '否' },
-         { prop: 'district', label: '行政区划', minWidth: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
+        { prop: 'district', label: '行政区划', minWidth: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
       ]
     },
     addEditformItems() {
@@ -373,7 +373,7 @@ export default {
       this.dialogVisible = true;
     },
     handlePerson(index, row) {
-      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.scrap_metal_recycleid } });
     },
     handleRemove(index, row) {
       this.removeData(row.scrap_metal_recycleid)
