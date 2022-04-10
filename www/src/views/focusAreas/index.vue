@@ -4,8 +4,8 @@
       <el-form ref="queryForm" :inline="true" :model="queryForm">
         <el-row>
           <el-col :span="6">
-            <el-form-item prop="impotant_fence" label="重点地区名称">
-              <el-input v-model="queryForm.impotant_fence"></el-input>
+            <el-form-item prop="important_fence" label="重点地区名称">
+              <el-input v-model="queryForm.important_fence"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
