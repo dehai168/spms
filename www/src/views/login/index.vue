@@ -2,8 +2,8 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <div class="title-container">
-        <svg-icon class="logo" icon-class="police badge" />
-        <!-- <img class="logo" :src="logoSrc" alt="" /> -->
+        <!-- <svg-icon class="logo" icon-class="police badge" /> -->
+        <img class="logo" :src="logoSrc" alt="" />
         <h3 class="title">{{ title }}</h3>
       </div>
 
@@ -33,7 +33,7 @@
       <el-button :loading="loading" type="primary" style="width: 100%; margin-bottom: 30px" @click.native.prevent="handleLogin">确定</el-button>
     </el-form>
     <div class="copyright">
-      <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">渝ICP备666666</a>
+      <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">渝ICP备XXXXXX</a>
     </div>
   </div>
 </template>
@@ -41,6 +41,7 @@
 <script>
 import defaultSettings from '@/settings'
 import { authcode, login } from '@/api/auth'
+import logoSrc from "@/assets/logo.png";
 export default {
   name: 'Login',
   data() {
@@ -67,7 +68,7 @@ export default {
     }
     return {
       title: defaultSettings.title,
-      logoSrc: defaultSettings.logo,
+      logoSrc: logoSrc,
       authcodeSrc: '',
       loginForm: {
         username: '',

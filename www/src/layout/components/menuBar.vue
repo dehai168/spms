@@ -1,8 +1,8 @@
 <template>
   <el-row class="container">
     <el-col :span="9">
-      <svg-icon class="logo" icon-class="police badge" />
-      <!-- <img class="logo" :src="logoSrc" alt="" /> -->
+      <!-- <svg-icon class="logo" icon-class="police badge" /> -->
+      <img class="logo" :src="logoSrc" alt="" />
       <span class="title">{{ title }}</span>
     </el-col>
     <el-col :span="14">
@@ -62,6 +62,7 @@ import defaultSettings from '@/settings'
 import { logout, pwdvalid, changepwd } from '@/api/auth'
 import { mapGetters } from 'vuex'
 import AppLink from './Sidebar/Link'
+import logoSrc from "@/assets/logo.png";
 export default {
   components: { AppLink },
   data() {
@@ -112,7 +113,7 @@ export default {
     }
     return {
       title: defaultSettings.title,
-      logoSrc: defaultSettings.logo,
+      logoSrc: logoSrc,
       dialogFormVisible: false,
       route: this.$route,
       form: {
