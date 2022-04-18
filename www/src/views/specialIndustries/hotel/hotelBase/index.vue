@@ -1,6 +1,6 @@
 <template>
   <el-container class="container">
-    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 140px">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 186px">
       <el-form ref="queryForm" :model="queryForm" :inline="true" label-width="10vw">
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
@@ -266,9 +266,23 @@ export default {
             type: 'select',
             options: mapToArray(map.business_state)
           },
+           {
+            key: 'check_state',
+            label: '核查状态',
+            type: 'select',
+            options: mapToArray(map.check_state)
+          },
+          {
+            key: 'install_state',
+            label: '安装状态',
+            type: 'select',
+            options: mapToArray(map.install_state)
+          },
+        ],
+        [
           { key: 'inputTime', label: '录入时间', type: 'datePicker', width: '14vw' },
           { key: 'btn', type: 'btn' }
-        ]
+        ],
         // [
         // {
         //   key: 'business_type',
@@ -340,6 +354,8 @@ export default {
         { prop: 'sign_name', label: '招牌名称', minWidth: 120 },
         { prop: 'enterprise_telephone', label: '联系电话', width: 140 },
         { prop: 'business_state', label: '营业状态', width: 80, formatter: (row, column, cellValue, index) => map.business_state[cellValue] },
+        { prop: 'check_state', label: '核查状态', width: 80, formatter: (row, column, cellValue, index) => map.check_state[cellValue] },
+        { prop: 'install_state', label: '安装状态', width: 80, formatter: (row, column, cellValue, index) => map.install_state[cellValue] },
         { prop: 'input_time', label: '录入时间', width: 140 },
 
         // { prop: 'checkStatus', label: '核查状态', width: 80 },
@@ -361,35 +377,46 @@ export default {
               options: mapToArray(map.business_state)
             },
             {
+              key: 'check_state',
+              label: '核查状态',
+              type: 'select',
+              options: mapToArray(map.check_state)
+            },
+            {
               key: 'trade_type',
               label: '行业分类',
               type: 'select',
               options: mapToArray(map.hotel_trade_type)
             },
-            { key: 'enterprise_code', label: '企业编码', type: 'input' },
           ],
           [
-
+            { key: 'enterprise_code', label: '企业编码', type: 'input' },
             { key: 'sign_name', label: '招牌名称', type: 'input' },
             { key: 'area', label: '占地面积（平米）', type: 'input' },
-            { key: 'fax', label: '传真', type: 'input' },
           ],
           [
+            { key: 'fax', label: '传真', type: 'input' },
             { key: 'rooms', label: '房间数', type: 'input' },
             { key: 'beds', label: '床位数', type: 'input' },
-            {
+          ],
+          [
+              {
               key: 'hotel_star',
               label: '旅馆星级',
               type: 'select',
               options: mapToArray(map.hotel_star)
             },
-          ],
-          [
             {
               key: 'hotel_level',
               label: '旅馆等级',
               type: 'select',
               options: mapToArray(map.hotel_level)
+            },
+            {
+              key: 'install_state',
+              label: '安装状态',
+              type: 'select',
+              options: mapToArray(map.install_state)
             },
           ],
           [
@@ -411,7 +438,7 @@ export default {
                 { label: '否', value: 0 }
               ]
             },
-            { key: 'standard_address', label: '标准经营地址', type: 'standardAddress' },
+            { key: 'standard_address', label: '标准经营地址', type: 'standardAddress', span:10 },
 
           ]
         ],
@@ -660,7 +687,7 @@ export default {
   height: calc(100vh - 120px);
   width: 100%;
   .main {
-    height: calc(100% - 136px);
+    height: calc(100% - 182px);
     width: 100%;
     padding: 5px;
     > button {
