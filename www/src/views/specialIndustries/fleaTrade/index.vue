@@ -236,7 +236,7 @@ export default {
           { key: 'special_license', label: '特殊行业许可证', type: 'input' },
         ],
         [
-          
+
           { key: 'btn', type: 'btn' },
         ]
       ]
@@ -244,7 +244,7 @@ export default {
     columns() {
       return [
         { type: 'index', label: '序号', width: 50 },
-        
+
         { prop: 'enterprise', label: '企业名称', minWidth: 180 },
         { prop: 'record_code', label: '备案登记号', width: 120 },
         // { prop: 'enterprise_address', label: '企业地址', minWidth: 180 },
@@ -388,7 +388,7 @@ export default {
       this.dialogVisible = true;
     },
     handlePerson(index, row) {
-      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.junk_tradeid } });
     },
     handleRemove(index, row) {
       this.removeData(row.junk_tradeid)
@@ -443,7 +443,6 @@ export default {
       this.formClear('add', true)
     },
     handleSubmit() {
-      console.log(this.addEditForm)
       const { fire_opinion_date, 填表日期, 操作时间, is_fire_regulation, ...rest } = this.addEditForm;
       const requestData = {
         fire_check_time: fire_opinion_date ? formatDate('date', fire_opinion_date) : undefined,

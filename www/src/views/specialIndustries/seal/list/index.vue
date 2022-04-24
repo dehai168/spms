@@ -407,7 +407,7 @@ export default {
 		},
 
 		handlePerson(index, row) {
-			this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise } });
+			this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.seal_engrave_unitid } });
 		},
 		handleDelete() { },
 		handleSearch() { },

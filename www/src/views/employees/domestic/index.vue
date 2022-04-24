@@ -203,6 +203,7 @@ export default {
 		// 其他页面跳转过来 填充企业名称
 		if (this.$route.query.enterprise) {
 			this.queryForm.enterprise = this.$route.query.enterprise
+			this.queryForm.enterprise_id = this.$route.query.enterprise_id
 			this.showBack = true
 		}
 		this.getList()

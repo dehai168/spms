@@ -1,13 +1,13 @@
 <template>
 	<div class="ktv-container">
-		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 90px; margin-bottom: 10px">
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 150px; margin-bottom: 10px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
 				<el-form-item v-for="formItem in formItems" :key="formItem.key" style="width: 30%" :label="formItem.label">
 					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
 						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 					</el-select>
 					<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
-					<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+					<el-date-picker v-else-if="formItem.type == 'datePicker'" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 				</el-form-item>
 
 				<el-form-item>
@@ -18,7 +18,7 @@
 		</el-header>
 		<div class="ktv-body" style="padding: 5px">
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
-			<div style="height: calc(100vh - 270px)">
+			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop"  v-bind="column" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
@@ -88,7 +88,7 @@ export default {
 					{ label: '场所分类（副）', key: 'place_vice_type', type: 'input' },
 					{ label: '场所备案编号', key: 'record_code', type: 'input' },
 					{ label: '娱乐场所名称', key: 'recreation_place_name', type: 'input' },
-					{ label: '娱乐场所简称', key: 'recreation_place_short', type: 'input' },
+					{ label: '简称', key: 'recreation_place_short', type: 'input' },
 					{ label: '户外悬挂', key: 'outdoor_hang', type: 'input' },
 					{ label: '联系电话', key: 'telephone', type: 'input' },
 					{ label: '邮政编码', key: 'post_code', type: 'input' },
@@ -210,11 +210,11 @@ export default {
 					label: '录入时间',
 					type: 'datePicker'
 				},
-				// {
-				// 	key: 'recreation_place_short',
-				// 	label: '娱乐场所简称',
-				// 	type: 'input'
-				// },
+				{
+					key: 'recreation_place_short',
+					label: '简称',
+					type: 'input'
+				},
 				// {
 				// 	key: 'outdoor_hang',
 				// 	label: '户外悬挂',
@@ -244,6 +244,7 @@ export default {
 			tableData: [],
 			columns: [
 				{ prop: 'recreation_place_name', label: '娱乐场所名称', },
+				{ prop: 'recreation_place_short', label: '简称', },
 				{ prop: 'place_main_type', label: '场所主分类', },
 				{ prop: 'record_code', label: '备案登记号' },
 				{ prop: 'recreation_place_state', label: '场所状态', formatter: (row, col, cell) => MAP.recreation_place_state[cell], width: 100 },
@@ -277,7 +278,7 @@ export default {
 	},
 	methods: {
 		handlePerson(index, row) {
-			this.$router.push({ path: '/employees/domestic', query: { enterprise: row.recreation_place_name } });
+			this.$router.push({ path: '/employees/domestic', query: { enterprise: row.recreation_place_name, enterprise_id: row.ktvid } });
 		},
 		async getList() {
 			const params = { ...this.queryForm }
