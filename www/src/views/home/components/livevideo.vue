@@ -1,5 +1,7 @@
 <template>
-  <iframe id="targetFrame" width="0" height="0" src="" frameborder="0"></iframe>
+  <div style="margin:0 auto; background: black; width: 400px; height: 300px">
+    <iframe id="targetFrame" width="0" height="0" frameborder="0"></iframe>
+  </div>
 </template>
 
 <script>
@@ -30,6 +32,10 @@ export default {
       type: String,
       default: ''
     }
+  },
+  created() {},
+  mounted() {
+    this.play()
   },
   methods: {
     full() {

@@ -37,16 +37,18 @@
         </el-option>
       </el-select>
     </el-card>
-    <el-dialog title="实时视频" :visible.sync="liveVideoDialogVisible" width="30%" :close-on-click-modal="false">
-      <Livevideo :src="videoObject.src"></Livevideo>
+    <el-dialog :title="videoName" :visible.sync="liveVideoDialogVisible" width="30%" :close-on-click-modal="false">
+      <div style="text-align: center; width: 100%">
+        <Livevideo :src="videoObject.src"></Livevideo>
+      </div>
     </el-dialog>
-    <el-dialog title="详情" :visible.sync="markerDetailDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog :title="detailName" :visible.sync="markerDetailDialogVisible" width="30%" :close-on-click-modal="false">
       <Markerdetail></Markerdetail>
     </el-dialog>
-    <el-dialog title="监控列表" :visible.sync="mediaListDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog :title="mediaName" :visible.sync="mediaListDialogVisible" width="30%" :close-on-click-modal="false">
       <Medialist @openVideo="viewVideo" @openImage="viewImage"></Medialist>
     </el-dialog>
-    <el-dialog title="抓拍列表" :visible.sync="viewImageDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog :title="imageName" :visible.sync="viewImageDialogVisible" width="30%" :close-on-click-modal="false">
       <Viewimage></Viewimage>
     </el-dialog>
   </div>
@@ -142,9 +144,13 @@ export default {
       videoObject: {
         src: 'index=50010400001310015829'
       },
+      videoName: '',
       markerDetailDialogVisible: false,
+      detailName: '',
       mediaListDialogVisible: false,
-      viewImageDialogVisible: false
+      mediaName: '',
+      viewImageDialogVisible: false,
+      imageName: ''
     }
   },
   mounted() {
@@ -321,8 +327,8 @@ export default {
       htmlArray.push("<li><span style='font-weight:bold'>详细地址</span>:<span style='color:#909399'>" + (object.enterprise_detail_address || '') + '</span></li>')
       htmlArray.push('</ul>')
       htmlArray.push("<ul style='list-style: none;height: 30px;line-height: 20px;padding: 0;margin-top: 5px;'>")
-      htmlArray.push('<li style="float:left;margin-left:10px;color:#409EFF"><button @click="clickHandlerMoreInfo">更多信息</button></li>')
-      htmlArray.push('<li style="float:left;margin-left:10px;color:#409EFF"><button @click="clickHandlerMediaList">实时视频</button></li>')
+      htmlArray.push('<li style="float:left;margin-left:10px;color:#409EFF;font-size:24px"><i class="el-icon-s-order" @click="clickHandlerMoreInfo"></i></li>')
+      htmlArray.push('<li style="float:left;margin-left:10px;color:#409EFF;font-size:24px"><i class="el-icon-video-camera" @click="clickHandlerMediaList"></i></li>')
       htmlArray.push('</ul>')
       htmlArray.push('</div>')
       return htmlArray.join('')
@@ -362,16 +368,15 @@ export default {
               template: this.editHtml(res.data),
               data() {
                 return {
-                  id,
-                  type
+                  data: res.data
                 }
               },
               methods: {
                 clickHandlerMoreInfo() {
-                  that.viewMarkerDetail()
+                  that.viewMarkerDetail(this.data)
                 },
                 clickHandlerMediaList() {
-                  that.viewMediaList()
+                  that.viewMediaList(this.data)
                 }
               }
             })
@@ -413,16 +418,20 @@ export default {
         this.map.setCenter([lnglat.lng, lnglat.lat])
       }
     },
-    viewMediaList(type, id) {
+    viewMediaList(data) {
+      this.mediaName = data.enterprise
       this.mediaListDialogVisible = true
     },
-    viewMarkerDetail(type, id) {
+    viewMarkerDetail(data) {
+      this.detailName = data.enterprise
       this.markerDetailDialogVisible = true
     },
-    viewVideo() {
+    viewVideo(row) {
+      this.videoName = this.mediaName + '-' + row.name
       this.liveVideoDialogVisible = true
     },
-    viewImage() {
+    viewImage(row) {
+      this.imageName = this.mediaName + '-' + row.name
       this.viewImageDialogVisible = true
     },
     // search() {
@@ -491,7 +500,7 @@ export default {
   top: 10px;
   width: 1110px;
   height: 90px;
-  z-index: 9999;
+  z-index: 2000;
   margin: auto;
   padding: 15px;
 }
@@ -510,7 +519,7 @@ export default {
   right: 10px;
   top: 110px;
   width: 300px;
-  z-index: 9999;
+  z-index: 2000;
 }
 .el-select-dropdown__item {
   height: 100px;

@@ -1,8 +1,9 @@
 <template>
-  <div>详情</div>
+  <img :src="imgSrc" style="width:100%" alt="" srcset="" />
 </template>
 
 <script>
+import imgSrc from '@/assets/demo.png'
 export default {
   name: 'markerdetail',
   props: {
@@ -13,6 +14,11 @@ export default {
     type: {
       type: Number,
       default: 0
+    }
+  },
+  data() {
+    return {
+      imgSrc: imgSrc
     }
   }
 }

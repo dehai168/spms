@@ -1,12 +1,21 @@
 <template>
-  <el-carousel :interval="5000" arrow="always">
-    <el-carousel-item v-for="item in 4" :key="item">
-      <h3>{{ item }}</h3>
-    </el-carousel-item>
-  </el-carousel>
+  <div style="text-align: center">
+    <img class="image" :src="logoSrcs[playIndex]" alt="" srcset="" />
+    <div class="title">{{ datetime }}</div>
+    <el-divider></el-divider>
+    <el-carousel :initial-index="playIndex" :autoplay="false" type="card" height="120px" @change="handleView">
+      <el-carousel-item v-for="(item, index) in logoSrcs" :key="index">
+        <img :src="item" alt="" srcset="" />
+      </el-carousel-item>
+    </el-carousel>
+  </div>
 </template>
 
 <script>
+import logoSrc1 from '@/assets/demo.jpg'
+import logoSrc2 from '@/assets/demo2.jpg'
+import logoSrc3 from '@/assets/demo3.jpg'
+import logoSrc4 from '@/assets/demo4.jpg'
 export default {
   name: 'markerdetail',
   props: {
@@ -18,23 +27,33 @@ export default {
       type: Number,
       default: 0
     }
+  },
+  data() {
+    return {
+      playIndex: 0,
+      datetime: new Date().toLocaleDateString(),
+      logoSrcs: [logoSrc1, logoSrc2, logoSrc3, logoSrc4]
+    }
+  },
+  methods: {
+    handleView(index) {
+      this.playIndex = index
+    }
   }
 }
 </script>
 <style scoped>
-.el-carousel__item h3 {
-  color: #475669;
-  font-size: 18px;
+.image {
   opacity: 0.75;
-  line-height: 300px;
-  margin: 0;
+  height: 420px;
+  width: 600px;
+  margin: 0 auto;
 }
-
-.el-carousel__item:nth-child(2n) {
-  background-color: #99a9bf;
+.title {
+  font-size: 14px;
 }
-
-.el-carousel__item:nth-child(2n + 1) {
-  background-color: #d3dce6;
+.el-carousel__item img {
+  opacity: 0.75;
+  height: 120px;
 }
 </style>

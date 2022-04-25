@@ -4,8 +4,8 @@
     <el-table-column prop="name" label="名称"> </el-table-column>
     <el-table-column label="操作" width="90">
       <template slot-scope="scope">
-        <el-button type="text" @click="handleVideo(scope.$index, scope.row)">视频</el-button>
-        <el-button type="text" @click="handleImage(scope.$index, scope.row)">图片</el-button>
+        <el-button type="text" style="font-size: 16px" icon="el-icon-video-camera" @click="handleVideo(scope.$index, scope.row)"></el-button>
+        <el-button type="text" style="font-size: 16px" icon="el-icon-picture-outline" @click="handleImage(scope.$index, scope.row)"></el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -36,10 +36,10 @@ export default {
     }
   },
   methods: {
-    handleVideo(row, index) {
+    handleVideo(index, row) {
       this.$emit('openVideo', row)
     },
-    handleImage(row, index) {
+    handleImage(index, row) {
       this.$emit('openImage', row)
     }
   }
