@@ -7,18 +7,18 @@
       <fieldset>
         <legend>特殊行业</legend>
         <ul>
-          <li><el-checkbox v-model="checkList[0]" @change="handleCheck" class="marginRight">旅馆业</el-checkbox></li>
-          <li><el-checkbox v-model="checkList[4]" @change="handleCheck" class="marginRight">公章刻制业</el-checkbox></li>
-          <li><el-checkbox v-model="checkList[1]" @change="handleCheck" class="marginRight">旧货交易</el-checkbox></li>
-          <li><el-checkbox v-model="checkList[2]" @change="handleCheck" class="marginRight">机动车维修</el-checkbox></li>
-          <li><el-checkbox v-model="checkList[3]" @change="handleCheck" class="marginRight">废旧金属回收</el-checkbox></li>
+          <li><el-checkbox v-model="checkList[0]" @change="handleCheck(0)" class="marginRight">旅馆业</el-checkbox><img :src="imgList[0]" alt="" srcset="" /></li>
+          <li><el-checkbox v-model="checkList[4]" @change="handleCheck(4)" class="marginRight">公章刻制业</el-checkbox><img :src="imgList[1]" alt="" srcset="" /></li>
+          <li><el-checkbox v-model="checkList[1]" @change="handleCheck(1)" class="marginRight">旧货交易</el-checkbox><img :src="imgList[2]" alt="" srcset="" /></li>
+          <li><el-checkbox v-model="checkList[2]" @change="handleCheck(2)" class="marginRight">机动车维修</el-checkbox><img :src="imgList[3]" alt="" srcset="" /></li>
+          <li><el-checkbox v-model="checkList[3]" @change="handleCheck(3)" class="marginRight">废旧金属回收</el-checkbox><img :src="imgList[4]" alt="" srcset="" /></li>
         </ul>
       </fieldset>
       <fieldset>
         <legend>娱乐场所</legend>
         <ul>
-          <li><el-checkbox v-model="checkList[6]" @change="handleCheck" class="marginRight">酒吧</el-checkbox></li>
-          <li><el-checkbox v-model="checkList[5]" @change="handleCheck" class="marginRight">KTV</el-checkbox></li>
+          <li><el-checkbox v-model="checkList[6]" @change="handleCheck(6)" class="marginRight">酒吧</el-checkbox><img :src="imgList[5]" alt="" srcset="" /></li>
+          <li><el-checkbox v-model="checkList[5]" @change="handleCheck(5)" class="marginRight">KTV</el-checkbox><img :src="imgList[6]" alt="" srcset="" /></li>
         </ul>
       </fieldset>
     </el-card>
@@ -37,6 +37,18 @@
         </el-option>
       </el-select>
     </el-card>
+    <el-dialog title="实时视频" :visible.sync="liveVideoDialogVisible" width="30%" :close-on-click-modal="false">
+      <Livevideo :src="videoObject.src"></Livevideo>
+    </el-dialog>
+    <el-dialog title="详情" :visible.sync="markerDetailDialogVisible" width="30%" :close-on-click-modal="false">
+      <Markerdetail></Markerdetail>
+    </el-dialog>
+    <el-dialog title="监控列表" :visible.sync="mediaListDialogVisible" width="30%" :close-on-click-modal="false">
+      <Medialist @openVideo="viewVideo" @openImage="viewImage"></Medialist>
+    </el-dialog>
+    <el-dialog title="抓拍列表" :visible.sync="viewImageDialogVisible" width="30%" :close-on-click-modal="false">
+      <Viewimage></Viewimage>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -52,10 +64,18 @@ import location_6 from '@/assets/map/location_6.png'
 import location_7 from '@/assets/map/location_7.png'
 import card from './components/card.vue'
 import gcoodrd from 'gcoord'
+import Livevideo from './components/livevideo.vue'
+import Markerdetail from './components/markerdetail.vue'
+import Medialist from './components/medialist.vue'
+import Viewimage from './components/viewimage.vue'
 export default {
   name: 'Home',
   components: {
-    card
+    card,
+    Livevideo,
+    Markerdetail,
+    Medialist,
+    Viewimage
   },
   data() {
     return {
@@ -117,7 +137,14 @@ export default {
           abroad_persons: 0,
           domestic_persons: 0
         }
-      ]
+      ],
+      liveVideoDialogVisible: false,
+      videoObject: {
+        src: 'index=50010400001310015829'
+      },
+      markerDetailDialogVisible: false,
+      mediaListDialogVisible: false,
+      viewImageDialogVisible: false
     }
   },
   mounted() {
@@ -129,13 +156,13 @@ export default {
   methods: {
     init() {},
     initMap() {
-      mapabcgl.accessToken = 'ec85d3648154874552835438ac6a02b2'
+      mapabcgl.accessToken = defaultSettings.mapabcToken
       if (!mapabcgl.supported()) {
         alert('您的浏览器不支持Mapabc GL')
       } else {
         this.map = new mapabcgl.Map({
           container: 'spms_map',
-          style: 'mapabc://style/mapabc79w',
+          style: 'mapabc://style/' + defaultSettings.mapabcStyle,
           zoom: 13,
           maxZoom: 23,
           minZoom: 10,
@@ -146,7 +173,7 @@ export default {
         const that = this
         this.map.on('load', function () {
           that.loadMarkerImage()
-          that.loadMarker()
+          that.loadDataAndCount()
         })
       }
     },
@@ -160,170 +187,124 @@ export default {
         })(index)
       }
     },
-    loadMarker() {
+    loadDataAndCount() {
       position({})
         .then(res => {
           if (res.code === 200) {
-            this.loadCluster(res.data)
+            this.infoList.length = 0
+            this.infoList = res.data
+            this.infoList.forEach(element => {
+              // 纠偏
+              const transform = gcoodrd.transform([element.lng, element.lat], gcoodrd.WGS84, gcoodrd.GCJ02)
+              element.lng = transform[0]
+              element.lat = transform[1]
+              const index = this.countList.findIndex(v => {
+                return v.id === element.type
+              })
+              if (index > -1) {
+                this.countList[index].count++
+                this.countList[index].abroad_persons += element.abroad_persons
+                this.countList[index].domestic_persons += element.domestic_persons
+              }
+            })
+
+            this.loadCluster()
           }
         })
         .catch(e => {
           console.error(e)
         })
     },
-    loadCluster(list) {
-      const that = this
-      const features = []
-      list.forEach(element => {
-        // 纠偏
-        const transform = gcoodrd.transform([element.lng, element.lat], gcoodrd.WGS84, gcoodrd.GCJ02)
-        element.lng = transform[0]
-        element.lat = transform[1]
-        // 按勾选过滤
-        if (that.checkList[element.type - 1]) {
-          features.push({
-            type: 'Feature',
-            properties: element,
-            geometry: { type: 'Point', coordinates: [element.lng, element.lat, 0.0] }
-          })
-        }
-
-        const index = that.countList.findIndex(v => {
-          return v.id === element.type
+    loadCluster() {
+      for (let index = 0; index < this.checkList.length; index++) {
+        const checked = this.checkList[index]
+        const sourceName = 'earthquakes_' + index
+        const tempArray = this.infoList.filter(v => {
+          return v.type === index
         })
-        if (index > -1) {
-          that.countList[index].count++
-          that.countList[index].abroad_persons += element.abroad_persons
-          that.countList[index].domestic_persons += element.domestic_persons
-        }
-        this.infoList.push(element)
-      })
-      this.map.addSource('earthquakes', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features
-        },
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50
-      })
-
-      this.map.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'earthquakes',
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-          'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
-        }
-      })
-      this.map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'earthquakes',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': ['sourcehansanscn-normal'],
-          'text-size': 12
-        }
-      })
-      this.map.addLayer({
-        id: 'unclustered-point',
-        type: 'symbol',
-        source: 'earthquakes',
-        filter: ['!has', 'point_count'],
-        layout: {
-          'icon-image': 'location_1',
-          'icon-size': 1
-        }
-      })
-      this.map.on('click', 'unclustered-point', function (e) {
-        let features = e.features[0].properties
-        that.loadPopup(features.id, features.type)
-      })
-      this.map.on('mouseenter', 'unclustered-point', function () {
-        that.map.getCanvas().style.cursor = 'pointer'
-      })
-      this.map.on('mouseleave', 'unclustered-point', function () {
-        that.map.getCanvas().style.cursor = ''
-      })
-    },
-    refreshCluster() {
-      const that = this
-      const features = []
-      this.infoList.forEach(element => {
-        if (that.checkList[element.type - 1]) {
+        const features = []
+        tempArray.forEach(element => {
           features.push({
             type: 'Feature',
             properties: element,
             geometry: { type: 'Point', coordinates: [element.lng, element.lat, 0.0] }
           })
-        }
-      })
-
-      this.map.removeLayer('unclustered-point')
-      this.map.removeLayer('cluster-count')
-      this.map.removeLayer('clusters')
-      this.map.removeSource('earthquakes')
-      if (this.popup) {
-        this.popup.remove()
+        })
+        this.map.addSource(sourceName, {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features
+          },
+          cluster: true,
+          clusterMaxZoom: 14,
+          clusterRadius: 50
+        })
+        this.refreshCluster(index, checked)
       }
-
-      this.map.addSource('earthquakes', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features
-        },
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50
-      })
-
-      this.map.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'earthquakes',
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-          'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+    },
+    refreshCluster(index, checked) {
+      const sourceName = 'earthquakes_' + index
+      const clustersName = 'clusters_' + index
+      const clustersCountName = 'cluster-count_' + index
+      const unclusterPointName = 'unclustered-point_' + index
+      const that = this
+      if (checked) {
+        this.map.addLayer({
+          id: clustersName,
+          type: 'circle',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
+            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+          }
+        })
+        this.map.addLayer({
+          id: clustersCountName,
+          type: 'symbol',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          layout: {
+            'text-field': '{point_count_abbreviated}',
+            'text-font': ['sourcehansanscn-normal'],
+            'text-size': 12
+          }
+        })
+        this.map.addLayer({
+          id: unclusterPointName,
+          type: 'symbol',
+          source: sourceName,
+          filter: ['!has', 'point_count'],
+          layout: {
+            'icon-image': 'location_' + index,
+            'icon-size': 1
+          }
+        })
+        this.map.on('click', unclusterPointName, function (e) {
+          let features = e.features[0].properties
+          that.loadPopup(features.id, features.type)
+        })
+        this.map.on('mouseenter', unclusterPointName, function () {
+          that.map.getCanvas().style.cursor = 'pointer'
+        })
+        this.map.on('mouseleave', unclusterPointName, function () {
+          that.map.getCanvas().style.cursor = ''
+        })
+      } else {
+        if (this.popup) {
+          this.popup.remove()
         }
-      })
-      this.map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'earthquakes',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': ['sourcehansanscn-normal'],
-          'text-size': 12
+        if (this.map.getLayer(unclusterPointName)) {
+          this.map.removeLayer(unclusterPointName)
         }
-      })
-      this.map.addLayer({
-        id: 'unclustered-point',
-        type: 'symbol',
-        source: 'earthquakes',
-        filter: ['!has', 'point_count'],
-        layout: {
-          'icon-image': 'location_1',
-          'icon-size': 1
+        if (this.map.getLayer(clustersCountName)) {
+          this.map.removeLayer(clustersCountName)
         }
-      })
-      this.map.on('click', 'unclustered-point', function (e) {
-        let features = e.features[0].properties
-        that.loadPopup(features.id, features.type)
-      })
-      this.map.on('mouseenter', 'unclustered-point', function () {
-        that.map.getCanvas().style.cursor = 'pointer'
-      })
-      this.map.on('mouseleave', 'unclustered-point', function () {
-        that.map.getCanvas().style.cursor = ''
-      })
+        if (this.map.getLayer(clustersName)) {
+          this.map.removeLayer(clustersName)
+        }
+      }
     },
     editHtml(object) {
       const htmlArray = []
@@ -340,8 +321,8 @@ export default {
       htmlArray.push("<li><span style='font-weight:bold'>详细地址</span>:<span style='color:#909399'>" + (object.enterprise_detail_address || '') + '</span></li>')
       htmlArray.push('</ul>')
       htmlArray.push("<ul style='list-style: none;height: 30px;line-height: 20px;padding: 0;margin-top: 5px;'>")
-      htmlArray.push('<li style="float:left;margin-left:10px;color:#409EFF"><a href="javascript:;" @click="clickHandler(\'moreinfo\',' + object.type + ',' + object.id + ')">更多信息</a></li>')
-      htmlArray.push('<li style="float:left;margin-left:10px;color:#409EFF"><a href="javascript:;" @click="clickHandler(\'livevideo\',' + object.type + ',' + object.id + ')">实时视频</a></li>')
+      htmlArray.push('<li style="float:left;margin-left:10px;color:#409EFF"><button @click="clickHandlerMoreInfo">更多信息</button></li>')
+      htmlArray.push('<li style="float:left;margin-left:10px;color:#409EFF"><button @click="clickHandlerMediaList">实时视频</button></li>')
       htmlArray.push('</ul>')
       htmlArray.push('</div>')
       return htmlArray.join('')
@@ -376,14 +357,21 @@ export default {
                 break
             }
             res.data.type = type
+            const that = this
             let infoWindow = Vue.extend({
               template: this.editHtml(res.data),
               data() {
-                return {}
+                return {
+                  id,
+                  type
+                }
               },
               methods: {
-                clickHandler(command, type, id) {
-                  console.log(command + ',' + type + ',' + id)
+                clickHandlerMoreInfo() {
+                  that.viewMarkerDetail()
+                },
+                clickHandlerMediaList() {
+                  that.viewMediaList()
                 }
               }
             })
@@ -392,7 +380,7 @@ export default {
               return v.id === id && v.type === type
             })
             if (item) {
-              this.openPopup(item, component.$el.outerHTML)
+              this.openPopup(item, component.$el)
             } else {
               this.$message({
                 message: '该企业没有定位信息',
@@ -421,9 +409,21 @@ export default {
           anchor: 'bottom-left',
           offset: [0, 0]
         }
-        this.popup = new mapabcgl.Popup(popupOption).setLngLat(new mapabcgl.LngLat(lnglat.lng, lnglat.lat)).setHTML(html).setMaxWidth('300px').addTo(this.map)
+        this.popup = new mapabcgl.Popup(popupOption).setLngLat(new mapabcgl.LngLat(lnglat.lng, lnglat.lat)).setDOMContent(html).setMaxWidth('300px').addTo(this.map)
         this.map.setCenter([lnglat.lng, lnglat.lat])
       }
+    },
+    viewMediaList(type, id) {
+      this.mediaListDialogVisible = true
+    },
+    viewMarkerDetail(type, id) {
+      this.markerDetailDialogVisible = true
+    },
+    viewVideo() {
+      this.liveVideoDialogVisible = true
+    },
+    viewImage() {
+      this.viewImageDialogVisible = true
     },
     // search() {
     //   if (this.keywords.length > 0) {
@@ -461,7 +461,6 @@ export default {
       }
     },
     handleSelect(id) {
-      console.log(id)
       const item = this.searchResultList.find(v => {
         return v.systemid === id
       })
@@ -471,8 +470,9 @@ export default {
         console.log(item)
       }
     },
-    handleCheck() {
-      this.refreshCluster()
+    handleCheck(index) {
+      const checked = this.checkList[index]
+      this.refreshCluster(index, checked)
     }
   }
 }
