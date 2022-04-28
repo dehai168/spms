@@ -5,34 +5,15 @@
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
             <el-form-item :label="formItem.label">
-              <el-select
-                v-if="formItem.type == 'select'"
-                v-model="queryForm[formItem.key]"
-                style="width:18vw"
-                placeholder="请选择"
-                :clearable="true"
-              >
-                <el-option
-                  v-for="option in formItem.options"
-                  :key="option.value"
-                  :value="option.value"
-                  :label="option.label"
-                />
+              <el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width:18vw"
+                placeholder="请选择" :clearable="true">
+                <el-option v-for="option in formItem.options" :key="option.value" :value="option.value"
+                  :label="option.label" />
               </el-select>
-              <el-input
-                v-else-if="formItem.type == 'input'"
-                v-model="queryForm[formItem.key]"
-                style="width:18vw"
-              />
-              <el-date-picker
-                v-else-if="formItem.type == 'datePicker'"
-                v-model="queryForm[formItem.key]"
-                style="width:18vw"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              />
+              <el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width:18vw" />
+              <el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]"
+                style="width:18vw" type="daterange" range-separator="至" start-placeholder="开始日期"
+                end-placeholder="结束日期" />
               <div v-else-if="formItem.type == 'btn'">
                 <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
                 <el-button @click="handleReset" icon="el-icon-delete">重置</el-button>
@@ -43,20 +24,10 @@
       </el-form>
     </el-header>
     <el-main class="main">
-      <el-table
-        v-loading="tableLoading"
-        :data="tableData"
-        border
-        height="100%"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column
-          v-for="column in columns"
-          :key="column.prop"
-          v-bind="column"
-          :show-overflow-tooltip="true"
-        />
+      <el-button @click="handleBack" icon="el-icon-back" style="margin-bottom: 10px" v-if="showBack">返回</el-button>
+      <el-table v-loading="tableLoading" :data="tableData" border :height="showBack ? 'calc(100% - 39px)' : '100%'"
+        style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
         <el-table-column prop="operate" label="操作" width="80" fixed="right">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
@@ -65,40 +36,22 @@
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :page-sizes="pagesizes"
-        :page-size="queryForm.pagesize"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="tableDataCount"
-      />
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
+        :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper"
+        :total="tableDataCount" />
     </el-footer>
     <!-- 详情 -->
-    <el-dialog
-      class="domestic-traveler-detail"
-      title="境内旅客详情"
-      :visible.sync="dialogVisible"
-      width="70%"
-      top="4vh"
-      :close-on-click-modal="false"
-    >
+    <el-dialog class="domestic-traveler-detail" title="境内旅客详情" :visible.sync="dialogVisible" width="70%" top="4vh"
+      :close-on-click-modal="false">
       <el-form label-width="120px" :inline="true" label-suffix=":">
         <my-card v-for="(cardItem, title, index) in detailItems" :key="index" :title="title">
-          <el-form-item
-            v-for="item in cardItem.items"
-            :key="item.key"
-            :label="item.label"
-            :style="{ width: cardItem.width }"
-          >{{ item.formatter ? item.formatter(detailData[item.key]) : detailData[item.key] }}</el-form-item>
+          <el-form-item v-for="item in cardItem.items" :key="item.key" :label="item.label"
+            :style="{ width: cardItem.width }">{{ item.formatter ? item.formatter(detailData[item.key]) :
+                detailData[item.key]
+            }}</el-form-item>
         </my-card>
         <div class="photo-coantainer">
-          <el-image
-            style="width: 100px; height: 100px"
-            :src="detailData.certificate_image"
-            fit="fill"
-          />
+          <el-image style="width: 100px; height: 100px" :src="detailData.certificate_image" fit="fill" />
           <div class="photo-tittle">证件照片</div>
           <el-image style="width: 100px; height: 100px" :src="detailData.scene_capture" fit="fill" />
           <div class="photo-tittle">现场照片</div>
@@ -126,10 +79,12 @@ export default {
   },
   data() {
     return {
+      showBack: false,
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
         pagesize: defaultSettings.pageSizes[0],
-        pageindex: 1
+        pageindex: 1,
+        enterprise: ''
       },
       tableLoading: false,
       tableData: [],
@@ -243,11 +198,20 @@ export default {
   },
   created() {
     const that = this
+    // 其他页面跳转过来 填充企业名称
+    if (this.$route.query.enterprise) {
+      this.queryForm.enterprise = this.$route.query.enterprise
+      this.queryForm.enterprise_id = this.$route.query.enterprise_id
+      this.showBack = true
+    }
     this.init(function () {
       that.handleQuery()
     })
   },
   methods: {
+    handleBack() {
+      this.$router.go(-1)
+    },
     init(callback) {
       // 初始化异步操作，例如数据字典
       enumsItems({ types: [2] })
@@ -312,6 +276,7 @@ export default {
 .container {
   height: calc(100vh - 120px);
   width: 100%;
+
   .main {
     height: calc(100% - 231px);
     width: 100%;
@@ -324,10 +289,12 @@ export default {
     position: relative;
     max-height: 600px;
     overflow: auto;
+
     .photo-coantainer {
       position: absolute;
       top: 0;
       right: 30px;
+
       .photo-tittle {
         display: flex;
         justify-content: center;
