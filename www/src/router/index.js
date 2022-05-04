@@ -209,8 +209,13 @@ export const constantRoutes = [
         name: 'earlywarn',
         component: () => import('@/views/earlyWarn/index'),
         meta: { title: '预警查询', icon: 'el-icon-school' }
+      },
+      {
+        path: 'fugitives',
+        name: 'fugitives',
+        component: () => import('@/views/fugitives/index'),
+        meta: { title: '在逃信息', icon: 'el-icon-school' }
       }
-
     ]
   },
   // TODO  添加页面路由
