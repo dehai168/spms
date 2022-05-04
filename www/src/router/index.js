@@ -234,6 +234,12 @@ export const constantRoutes = [
         name: 'earlywarn',
         component: () => import('@/views/earlyWarn/index'),
         meta: { title: '预警查询', icon: 'el-icon-search' }
+      },
+      {
+        path: 'fugitives',
+        name: 'fugitives',
+        component: () => import('@/views/fugitives/index'),
+        meta: { title: '在逃人员', icon: 'el-icon-aim' }
       }
     ]
   },

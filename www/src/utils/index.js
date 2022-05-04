@@ -160,33 +160,3 @@ export function formatDate(type, obj) {
     return `${time} ${date}`
   }
 }
-
-export function loadJs(src) {
-  return new Promise((resolve, reject) => {
-    let script = document.createElement('script')
-    script.type = "text/javascript"
-    script.onload = () => {
-      resolve()
-    }
-    script.onerror = () => {
-      reject()
-    }
-    script.src = src
-    document.getElementsByTagName('head')[0].appendChild(script)
-  })
-}
-export function loadCss(src) {
-  return new Promise((resolve, reject) => {
-    let link = document.createElement('link')
-    link.type = "text/css"
-    link.ref = "stylesheet"
-    link.onload = () => {
-      resolve()
-    }
-    link.onerror = () => {
-      reject()
-    }
-    link.src = src
-    document.getElementsByTagName('head')[0].appendChild(link)
-  })
-}

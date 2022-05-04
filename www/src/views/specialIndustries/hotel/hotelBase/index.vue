@@ -58,7 +58,7 @@
           v-bind="column"
           :show-overflow-tooltip="true"
         />
-        <el-table-column prop="operate" label="操作" width="200" fixed="right">
+        <el-table-column prop="operate" label="操作" width="240" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -71,6 +71,7 @@
               @click="handleEdit(scope.$index, scope.row, 'edit')"
             >编辑</el-button>
             <el-button type="text" size="small" @click="handlePerson(scope.$index, scope.row)">从业人员</el-button>
+            <el-button type="text" size="small" @click="handleHotelPerson(scope.$index, scope.row)">住店人员</el-button>
             <el-button
               slot="reference"
               type="text"
@@ -546,6 +547,9 @@ export default {
     },
     handlePerson(index, row) {
       this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.hotelid } });
+    },
+    handleHotelPerson(index, row) {
+      this.$router.push({ path: '/specialindustries/hotel/domestic', query: { enterprise: row.enterprise, enterprise_id: row.hotelid } });
     },
     handleRemove(index, row) {
       this.removeData(row.hotelid)
