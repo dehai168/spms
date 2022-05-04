@@ -214,7 +214,7 @@ export const constantRoutes = [
         path: 'fugitives',
         name: 'fugitives',
         component: () => import('@/views/fugitives/index'),
-        meta: { title: '在逃信息', icon: 'el-icon-school' }
+        meta: { title: '全部在逃人员查询', icon: 'el-icon-school' }
       }
     ]
   },

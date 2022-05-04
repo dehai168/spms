@@ -41,7 +41,7 @@
         <el-table-column prop="alarm_time" label="入住时间" width="135"> </el-table-column>
         <el-table-column prop="alarm_address" label="预警地点"> </el-table-column>
         <el-table-column prop="alarm_reason" label="预警原因"> </el-table-column>
-        <el-table-column prop="type" label="重点地区"> </el-table-column>
+        <el-table-column prop="type" label="类型"> </el-table-column>
         <el-table-column prop="realname" label="姓名"> </el-table-column>
         <el-table-column prop="certificate_code" label="证件号码"> </el-table-column>
         <el-table-column prop="state" label="状态" width="80">
