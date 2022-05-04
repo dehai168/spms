@@ -1,14 +1,14 @@
 <template>
   <el-row class="container">
-    <el-col :span="9">
+    <el-col :span="7">
       <!-- <svg-icon class="logo" icon-class="police badge" /> -->
       <img class="logo" :src="logoSrc" alt="" />
       <span class="title">{{ title }}</span>
     </el-col>
-    <el-col :span="14">
+    <el-col :span="16">
       <ul>
         <li :class="{ active: activeMenu.indexOf('/home/') > -1 }">
-          <app-link to="/home"> <i class="el-icon-s-platform"></i> 信息综合查询 </app-link>
+          <app-link to="/home"> <i class="el-icon-s-platform"></i> 首页 </app-link>
         </li>
         <li :class="{ active: activeMenu.indexOf('/basicinfo/') > -1 }">
           <app-link to="/basicinfo"> <i class="el-icon-s-claim"></i> 基础信息管理 </app-link>
@@ -225,12 +225,12 @@ export default {
     list-style: none;
     margin: 0;
     padding: 0;
-    margin-left: 10px;
+    margin-left: 5px;
     li {
       margin: 0;
       float: left;
       text-align: center;
-      width: 185px;
+      width: 170px;
       font-weight: 600;
       line-height: 60px;
       font-size: 20px;
