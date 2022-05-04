@@ -75,6 +75,11 @@ export const constantRoutes = [
     redirect: '/basicinfo/specialindustries/hotel/base',
   },
   {
+    path: '/generalinfo',
+    component: Layout,
+    redirect: '/generalinfo/index',
+  },
+  {
     path: '/analysis',
     component: Layout,
     redirect: '/analysis/focusareas',
@@ -213,6 +218,17 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/generalinfo',
+    component: HomeLayout,
+    children: [
+      {
+        path: 'index',
+        name: 'generalInfo',
+        component: () => import("@/views/generalInfo/index"),
+      }
+    ]
+  },
+  {
     path: '/analysis',
     component: Layout,
     meta: { title: '智能研判分析', icon: 'el-icon-data-analysis' },
@@ -239,7 +255,7 @@ export const constantRoutes = [
         path: 'fugitives',
         name: 'fugitives',
         component: () => import('@/views/fugitives/index'),
-        meta: { title: '在逃人员', icon: 'el-icon-aim' }
+        meta: { title: '全部在逃人员查询', icon: 'el-icon-aim' }
       }
     ]
   },

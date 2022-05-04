@@ -42,14 +42,14 @@
     <el-main class="main">
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="index"> </el-table-column>
-        <el-table-column prop="realname" label="姓名" width="105"> </el-table-column>
-        <el-table-column prop="certificate_code" label="证件号码" width="135"> </el-table-column>
+        <el-table-column prop="realname" label="姓名" width="75"> </el-table-column>
+        <el-table-column prop="certificate_code" label="证件号码" width="145"> </el-table-column>
         <el-table-column prop="sex" label="性别" width="60"> </el-table-column>
-        <el-table-column prop="birthday" label="出生日期" width="105"> </el-table-column>
+        <el-table-column prop="birthday" label="出生日期" width="100"> </el-table-column>
         <el-table-column prop="province_city" label="户籍市县"> </el-table-column>
         <el-table-column prop="detail_address" label="户籍详址"> </el-table-column>
-        <el-table-column prop="circular_code" label="通报编号" width="135"> </el-table-column>
-        <el-table-column prop="reg_date" label="登记日期" width="135"> </el-table-column>
+        <el-table-column prop="circular_code" label="通报编号" width="185"> </el-table-column>
+        <el-table-column prop="reg_date" label="登记日期" width="110"> </el-table-column>
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">

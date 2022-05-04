@@ -48,7 +48,7 @@
     <el-dialog :title="mediaName" :visible.sync="mediaListDialogVisible" width="30%" :close-on-click-modal="false">
       <Medialist @openVideo="viewVideo" @openImage="viewImage"></Medialist>
     </el-dialog>
-    <el-dialog :title="imageName" :visible.sync="viewImageDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog :title="imageName" :visible.sync="viewImageDialogVisible" width="50%" :close-on-click-modal="false">
       <Viewimage></Viewimage>
     </el-dialog>
   </div>
@@ -355,9 +355,11 @@ export default {
                 break
               case 6:
                 res.data.id = res.data.ktvid
+                res.data.enterprise=res.data.recreation_place_name
                 break
               case 7:
                 res.data.id = res.data.barid
+                res.data.enterprise=res.data.recreation_place_name
                 break
               default:
                 break
