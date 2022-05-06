@@ -205,16 +205,16 @@ export const constantRoutes = [
         meta: { title: '重点关注对象管理', icon: 'el-icon-school' }
       },
       {
+        path: 'fugitives',
+        name: 'fugitives',
+        component: () => import('@/views/fugitives/index'),
+        meta: { title: '全国在逃人员', icon: 'el-icon-school' }
+      },
+      {
         path: 'earlywarn',
         name: 'earlywarn',
         component: () => import('@/views/earlyWarn/index'),
         meta: { title: '预警查询', icon: 'el-icon-school' }
-      },
-      {
-        path: 'fugitives',
-        name: 'fugitives',
-        component: () => import('@/views/fugitives/index'),
-        meta: { title: '全部在逃人员查询', icon: 'el-icon-school' }
       }
     ]
   },

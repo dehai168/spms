@@ -38,7 +38,7 @@
     </el-header>
     <el-main class="main">
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%">
-        <el-table-column prop="alarm_time" label="入住时间" width="135"> </el-table-column>
+        <el-table-column prop="alarm_time" label="预警时间" width="135"> </el-table-column>
         <el-table-column prop="alarm_address" label="预警地点"> </el-table-column>
         <el-table-column prop="alarm_reason" label="预警原因"> </el-table-column>
         <el-table-column prop="type" label="类型"> </el-table-column>
