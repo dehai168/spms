@@ -92,7 +92,7 @@ export default {
       countList: [
         {
           id: 1,
-          to: '/basicinfomg/specialindustries/hotel/base',
+          to: '/basicinfo/specialindustries/hotel/base',
           enterprise: '旅馆',
           count: 1,
           abroad_persons: 1,
@@ -100,7 +100,7 @@ export default {
         },
         {
           id: 5,
-          to: '/basicinfomg/specialindustries/seal/list',
+          to: '/basicinfo/specialindustries/seal/list',
           enterprise: '印章刻制',
           count: 0,
           abroad_persons: 0,
@@ -108,7 +108,7 @@ export default {
         },
         {
           id: 4,
-          to: '/basicinfomg/specialindustries/scrapMetal',
+          to: '/basicinfo/specialindustries/scrapMetal',
           enterprise: '废旧金属回收',
           count: 0,
           abroad_persons: 0,
@@ -116,7 +116,7 @@ export default {
         },
         {
           id: 2,
-          to: '/basicinfomg/specialindustries/fleatrade',
+          to: '/basicinfo/specialindustries/fleatrade',
           enterprise: '旧货交易',
           count: 0,
           abroad_persons: 0,
@@ -124,7 +124,7 @@ export default {
         },
         {
           id: 3,
-          to: '/basicinfomg/specialindustries/vehiclerepair',
+          to: '/basicinfo/specialindustries/vehiclerepair',
           enterprise: '机动车维修',
           count: 0,
           abroad_persons: 0,
@@ -132,7 +132,7 @@ export default {
         },
         {
           id: 6,
-          to: '/basicinfomg/entertainment-places/ktv',
+          to: '/basicinfo/entertainment-places/ktv',
           enterprise: 'KTV',
           count: 0,
           abroad_persons: 0,
@@ -140,7 +140,7 @@ export default {
         },
         {
           id: 7,
-          to: '/basicinfomg/entertainment-places/bar',
+          to: '/basicinfo/entertainment-places/bar',
           enterprise: '酒吧',
           count: 0,
           abroad_persons: 0,
