@@ -373,7 +373,7 @@ export default {
       this.dialogVisible = true;
     },
     handlePerson(index, row) {
-      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.scrap_metal_recycleid } });
+      this.$router.push({ path: '/basicinfo/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.scrap_metal_recycleid } });
     },
     handleRemove(index, row) {
       this.removeData(row.scrap_metal_recycleid)

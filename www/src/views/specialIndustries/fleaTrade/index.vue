@@ -388,7 +388,7 @@ export default {
       this.dialogVisible = true;
     },
     handlePerson(index, row) {
-      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.junk_tradeid } });
+      this.$router.push({ path: '/basicinfo/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.junk_tradeid } });
     },
     handleRemove(index, row) {
       this.removeData(row.junk_tradeid)

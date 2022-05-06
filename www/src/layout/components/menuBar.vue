@@ -11,7 +11,7 @@
           <app-link to="/home"> <i class="el-icon-s-platform"></i> 首页 </app-link>
         </li>
         <li :class="{ active: activeMenu.indexOf('/basicinfo/') > -1 }">
-          <app-link to="/basicinfo"> <i class="el-icon-s-claim"></i> 基础信息管理 </app-link>
+          <app-link to="/basicinfomg"> <i class="el-icon-s-claim"></i> 基础信息管理 </app-link>
         </li>
         <li :class="{ active: activeMenu.indexOf('/generalinfo/') > -1 }">
           <app-link to="/generalinfo"><i class="el-icon-files"></i> 综合信息查询 </app-link>

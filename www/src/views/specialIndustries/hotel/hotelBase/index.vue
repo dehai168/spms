@@ -546,10 +546,10 @@ export default {
       this.dialogVisible = true;
     },
     handlePerson(index, row) {
-      this.$router.push({ path: '/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.hotelid } });
+      this.$router.push({ path: '/basicinfo/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.hotelid } });
     },
     handleHotelPerson(index, row) {
-      this.$router.push({ path: '/specialindustries/hotel/domestic', query: { enterprise: row.enterprise, enterprise_id: row.hotelid } });
+      this.$router.push({ path: '/basicinfo/specialindustries/hotel/domestic', query: { enterprise: row.enterprise, enterprise_id: row.hotelid } });
     },
     handleRemove(index, row) {
       this.removeData(row.hotelid)

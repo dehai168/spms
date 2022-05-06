@@ -1,7 +1,7 @@
 <template>
   <div class="container map-container" id="spms_map">
     <el-card class="top-card">
-      <card v-for="item in countList" v-bind:key="item.id" :id="item.id" :enterprise="item.enterprise" :count="item.count" :abroad_persons="item.abroad_persons" :domestic_persons="item.domestic_persons" />
+      <card v-for="item in countList" v-bind:key="item.id" :id="item.id" :to="item.to" :enterprise="item.enterprise" :count="item.count" :abroad_persons="item.abroad_persons" :domestic_persons="item.domestic_persons" />
     </el-card>
     <el-card class="right-card">
       <fieldset>
@@ -42,7 +42,7 @@
         <Livevideo :src="videoObject.src"></Livevideo>
       </div>
     </el-dialog>
-    <el-dialog :title="detailName" :visible.sync="markerDetailDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog :title="detailName" :visible.sync="markerDetailDialogVisible" width="50%" :close-on-click-modal="false">
       <Markerdetail></Markerdetail>
     </el-dialog>
     <el-dialog :title="mediaName" :visible.sync="mediaListDialogVisible" width="30%" :close-on-click-modal="false">
@@ -92,6 +92,7 @@ export default {
       countList: [
         {
           id: 1,
+          to: '/basicinfomg/specialindustries/hotel/base',
           enterprise: '旅馆',
           count: 1,
           abroad_persons: 1,
@@ -99,6 +100,7 @@ export default {
         },
         {
           id: 5,
+          to: '/basicinfomg/specialindustries/seal/list',
           enterprise: '印章刻制',
           count: 0,
           abroad_persons: 0,
@@ -106,6 +108,7 @@ export default {
         },
         {
           id: 4,
+          to: '/basicinfomg/specialindustries/scrapMetal',
           enterprise: '废旧金属回收',
           count: 0,
           abroad_persons: 0,
@@ -113,6 +116,7 @@ export default {
         },
         {
           id: 2,
+          to: '/basicinfomg/specialindustries/fleatrade',
           enterprise: '旧货交易',
           count: 0,
           abroad_persons: 0,
@@ -120,6 +124,7 @@ export default {
         },
         {
           id: 3,
+          to: '/basicinfomg/specialindustries/vehiclerepair',
           enterprise: '机动车维修',
           count: 0,
           abroad_persons: 0,
@@ -127,6 +132,7 @@ export default {
         },
         {
           id: 6,
+          to: '/basicinfomg/entertainment-places/ktv',
           enterprise: 'KTV',
           count: 0,
           abroad_persons: 0,
@@ -134,6 +140,7 @@ export default {
         },
         {
           id: 7,
+          to: '/basicinfomg/entertainment-places/bar',
           enterprise: '酒吧',
           count: 0,
           abroad_persons: 0,
@@ -355,11 +362,11 @@ export default {
                 break
               case 6:
                 res.data.id = res.data.ktvid
-                res.data.enterprise=res.data.recreation_place_name
+                res.data.enterprise = res.data.recreation_place_name
                 break
               case 7:
                 res.data.id = res.data.barid
-                res.data.enterprise=res.data.recreation_place_name
+                res.data.enterprise = res.data.recreation_place_name
                 break
               default:
                 break

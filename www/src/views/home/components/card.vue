@@ -1,5 +1,5 @@
 <template>
-  <div style="display: inline-flex;margin-right:3px;min-width:137px;">
+  <div style="display: inline-flex; margin-right: 3px; min-width: 137px">
     <div class="icon">
       <i v-if="id === 1" class="el-icon-office-building"></i>
       <i v-if="id === 2" class="el-icon-wallet"></i>
@@ -11,10 +11,14 @@
     </div>
     <div class="text">
       <div>
-        {{ enterprise }}:<el-link type="primary">{{ count }}</el-link>
+        {{ enterprise }}:<router-link :to="to"
+          ><el-link type="primary">{{ count }}</el-link></router-link
+        >
       </div>
       <div>
-        从业人员:<el-link type="primary">{{ abroad_persons + domestic_persons }}</el-link>
+        从业人员:<router-link :to="'/basicinfo/employees/domestic?trade_type=' + id"
+          ><el-link type="primary">{{ abroad_persons + domestic_persons }}</el-link></router-link
+        >
       </div>
     </div>
   </div>
@@ -27,6 +31,10 @@ export default {
     id: {
       type: Number,
       default: 0
+    },
+    to: {
+      type: String,
+      default: ''
     },
     enterprise: {
       type: String,
