@@ -22,3 +22,10 @@ export function list(params) {
         params
     })
 }
+export function devicelist(params) {
+    return request({
+        url: '/police/device/list?token=' + getToken(),
+        method: 'get',
+        params
+    })
+}

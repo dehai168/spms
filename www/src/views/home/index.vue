@@ -21,6 +21,12 @@
           <li><el-checkbox v-model="checkList[5]" @change="handleCheck(5)" class="marginRight">KTV</el-checkbox><img :src="imgList[6]" alt="" srcset="" /></li>
         </ul>
       </fieldset>
+      <fieldset>
+        <legend>监控设备</legend>
+        <ul>
+          <li><el-checkbox v-model="cameraVisable" @change="handleCameraVisable()" class="marginRight">摄像头</el-checkbox><img :src="cameraImg" alt="" srcset="" /></li>
+        </ul>
+      </fieldset>
     </el-card>
     <el-card class="right-search-card">
       <!-- <el-input placeholder="搜索场所(企业)名称" v-model="keywords" style="width: 280px">
@@ -56,7 +62,7 @@
 <script>
 import defaultSettings from '@/settings'
 import Vue from 'vue/dist/vue.js'
-import { position, detail, list } from '@/api/home'
+import { position, detail, list, devicelist } from '@/api/home'
 import location_1 from '@/assets/map/location_1.png'
 import location_2 from '@/assets/map/location_2.png'
 import location_3 from '@/assets/map/location_3.png'
@@ -64,6 +70,7 @@ import location_4 from '@/assets/map/location_4.png'
 import location_5 from '@/assets/map/location_5.png'
 import location_6 from '@/assets/map/location_6.png'
 import location_7 from '@/assets/map/location_7.png'
+import camera from '@/assets/map/camera.png'
 import card from './components/card.vue'
 import gcoodrd from 'gcoord'
 import Livevideo from './components/livevideo.vue'
@@ -84,8 +91,11 @@ export default {
       map: null,
       popup: null,
       imgList: [location_1, location_2, location_3, location_4, location_5, location_6, location_7],
-      checkList: [true, true, true, true, true, true, true],
+      cameraImg: camera,
+      cameraVisable: true,
+      checkList: [true, true, true, true, true, true, true, true],
       infoList: [],
+      cameraDeviceList: [],
       keywords: '',
       loading: false,
       searchResultList: [],
@@ -187,6 +197,7 @@ export default {
         this.map.on('load', function () {
           that.loadMarkerImage()
           that.loadDataAndCount()
+          that.loadCameraList()
         })
       }
     },
@@ -199,6 +210,9 @@ export default {
           })
         })(index)
       }
+      that.map.loadImage(this.cameraImg, function (error, image) {
+        that.map.addImage('camera', image)
+      })
     },
     loadDataAndCount() {
       position({})
@@ -223,6 +237,24 @@ export default {
 
             this.loadCluster()
           }
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+    loadCameraList() {
+      devicelist({})
+        .then(res => {
+          this.cameraDeviceList.length = 0
+          this.cameraDeviceList = res.data
+          this.cameraDeviceList.forEach(element => {
+            // 纠偏
+            const transform = gcoodrd.transform([element.lng, element.lat], gcoodrd.WGS84, gcoodrd.GCJ02)
+            element.lng = transform[0]
+            element.lat = transform[1]
+          })
+
+          this.loadCameraCluster()
         })
         .catch(e => {
           console.error(e)
@@ -255,6 +287,28 @@ export default {
         })
         this.refreshCluster(index, checked)
       }
+    },
+    loadCameraCluster() {
+      const sourceName = 'earthquakes_camera'
+      const features = []
+      this.cameraDeviceList.forEach(element => {
+        features.push({
+          type: 'Feature',
+          properties: element,
+          geometry: { type: 'Point', coordinates: [element.lng, element.lat, 0.0] }
+        })
+      })
+      this.map.addSource(sourceName, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features
+        },
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50
+      })
+      this.refreshCameraCluster()
     },
     refreshCluster(index, checked) {
       const sourceName = 'earthquakes_' + index
@@ -307,6 +361,71 @@ export default {
       } else {
         if (this.popup) {
           this.popup.remove()
+        }
+        if (this.map.getLayer(unclusterPointName)) {
+          this.map.removeLayer(unclusterPointName)
+        }
+        if (this.map.getLayer(clustersCountName)) {
+          this.map.removeLayer(clustersCountName)
+        }
+        if (this.map.getLayer(clustersName)) {
+          this.map.removeLayer(clustersName)
+        }
+      }
+    },
+    refreshCameraCluster() {
+      const sourceName = 'earthquakes_camera'
+      const clustersName = 'clusters_camera'
+      const clustersCountName = 'cluster-count_camera'
+      const unclusterPointName = 'unclustered-point_camera'
+      const that = this
+      if (this.cameraVisable) {
+        this.map.addLayer({
+          id: clustersName,
+          type: 'circle',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
+            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+          }
+        })
+        this.map.addLayer({
+          id: clustersCountName,
+          type: 'symbol',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          layout: {
+            'text-field': '{point_count_abbreviated}',
+            'text-font': ['sourcehansanscn-normal'],
+            'text-size': 12
+          }
+        })
+        this.map.addLayer({
+          id: unclusterPointName,
+          type: 'symbol',
+          source: sourceName,
+          filter: ['!has', 'point_count'],
+          layout: {
+            'icon-image': 'camera',
+            'icon-size': 1
+          }
+        })
+        this.map.on('click', unclusterPointName, function (e) {
+          let features = e.features[0].properties
+          that.videoName = features.type + '-' + features.type2 + '-' + features.name
+          that.videoObject.src = features.code
+          that.liveVideoDialogVisible = true
+        })
+        this.map.on('mouseenter', unclusterPointName, function () {
+          that.map.getCanvas().style.cursor = 'pointer'
+        })
+        this.map.on('mouseleave', unclusterPointName, function () {
+          that.map.getCanvas().style.cursor = ''
+        })
+      } else {
+        if (this.liveVideoDialogVisible) {
+          this.liveVideoDialogVisible = false
         }
         if (this.map.getLayer(unclusterPointName)) {
           this.map.removeLayer(unclusterPointName)
@@ -491,6 +610,9 @@ export default {
     handleCheck(index) {
       const checked = this.checkList[index]
       this.refreshCluster(index, checked)
+    },
+    handleCameraVisable() {
+      this.refreshCameraCluster()
     }
   }
 }

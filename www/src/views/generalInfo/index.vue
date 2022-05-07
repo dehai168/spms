@@ -19,7 +19,7 @@
         <Livevideo :src="videoObject.src"></Livevideo>
       </div>
     </el-dialog>
-    <el-dialog :title="detailName" :visible.sync="markerDetailDialogVisible" width="30%" :close-on-click-modal="false">
+    <el-dialog :title="detailName" :visible.sync="markerDetailDialogVisible" width="50%" :close-on-click-modal="false">
       <Markerdetail></Markerdetail>
     </el-dialog>
     <el-dialog :title="mediaName" :visible.sync="mediaListDialogVisible" width="30%" :close-on-click-modal="false">
@@ -33,7 +33,7 @@
 <script>
 import defaultSettings from '@/settings'
 import Vue from 'vue/dist/vue.js'
-import { position, detail } from '@/api/home'
+import { list, detail } from '@/api/home'
 import location_1 from '@/assets/map/location_1.png'
 import location_2 from '@/assets/map/location_2.png'
 import location_3 from '@/assets/map/location_3.png'
@@ -188,7 +188,7 @@ export default {
             })
             let component = new infoWindow().$mount()
             const item = this.infoList.find(v => {
-              return v.id === id && v.type === type
+              return v.systemid === id && v.type === type
             })
             if (item) {
               this.openPopup(item, component.$el)
@@ -242,7 +242,7 @@ export default {
     },
     search() {
       if (this.keywords.length > 0) {
-        position({ key: this.keywords, index: 0, size: 50 })
+        list({ key: this.keywords, index: 0, size: 100 })
           .then(res => {
             if (res.code === 200) {
               this.infoList.length = 0
@@ -299,7 +299,7 @@ export default {
       })
       this.map.on('click', unclusterPointName, function (e) {
         let features = e.features[0].properties
-        that.loadPopup(features.id, features.type)
+        that.loadPopup(features.systemid, features.type)
       })
       this.map.on('mouseenter', unclusterPointName, function () {
         that.map.getCanvas().style.cursor = 'pointer'
