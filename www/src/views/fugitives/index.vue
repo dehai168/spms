@@ -49,6 +49,13 @@
         <el-table-column prop="province_city" label="户籍市县"> </el-table-column>
         <el-table-column prop="detail_address" label="户籍详址"> </el-table-column>
         <el-table-column prop="circular_code" label="通报编号" width="185"> </el-table-column>
+        <el-table-column label="案件详情" width="80">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" title="案件详情" width="200" trigger="hover" :content="scope.row.case_detail">
+              <el-button slot="reference"  type="text" size="small">查看</el-button>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column prop="reg_date" label="登记日期" width="110"> </el-table-column>
       </el-table>
     </el-main>
