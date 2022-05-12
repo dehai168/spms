@@ -14,11 +14,6 @@
         </el-input>
       </div>
     </div>
-    <el-dialog :title="videoName" :visible.sync="liveVideoDialogVisible" width="30%" :close-on-click-modal="false">
-      <div style="text-align: center; width: 100%">
-        <Livevideo :src="videoObject.src"></Livevideo>
-      </div>
-    </el-dialog>
     <el-dialog :title="detailName" :visible.sync="markerDetailDialogVisible" width="50%" :close-on-click-modal="false">
       <Markerdetail></Markerdetail>
     </el-dialog>
@@ -28,6 +23,7 @@
     <el-dialog :title="imageName" :visible.sync="viewImageDialogVisible" width="50%" :close-on-click-modal="false">
       <Viewimage></Viewimage>
     </el-dialog>
+    <iframe id="targetFrame" width="0" height="0" frameborder="0"></iframe>
   </div>
 </template>
 <script>
@@ -43,7 +39,6 @@ import location_6 from '@/assets/map/location_6.png'
 import location_7 from '@/assets/map/location_7.png'
 import card from '../home/components/card.vue'
 import gcoodrd from 'gcoord'
-import Livevideo from '../home/components/livevideo.vue'
 import Markerdetail from '../home/components/markerdetail.vue'
 import Medialist from '../home/components/medialist.vue'
 import Viewimage from '../home/components/viewimage.vue'
@@ -51,7 +46,6 @@ export default {
   name: 'GeneralInfo',
   components: {
     card,
-    Livevideo,
     Markerdetail,
     Medialist,
     Viewimage
@@ -64,10 +58,8 @@ export default {
       keywords: '',
       liveVideoDialogVisible: false,
       videoObject: {
-        src: 'index=50010400001310015829'
+        src: ''
       },
-      videoName: '',
-      markerDetailDialogVisible: false,
       detailName: '',
       mediaListDialogVisible: false,
       mediaName: '',
@@ -233,8 +225,8 @@ export default {
       this.markerDetailDialogVisible = true
     },
     viewVideo(row) {
-      this.videoName = this.mediaName + '-' + row.name
-      this.liveVideoDialogVisible = true
+      this.videoObject.src = row.code
+      this.play()
     },
     viewImage(row) {
       this.imageName = this.mediaName + '-' + row.name
@@ -319,6 +311,31 @@ export default {
       if (this.map.getSource('earthquakes')) {
         this.map.removeSource('earthquakes')
       }
+    },
+    full() {
+      const url = 'VideoMap://fullscreen'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
+    },
+    hide() {
+      const url = 'VideoMap://hide'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
+    },
+    exit() {
+      const url = 'VideoMap://exit'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
+    },
+    play() {
+      const url = 'VideoPlay://index=' + this.videoObject.src + '&pos=0_0_200_200&fullscreen=true'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
+    },
+    stop() {
+      const url = 'VideoPlay://exit'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
     }
   }
 }

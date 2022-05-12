@@ -43,11 +43,6 @@
         </el-option>
       </el-select>
     </el-card>
-    <el-dialog :title="videoName" :visible.sync="liveVideoDialogVisible" width="30%" :close-on-click-modal="false">
-      <div style="text-align: center; width: 100%">
-        <Livevideo :src="videoObject.src"></Livevideo>
-      </div>
-    </el-dialog>
     <el-dialog :title="detailName" :visible.sync="markerDetailDialogVisible" width="50%" :close-on-click-modal="false">
       <Markerdetail></Markerdetail>
     </el-dialog>
@@ -57,6 +52,7 @@
     <el-dialog :title="imageName" :visible.sync="viewImageDialogVisible" width="50%" :close-on-click-modal="false">
       <Viewimage></Viewimage>
     </el-dialog>
+    <iframe id="targetFrame" width="0" height="0" frameborder="0"></iframe>
   </div>
 </template>
 <script>
@@ -71,9 +67,9 @@ import location_5 from '@/assets/map/location_5.png'
 import location_6 from '@/assets/map/location_6.png'
 import location_7 from '@/assets/map/location_7.png'
 import camera from '@/assets/map/camera.png'
+import camera_cluter from '@/assets/map/camera_cluster.png'
 import card from './components/card.vue'
 import gcoodrd from 'gcoord'
-import Livevideo from './components/livevideo.vue'
 import Markerdetail from './components/markerdetail.vue'
 import Medialist from './components/medialist.vue'
 import Viewimage from './components/viewimage.vue'
@@ -81,7 +77,6 @@ export default {
   name: 'Home',
   components: {
     card,
-    Livevideo,
     Markerdetail,
     Medialist,
     Viewimage
@@ -92,6 +87,7 @@ export default {
       popup: null,
       imgList: [location_1, location_2, location_3, location_4, location_5, location_6, location_7],
       cameraImg: camera,
+      camera_cluterImg: camera_cluter,
       cameraVisable: true,
       checkList: [true, true, true, true, true, true, true, true],
       infoList: [],
@@ -157,11 +153,9 @@ export default {
           domestic_persons: 0
         }
       ],
-      liveVideoDialogVisible: false,
       videoObject: {
-        src: 'index=50010400001310015829'
+        src: ''
       },
-      videoName: '',
       markerDetailDialogVisible: false,
       detailName: '',
       mediaListDialogVisible: false,
@@ -212,6 +206,9 @@ export default {
       }
       that.map.loadImage(this.cameraImg, function (error, image) {
         that.map.addImage('camera', image)
+      })
+      that.map.loadImage(this.camera_cluterImg, function (error, image) {
+        that.map.addImage('camera_cluter', image)
       })
     },
     loadDataAndCount() {
@@ -380,14 +377,24 @@ export default {
       const unclusterPointName = 'unclustered-point_camera'
       const that = this
       if (this.cameraVisable) {
+        // this.map.addLayer({
+        //   id: clustersName,
+        //   type: 'circle',
+        //   source: sourceName,
+        //   filter: ['has', 'point_count'],
+        //   paint: {
+        //     'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
+        //     'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+        //   }
+        // })
         this.map.addLayer({
           id: clustersName,
-          type: 'circle',
+          type: 'symbol',
           source: sourceName,
           filter: ['has', 'point_count'],
-          paint: {
-            'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
-            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+          layout: {
+            'icon-image': 'camera_cluter',
+            'icon-size': 1
           }
         })
         this.map.addLayer({
@@ -411,11 +418,13 @@ export default {
             'icon-size': 1
           }
         })
+        this.map.on('click', clustersName, function (e) {
+          console.log(e)
+        })
         this.map.on('click', unclusterPointName, function (e) {
           let features = e.features[0].properties
-          that.videoName = features.type + '-' + features.type2 + '-' + features.name
           that.videoObject.src = features.code
-          that.liveVideoDialogVisible = true
+          that.play()
         })
         this.map.on('mouseenter', unclusterPointName, function () {
           that.map.getCanvas().style.cursor = 'pointer'
@@ -424,9 +433,6 @@ export default {
           that.map.getCanvas().style.cursor = ''
         })
       } else {
-        if (this.liveVideoDialogVisible) {
-          this.liveVideoDialogVisible = false
-        }
         if (this.map.getLayer(unclusterPointName)) {
           this.map.removeLayer(unclusterPointName)
         }
@@ -555,8 +561,8 @@ export default {
       this.markerDetailDialogVisible = true
     },
     viewVideo(row) {
-      this.videoName = this.mediaName + '-' + row.name
-      this.liveVideoDialogVisible = true
+      this.videoObject.src = row.code
+      this.play()
     },
     viewImage(row) {
       this.imageName = this.mediaName + '-' + row.name
@@ -613,6 +619,31 @@ export default {
     },
     handleCameraVisable() {
       this.refreshCameraCluster()
+    },
+    full() {
+      const url = 'VideoMap://fullscreen'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
+    },
+    hide() {
+      const url = 'VideoMap://hide'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
+    },
+    exit() {
+      const url = 'VideoMap://exit'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
+    },
+    play() {
+      const url = 'VideoPlay://index=' + this.videoObject.src + '&pos=0_0_200_200&fullscreen=true'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
+    },
+    stop() {
+      const url = 'VideoPlay://exit'
+      const tf = document.getElementById('targetFrame')
+      tf.setAttribute('src', url)
     }
   }
 }
