@@ -377,26 +377,26 @@ export default {
       const unclusterPointName = 'unclustered-point_camera'
       const that = this
       if (this.cameraVisable) {
-        // this.map.addLayer({
-        //   id: clustersName,
-        //   type: 'circle',
-        //   source: sourceName,
-        //   filter: ['has', 'point_count'],
-        //   paint: {
-        //     'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
-        //     'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
-        //   }
-        // })
         this.map.addLayer({
           id: clustersName,
-          type: 'symbol',
+          type: 'circle',
           source: sourceName,
           filter: ['has', 'point_count'],
-          layout: {
-            'icon-image': 'camera_cluter',
-            'icon-size': 1
+          paint: {
+            'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
+            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
           }
         })
+        // this.map.addLayer({
+        //   id: clustersName,
+        //   type: 'symbol',
+        //   source: sourceName,
+        //   filter: ['has', 'point_count'],
+        //   layout: {
+        //     'icon-image': 'camera_cluter',
+        //     'icon-size': 1
+        //   }
+        // })
         this.map.addLayer({
           id: clustersCountName,
           type: 'symbol',

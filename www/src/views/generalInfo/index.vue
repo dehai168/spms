@@ -56,7 +56,7 @@ export default {
       popup: null,
       imgList: [location_1, location_2, location_3, location_4, location_5, location_6, location_7],
       keywords: '',
-      liveVideoDialogVisible: false,
+      markerDetailDialogVisible: false,
       videoObject: {
         src: ''
       },
