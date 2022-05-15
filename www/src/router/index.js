@@ -220,6 +220,11 @@ export const constantRoutes = [
           },
         ]
       },
+      {
+        path: 'black-list',
+        meta: { title: '企业黑名单', icon: 'el-icon-set-up' },
+        component: () => import('@/views/blackList'),
+      },
     ]
   },
   {

@@ -5,34 +5,16 @@
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
             <el-form-item :label="formItem.label">
-              <el-select
-                v-if="formItem.type == 'select'"
-                v-model="queryForm[formItem.key]"
-                :style="{ width: formItem.width || '11vw' }"
-                placeholder="请选择"
-                :clearable="true"
-              >
-                <el-option
-                  v-for="option in formItem.options"
-                  :key="option.value"
-                  :value="option.value"
-                  :label="option.label"
-                />
+              <el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]"
+                :style="{ width: formItem.width || '11vw' }" placeholder="请选择" :clearable="true">
+                <el-option v-for="option in formItem.options" :key="option.value" :value="option.value"
+                  :label="option.label" />
               </el-select>
-              <el-input
-                v-else-if="formItem.type == 'input'"
-                v-model="queryForm[formItem.key]"
-                :style="{ width: formItem.width || '11vw' }"
-              />
-              <el-date-picker
-                v-else-if="formItem.type == 'datePicker'"
-                v-model="queryForm[formItem.key]"
-                :style="{ width: formItem.width || '11vw' }"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              />
+              <el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]"
+                :style="{ width: formItem.width || '11vw' }" />
+              <el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]"
+                :style="{ width: formItem.width || '11vw' }" type="daterange" range-separator="至"
+                start-placeholder="开始日期" end-placeholder="结束日期" />
               <div v-else-if="formItem.type == 'btn'">
                 <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
                 <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
@@ -44,114 +26,47 @@
     </el-header>
     <el-main class="main">
       <el-button icon="el-icon-plus" type="primary" @click="handleCreate">新增</el-button>
-      <el-table
-        v-loading="tableLoading"
-        :data="tableData"
-        height="calc(100% - 36px)"
-        border
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column
-          v-for="column in columns"
-          :key="column.prop"
-          v-bind="column"
-          :show-overflow-tooltip="true"
-        />
+      <el-table v-loading="tableLoading" :data="tableData" height="calc(100% - 36px)" border style="width: 100%"
+        @selection-change="handleSelectionChange">
+        <el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
         <el-table-column prop="operate" label="操作" width="200" fixed="right">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="handleEdit(scope.$index, scope.row, 'detail')"
-            >详情</el-button>
-            <el-button
-              type="text"
-              size="small"
-              @click="handleEdit(scope.$index, scope.row, 'edit')"
-            >编辑</el-button>
+            <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row, 'detail')">详情</el-button>
+            <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row, 'edit')">编辑</el-button>
             <el-button type="text" size="small" @click="handlePerson(scope.$index, scope.row)">从业人员</el-button>
-            <el-button
-              slot="reference"
-              type="text"
-              size="small"
-              @click="handleRemove(scope.$index, scope.row)"
-            >删除</el-button>
+            <el-button slot="reference" type="text" size="small" @click="handleRemove(scope.$index, scope.row)">删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :page-sizes="pagesizes"
-        :page-size="queryForm.pagesize"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="tableDataCount"
-      />
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
+        :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper"
+        :total="tableDataCount" />
     </el-footer>
     <!-- 新增 编辑 -->
-    <el-dialog
-      class="hotel-base-add"
-      :title="dialogTittle"
-      :visible.sync="dialogVisible"
-      width="70%"
-      top="4vh"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="addEditForm"
-        :model="addEditForm"
-        label-width="7.5vw"
-        :inline="true"
-        :disabled="flag == 'detail'"
-      >
+    <el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh"
+      :close-on-click-modal="false">
+      <el-form ref="addEditForm" :model="addEditForm" label-width="7.5vw" :inline="true" :disabled="flag == 'detail'">
         <my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
           <el-row v-for="(row, rowIndex) in cardItem" :key="rowIndex">
             <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
               <el-form-item :label="formItem.label">
-                <el-select
-                  v-if="formItem.type == 'select'"
-                  v-model="addEditForm[formItem.key]"
-                  :style="{ width: formItem.width || '13.5vw' }"
-                  placeholder="请选择"
-                >
-                  <el-option
-                    v-for="option in formItem.options"
-                    :key="option.value"
-                    :value="option.value"
-                    :label="option.label"
-                  />
+                <el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]"
+                  :style="{ width: formItem.width || '13.5vw' }" placeholder="请选择">
+                  <el-option v-for="option in formItem.options" :key="option.value" :value="option.value"
+                    :label="option.label" />
                 </el-select>
-                <el-input
-                  v-else-if="formItem.type == 'input'"
-                  v-model="addEditForm[formItem.key]"
-                  :style="{ width: formItem.width || '13.5vw' }"
-                />
-                <el-input
-                  v-else-if="formItem.type == 'textarea'"
-                  v-model="addEditForm[formItem.key]"
-                  type="textarea"
-                  style="width:500px"
-                />
-                <el-date-picker
-                  v-else-if="formItem.type == 'datePicker'"
-                  v-model="addEditForm[formItem.key]"
-                  :style="{ width: formItem.width || '13.5vw' }"
-                  type="date"
-                  placeholder="请选择日期"
-                />
-                <el-radio-group
-                  v-else-if="formItem.type == 'radio'"
-                  v-model="addEditForm[formItem.key]"
-                >
-                  <el-radio
-                    v-for="option in formItem.options"
-                    :key="option.value"
-                    :label="option.value"
-                  >{{ option.label }}</el-radio>
+                <el-input v-else-if="formItem.type == 'input'" v-model="addEditForm[formItem.key]"
+                  :style="{ width: formItem.width || '13.5vw' }" />
+                <el-input v-else-if="formItem.type == 'textarea'" v-model="addEditForm[formItem.key]" type="textarea"
+                  style="width:500px" />
+                <el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="addEditForm[formItem.key]"
+                  :style="{ width: formItem.width || '13.5vw' }" type="date" placeholder="请选择日期" />
+                <el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
+                  <el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label
+                  }}</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -234,6 +149,18 @@ export default {
           },
         ],
         [
+          {
+            key: 'check_state',
+            label: '核查状态',
+            type: 'select',
+            options: mapToArray(map.check_state)
+          },
+          {
+            key: 'iscase',
+            label: '是否涉案',
+            type: 'select',
+            options: mapToArray(map.iscase)
+          },
           { key: 'inputTime', label: '录入时间', type: 'datePicker', span: 8, width: '13vw' },
           { key: 'btn', type: 'btn', span: 4 },
           // { key: 'enterprise_code', label: '企业编码', type: 'input' },
@@ -255,6 +182,8 @@ export default {
         },
         { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, value) => this.enumData[2].find(i => i.value === value)?.label },
         { prop: 'enterprise_address', label: '企业地址', minWidth: 160 },
+        { prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => map.check_state[cellValue] },
+        { prop: 'iscase', label: '是否涉案', width: 80, formatter: (row, column, cellValue, index) => map.iscase[cellValue] },
 
         // { prop: 'enterprise_code', label: '企业编码', width: 120 },
         // { prop: 'credit_code', label: '社会信用代码', minWidth: 120 },
@@ -281,9 +210,23 @@ export default {
               type: 'select',
               options: this.enumData[2]
             },
-            { key: 'register_date', label: '企业登记日期', type: 'datePicker' },
+            {
+              key: 'check_state',
+              label: '核查状态',
+              type: 'select',
+              options: mapToArray(map.check_state)
+            },
+            {
+              key: 'iscase',
+              label: '是否涉案',
+              type: 'select',
+              options: mapToArray(map.iscase)
+            },
           ],
-          [{ key: 'enterprise_address', label: '地址', type: 'input', width: '500px', span: 24 },]
+          [
+            { key: 'register_date', label: '企业登记日期', type: 'datePicker' },
+            { key: 'enterprise_address', label: '地址', type: 'input', width: '500px', span: 24 },
+          ]
         ],
         '工商信息': [
           [
@@ -515,18 +458,22 @@ export default {
 .container {
   height: calc(100vh - 120px);
   width: 100%;
+
   .main {
     height: calc(100% - 84px);
     width: 100%;
     padding: 5px;
-    > button {
+
+    >button {
       margin-bottom: 5px;
     }
+
     .el-table {
       height: calc(100% - 36px);
     }
   }
 }
+
 .hotel-base-add {
   .el-form {
     max-height: 600px;

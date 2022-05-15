@@ -5,34 +5,16 @@
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
             <el-form-item :label="formItem.label" :label-width="formItem.labelWidth || '8.5vw'">
-              <el-select
-                v-if="formItem.type == 'select'"
-                v-model="queryForm[formItem.key]"
-                :style="{ width: formItem.width || '11vw' }"
-                placeholder="请选择"
-                :clearable="true"
-              >
-                <el-option
-                  v-for="option in formItem.options"
-                  :key="option.value"
-                  :value="option.value"
-                  :label="option.label"
-                />
+              <el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]"
+                :style="{ width: formItem.width || '11vw' }" placeholder="请选择" :clearable="true">
+                <el-option v-for="option in formItem.options" :key="option.value" :value="option.value"
+                  :label="option.label" />
               </el-select>
-              <el-input
-                v-else-if="formItem.type == 'input'"
-                v-model="queryForm[formItem.key]"
-                :style="{ width: formItem.width || '11vw' }"
-              />
-              <el-date-picker
-                v-else-if="formItem.type == 'datePicker'"
-                v-model="queryForm[formItem.key]"
-                :style="{ width: formItem.width || '11vw' }"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              />
+              <el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]"
+                :style="{ width: formItem.width || '11vw' }" />
+              <el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]"
+                :style="{ width: formItem.width || '11vw' }" type="daterange" range-separator="至"
+                start-placeholder="开始日期" end-placeholder="结束日期" />
               <div v-else-if="formItem.type == 'btn'">
                 <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
                 <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
@@ -44,112 +26,43 @@
     </el-header>
     <el-main class="main">
       <el-button icon="el-icon-plus" type="primary" @click="handleCreate">新增</el-button>
-      <el-table
-        v-loading="tableLoading"
-        :data="tableData"
-        height="calc(100% - 36px)"
-        border
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column
-          v-for="column in columns"
-          :key="column.prop"
-          v-bind="column"
-          :show-overflow-tooltip="true"
-        />
+      <el-table v-loading="tableLoading" :data="tableData" height="calc(100% - 36px)" border style="width: 100%"
+        @selection-change="handleSelectionChange">
+        <el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
         <el-table-column prop="operate" label="操作" width="200" fixed="right">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="handleEdit(scope.$index, scope.row, 'detail')"
-            >详情</el-button>
-            <el-button
-              type="text"
-              size="small"
-              @click="handleEdit(scope.$index, scope.row, 'edit')"
-            >编辑</el-button>
+            <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row, 'detail')">详情</el-button>
+            <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row, 'edit')">编辑</el-button>
             <el-button type="text" size="small" @click="handlePerson(scope.$index, scope.row)">从业人员</el-button>
-            <el-button
-              slot="reference"
-              type="text"
-              size="small"
-              @click="handleRemove(scope.$index, scope.row)"
-            >删除</el-button>
+            <el-button slot="reference" type="text" size="small" @click="handleRemove(scope.$index, scope.row)">删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :page-sizes="pagesizes"
-        :page-size="queryForm.pagesize"
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="tableDataCount"
-      />
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
+        :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper"
+        :total="tableDataCount" />
     </el-footer>
     <!-- 新增 编辑 -->
-    <el-dialog
-      class="hotel-base-add"
-      :title="dialogTittle"
-      :visible.sync="dialogVisible"
-      width="70%"
-      top="4vh"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="addEditForm"
-        :model="addEditForm"
-        label-width="160px"
-        :inline="true"
-        :disabled="flag == 'detail'"
-      >
-        <el-form-item
-          v-for="formItem in addEditformItems"
-          :key="formItem.key"
-          :label="formItem.label"
-        >
-          <el-select
-            v-if="formItem.type == 'select'"
-            v-model="addEditForm[formItem.key]"
-            style="width:200px"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="option in formItem.options"
-              :key="option.value"
-              :value="option.value"
-              :label="option.label"
-            />
+    <el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh"
+      :close-on-click-modal="false">
+      <el-form ref="addEditForm" :model="addEditForm" label-width="160px" :inline="true" :disabled="flag == 'detail'">
+        <el-form-item v-for="formItem in addEditformItems" :key="formItem.key" :label="formItem.label">
+          <el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width:200px"
+            placeholder="请选择">
+            <el-option v-for="option in formItem.options" :key="option.value" :value="option.value"
+              :label="option.label" />
           </el-select>
-          <el-input
-            v-else-if="formItem.type == 'input'"
-            v-model="addEditForm[formItem.key]"
-            style="width:200px"
-          />
-          <el-input
-            v-else-if="formItem.type == 'textarea'"
-            v-model="addEditForm[formItem.key]"
-            type="textarea"
-            style="width:500px"
-          />
-          <el-date-picker
-            v-else-if="formItem.type == 'datePicker'"
-            v-model="addEditForm[formItem.key]"
-            type="date"
-            placeholder="请选择日期"
-            style="width:200px"
-          />
+          <el-input v-else-if="formItem.type == 'input'" v-model="addEditForm[formItem.key]" style="width:200px" />
+          <el-input v-else-if="formItem.type == 'textarea'" v-model="addEditForm[formItem.key]" type="textarea"
+            style="width:500px" />
+          <el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="addEditForm[formItem.key]" type="date"
+            placeholder="请选择日期" style="width:200px" />
           <el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
-            <el-radio
-              v-for="option in formItem.options"
-              :key="option.value"
-              :label="option.value"
-            >{{ option.label }}</el-radio>
+            <el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -236,7 +149,18 @@ export default {
           { key: 'special_license', label: '特殊行业许可证', type: 'input' },
         ],
         [
-
+          {
+            key: 'check_state',
+            label: '核查状态',
+            type: 'select',
+            options: mapToArray(map.check_state)
+          },
+          {
+            key: 'iscase',
+            label: '是否涉案',
+            type: 'select',
+            options: mapToArray(map.iscase)
+          },
           { key: 'btn', type: 'btn' },
         ]
       ]
@@ -256,6 +180,8 @@ export default {
         { prop: 'police_unit', label: '管辖派出所', minWidth: 200, formatter: (r, c, value) => this.enumData[1].find(i => i.value === value)?.label },
         { prop: 'legal_telephone', label: '法人联系电话', minWidth: 180 },
         { prop: 'special_license', label: '特殊行业许可证', width: 180 },
+        { prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => map.check_state[cellValue] },
+        { prop: 'iscase', label: '是否涉案', width: 80, formatter: (row, column, cellValue, index) => map.iscase[cellValue] },
       ]
     },
     addEditformItems() {
@@ -293,6 +219,18 @@ export default {
           label: '经济性质',
           type: 'select',
           options: mapToArray(map.economic_type)
+        },
+        {
+          key: 'check_state',
+          label: '核查状态',
+          type: 'select',
+          options: mapToArray(map.check_state)
+        },
+        {
+          key: 'iscase',
+          label: '是否涉案',
+          type: 'select',
+          options: mapToArray(map.iscase)
         },
         { key: 'special_license', label: '特种行业许可证编号', type: 'input' },
         { key: 'enterprise_permit_code', label: '工商营业执照编号', type: 'input' },
@@ -526,18 +464,22 @@ export default {
 .container {
   height: calc(100vh - 120px);
   width: 100%;
+
   .main {
     height: calc(100% - 184px);
     width: 100%;
     padding: 5px;
-    > button {
+
+    >button {
       margin-bottom: 5px;
     }
+
     .el-table {
       height: calc(100% - 36px);
     }
   }
 }
+
 .hotel-base-add {
   .el-form {
     max-height: 600px;
