@@ -8,3 +8,10 @@ export function enumsItems(data) {
     data
   })
 }
+export function getEnterpriseList(params) {
+  return request({
+    url: '/police/enterprise/search/list',
+    method: 'get',
+    params
+  })
+}
