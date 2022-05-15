@@ -6,7 +6,8 @@
           <el-col :span="6">
             <el-form-item prop="type" label="行业类型">
               <el-select v-model="queryForm.type" placeholder="请选择" clearable>
-                <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -17,7 +18,9 @@
           </el-col>
           <el-col :span="6">
             <el-form-item prop="daterange" label="创建日期">
-              <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="max-width: 240px"> </el-date-picker>
+              <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange"
+                range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false"
+                style="max-width: 240px"> </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -32,19 +35,23 @@
       <el-row>
         <el-button type="primary" icon="el-icon-plus" @click="handleCreate" style="margin-bottom: 5px">新增</el-button>
       </el-row>
-      <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%"
+        @selection-change="handleSelectionChange">
         <el-table-column type="index"> </el-table-column>
-        <el-table-column prop="type" label="行业类型"> </el-table-column>
+        <el-table-column prop="typename" label="行业类型"> </el-table-column>
         <el-table-column prop="enterprise" label="企业名称"> </el-table-column>
-        <el-table-column prop="check_type" label="检查方式"> </el-table-column>
+        <el-table-column prop="checktypename" label="检查方式"> </el-table-column>
         <el-table-column label="检查时间段" width="270">
           <template slot-scope="scope">
-            <span>{{ scope.row.check_fromtime }}</span
-            >~<span>{{ scope.row.check_totime }}</span>
+            <span>{{ scope.row.check_fromtime }}</span>~<span>{{ scope.row.check_totime }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="check_user" label="检查人" width="80"> </el-table-column>
-        <el-table-column prop="check_result" label="检查结果" width="105"> </el-table-column>
+        <el-table-column prop="check_result" label="检查结果" width="105">
+          <template slot-scope="scope">
+            {{ scope.row.check_result ? '异常' : '正常' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="chief_person" label="企业负责人" width="105"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
@@ -56,27 +63,34 @@
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
+        :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper"
+        :total="tableDataCount"> </el-pagination>
     </el-footer>
     <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="45%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
         <el-form-item prop="type" label="行业类型">
-          <el-select v-model="form.type" placeholder="请选择" style="width: 100%" :disabled="isView" @change="handleTypeSelect">
+          <el-select v-model="form.type" placeholder="请选择" style="width: 100%" :disabled="isView"
+            @change="handleTypeSelect">
             <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="systemid" label="企业名称">
-          <el-select v-model="form.systemid" filterable remote placeholder="请输入关键词" :remote-method="remoteMethod" :loading="loading" :disabled="isView" style="width: 100%" @change="handleSelectCompany">
-            <el-option v-for="item in options" :key="item.systemid" :label="item.enterprise" :value="item.systemid"> </el-option>
+          <el-select v-model="form.systemid" filterable remote placeholder="请输入关键词" :remote-method="remoteMethod"
+            :loading="loading" :disabled="isView" style="width: 100%" @change="handleSelectCompany">
+            <el-option v-for="item in options" :key="item.systemid" :label="item.enterprise" :value="item.systemid">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="check_type" label="检查方式">
           <el-select v-model="form.check_type" placeholder="请选择" style="width: 100%" :disabled="isView">
-            <el-option v-for="item in checkTypeList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option v-for="item in checkTypeList" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="daterange" label="检查时间">
-          <el-date-picker v-model="form.daterange" value-format="yyyy-MM-dd HH:mm:ss" type="datetimerange" placeholder="选择日期时间" style="width: 100%" :clearable="false" :disabled="isView"> </el-date-picker>
+          <el-date-picker v-model="form.daterange" value-format="yyyy-MM-dd HH:mm:ss" type="datetimerange"
+            placeholder="选择日期时间" style="width: 100%" :clearable="false" :disabled="isView"> </el-date-picker>
         </el-form-item>
         <el-form-item prop="check_user" label="检查人">
           <el-input v-model="form.check_user" maxlength="50" :disabled="isView"></el-input>
@@ -90,7 +104,7 @@
             <el-table-column prop="check_name" label="检查事项"> </el-table-column>
             <el-table-column label="选择">
               <template slot-scope="scope">
-                <el-radio-group v-model="scope.row.result">
+                <el-radio-group v-model="scope.row.result" :disabled="isView">
                   <el-radio :label="1">是</el-radio>
                   <el-radio :label="0">否</el-radio>
                 </el-radio-group>
@@ -98,17 +112,19 @@
             </el-table-column>
             <el-table-column label="说明">
               <template slot-scope="scope">
-                <el-input type="textarea" v-model="scope.row.explain"></el-input>
+                <el-input type="textarea" v-model="scope.row.explain" :disabled="isView"></el-input>
               </template>
             </el-table-column>
           </el-table>
         </el-form-item>
         <el-form-item prop="check_idea" label="工作意见">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.check_idea" maxlength="250" show-word-limit :disabled="isView"> </el-input>
+          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.check_idea" maxlength="250"
+            show-word-limit :disabled="isView"> </el-input>
         </el-form-item>
         <el-form-item prop="check_result" label="检查结果">
           <el-select v-model="form.check_result" placeholder="请选择" style="width: 100%" :disabled="isView" clearable>
-            <el-option v-for="item in checkResultList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option v-for="item in checkResultList" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="chief_person" label="场所负责人">
@@ -199,8 +215,8 @@ export default {
       that.handleQuery()
     })
   },
-  mounted() {},
-  destroyed() {},
+  mounted() { },
+  destroyed() { },
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
@@ -218,8 +234,17 @@ export default {
       items(this.queryForm)
         .then(res => {
           if (res.code === 200) {
-            // res.data.items.forEach(element => {
-            // })
+            const that = this
+            res.data.forEach(element => {
+              let item = that.typeList.find(v => {
+                return v.value === element.type
+              })
+              element.typename = item ? item.label : ''
+              item = that.checkTypeList.find(v => {
+                return v.value === element.check_type
+              })
+              element.checktypename = item ? item.label : ''
+            })
             this.tableData = res.data
             this.tableDataCount = res.size
           }
@@ -321,12 +346,16 @@ export default {
       this.formClear(false)
       this.isView = true
       this.form = { ...row }
+      this.form.daterange = [this.form.check_fromtime, this.form.check_totime]
+      this.options = [{ systemid: this.form.systemid, enterprise: this.form.enterprise }]
       this.dialogVisible = true
       return
     },
     handleUpdate(index, row) {
       this.formClear(false)
       this.form = { ...row }
+      this.form.daterange = [this.form.check_fromtime, this.form.check_totime]
+      this.options = [{ systemid: this.form.systemid, enterprise: this.form.enterprise }]
       this.dialogVisible = true
       return
     },
@@ -367,7 +396,7 @@ export default {
               console.error(e)
             })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     remoteMethod(query) {
       if (query !== '') {
@@ -384,7 +413,7 @@ export default {
               this.options = res.data
             }
           })
-          .catch(err => {})
+          .catch(err => { })
       } else {
         this.options = []
       }
@@ -416,7 +445,7 @@ export default {
             })
           }
         })
-        .catch(err => {})
+        .catch(err => { })
     }
   }
 }
@@ -426,6 +455,7 @@ export default {
   height: calc(100vh - 110px);
   width: 100%;
 }
+
 .main {
   height: calc(100vh - 152px);
   width: 100%;
