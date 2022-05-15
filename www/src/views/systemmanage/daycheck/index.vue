@@ -65,8 +65,8 @@
             <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="enterprise" label="企业名称">
-          <el-select v-model="form.enterprise" filterable remote placeholder="请输入关键词" :remote-method="remoteMethod" :loading="loading" :disabled="isView" style="width: 100%">
+        <el-form-item prop="systemid" label="企业名称">
+          <el-select v-model="form.systemid" filterable remote placeholder="请输入关键词" :remote-method="remoteMethod" :loading="loading" :disabled="isView" style="width: 100%" @change="handleSelectCompany">
             <el-option v-for="item in options" :key="item.systemid" :label="item.enterprise" :value="item.systemid"> </el-option>
           </el-select>
         </el-form-item>
@@ -76,7 +76,7 @@
           </el-select>
         </el-form-item>
         <el-form-item prop="daterange" label="检查时间">
-          <el-date-picker v-model="form.daterange" value-format="yyyy-MM-dd HH:mm:ss" type="datetimerange" placeholder="选择日期时间" style="width: 100%" :disabled="isView"> </el-date-picker>
+          <el-date-picker v-model="form.daterange" value-format="yyyy-MM-dd HH:mm:ss" type="datetimerange" placeholder="选择日期时间" style="width: 100%" :clearable="false" :disabled="isView"> </el-date-picker>
         </el-form-item>
         <el-form-item prop="check_user" label="检查人">
           <el-input v-model="form.check_user" maxlength="50" :disabled="isView"></el-input>
@@ -85,7 +85,7 @@
           <el-input v-model="form.check_peer" maxlength="50" :disabled="isView"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-table :data="form.checkList" border style="width: 100%">
+          <el-table :data="form.check_list" border style="width: 100%" max-height="250">
             <el-table-column type="index"> </el-table-column>
             <el-table-column prop="check_name" label="检查事项"> </el-table-column>
             <el-table-column label="选择">
@@ -102,25 +102,6 @@
               </template>
             </el-table-column>
           </el-table>
-          <!-- <table>
-                <thead>
-                    <th>
-                        <td>检查事项</td>
-                        <td>选择</td>
-                        <td>说明</td>
-                    </th>
-                </thead>
-                <tbody>
-                    <tr v-for="item in checkList" :key="item.checkid">
-                        <td>{{item.check_name}}</td>
-                        <td><el-radio-group v-model="item.result">
-    <el-radio :label="1">是</el-radio>
-    <el-radio :label="0">否</el-radio>
-  </el-radio-group></td>
-                        <td><el-input type="textarea" v-model="item.explain"></el-input></td>
-                    </tr>
-                </tbody>
-            </table> -->
         </el-form-item>
         <el-form-item prop="check_idea" label="工作意见">
           <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="form.check_idea" maxlength="250" show-word-limit :disabled="isView"> </el-input>
@@ -166,22 +147,24 @@ export default {
       },
       form: {
         daily_check_id: -1,
-        type: 1,
-        systemid: -1,
+        type: null,
+        systemid: null,
         enterprise: '',
+        credit_code: '',
         check_type: 1,
         daterange: [],
         check_user: '',
         check_peer: '',
-        checkList: [],
+        check_list: [],
         check_idea: '',
         check_result: 0,
         chief_person: '',
+        chief_person_sign: '',
         remark: ''
       },
       formRules: {
-        // realname: [{ required: true, trigger: 'blur', message: '该项是必填项' }],
-        // certificate_code: [{ required: true, trigger: 'blur', message: '该项是必填项' }]
+        type: [{ required: true, trigger: 'blur', message: '该项是必填项' }],
+        systemid: [{ required: true, trigger: 'blur', message: '该项是必填项' }]
       },
       typeList: [
         { value: 1, label: '旅馆业' },
@@ -269,6 +252,8 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           this.submitDisabled = true // 防止重复提交
+          this.form.check_fromtime = this.form.daterange[0]
+          this.form.check_totime = this.form.daterange[1]
           if (this.addflag) {
             create(this.form)
               .then(res => {
@@ -404,6 +389,13 @@ export default {
         this.options = []
       }
     },
+    handleSelectCompany(id) {
+      const item = this.options.find(v => {
+        return v.systemid === id
+      })
+      this.form.enterprise = item.enterprise
+      this.form.credit_code = item.credit_code
+    },
     handleTypeSelect(item) {
       checkItems({
         pageindex: 1,
@@ -412,9 +404,9 @@ export default {
       })
         .then(res => {
           if (res.code === 200) {
-            this.form.checkList.length = 0
+            this.form.check_list.length = 0
             res.data.forEach(element => {
-              this.form.checkList.push({
+              this.form.check_list.push({
                 checkid: element.checkid,
                 check_name: element.check_name,
                 result: null,

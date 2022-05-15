@@ -111,7 +111,7 @@ export default {
       },
       form: {
         checkid: -1,
-        type: '1',
+        type: 1,
         check_name: '',
         input_type: 0,
         isrequred: false,
