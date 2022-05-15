@@ -89,6 +89,11 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/datacount/index',
   },
+  {
+    path: '/systemmanage',
+    component: Layout,
+    redirect: '/systemmanage/checklist',
+  },
   // 二级路由
   {
     path: '/home',
@@ -269,6 +274,25 @@ export const constantRoutes = [
         name: 'Index',
         meta: { title: '分析', icon: 'el-icon-school' },
         component: () => import("@/views/datacount/index"),
+      }
+    ]
+  },
+  {
+    path: '/systemmanage',
+    component: Layout,
+    meta: { title: '系统管理', icon: 'el-icon-setting' },
+    children: [
+      {
+        path: 'checklist',
+        name: 'CheckList',
+        meta: { title: '检查项管理', icon: 'el-icon-s-order' },
+        component: () => import("@/views/systemmanage/checklist"),
+      },
+      {
+        path: 'daycheck',
+        name: 'DayCheck',
+        meta: { title: '日常检查管理', icon: 'el-icon-s-claim' },
+        component: () => import("@/views/systemmanage/daycheck"),
       }
     ]
   },

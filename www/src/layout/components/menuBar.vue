@@ -7,7 +7,7 @@
     </el-col>
     <el-col :span="16">
       <ul>
-        <li :class="{ active: activeMenu.indexOf('/home/') > -1 }">
+        <li style="width:100px;" :class="{ active: activeMenu.indexOf('/home/') > -1 }">
           <app-link to="/home"> <i class="el-icon-s-platform"></i> 首页 </app-link>
         </li>
         <li :class="{ active: activeMenu.indexOf('/basicinfo/') > -1 }">
@@ -21,6 +21,9 @@
         </li>
         <li :class="{ active: activeMenu.indexOf('/datacount/') > -1 }">
           <app-link to="/datacount"><i class="el-icon-s-data"></i> 数据统计分析 </app-link>
+        </li>
+        <li :class="{ active: activeMenu.indexOf('/systemmanage/') > -1 }">
+          <app-link to="/systemmanage"><i class="el-icon-setting"></i> 系统管理 </app-link>
         </li>
       </ul>
     </el-col>
@@ -230,7 +233,7 @@ export default {
       margin: 0;
       float: left;
       text-align: center;
-      width: 170px;
+      width: 165px;
       font-weight: 600;
       line-height: 60px;
       font-size: 20px;
