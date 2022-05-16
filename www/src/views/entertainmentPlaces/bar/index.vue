@@ -20,7 +20,7 @@
 			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
-					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop"  v-bind="column" />
+					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop" v-bind="column" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
@@ -89,6 +89,12 @@ export default {
 					{ label: '场所备案编号', key: 'record_code', type: 'input' },
 					{ label: '娱乐场所名称', key: 'recreation_place_name', type: 'input' },
 					{ label: '简称', key: 'recreation_place_short', type: 'input' },
+					{
+						key: 'check_state',
+						label: '核查状态',
+						type: 'select',
+						options: mapToArray(MAP.check_state)
+					},
 					{ label: '户外悬挂', key: 'outdoor_hang', type: 'input' },
 					{ label: '联系电话', key: 'telephone', type: 'input' },
 					{ label: '邮政编码', key: 'post_code', type: 'input' },
@@ -215,6 +221,12 @@ export default {
 					label: '简称',
 					type: 'input'
 				},
+				{
+					key: 'check_state',
+					label: '核查状态',
+					type: 'select',
+					options: mapToArray(MAP.check_state)
+				},
 				// {
 				// 	key: 'outdoor_hang',
 				// 	label: '户外悬挂',
@@ -250,6 +262,7 @@ export default {
 				{ prop: 'recreation_place_state', label: '场所状态', formatter: (row, col, cell) => MAP.recreation_place_state[cell], width: 100 },
 				{ prop: 'security_level', label: '治安级别', formatter: (row, col, cell) => MAP.security_level[cell], width: 100 },
 				{ prop: 'persons', label: '总人数', width: 80 },
+				{ prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => MAP.check_state[cellValue] },
 				{ prop: 'security_manage_unit', label: '治安管理机构', formatter: (row, col, cell) => MAP.jurisdiction_unit[cell] },
 			],
 			dialogVisible: false

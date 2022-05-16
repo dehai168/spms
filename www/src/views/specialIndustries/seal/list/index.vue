@@ -2,39 +2,12 @@
 	<div class="seal-list-container">
 		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 150px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
-				<el-form-item
-					v-for="formItem in formItems"
-					:key="formItem.key"
-					style="width: 30%"
-					:label="formItem.label"
-				>
-					<el-select
-						v-if="formItem.type == 'select'"
-						v-model="queryForm[formItem.key]"
-						style="width: 14vw"
-						placeholder="请选择"
-					>
-						<el-option
-							v-for="option in formItem.options"
-							:key="option.value"
-							:value="option.value"
-							:label="option.label"
-						/>
+				<el-form-item v-for="formItem in formItems" :key="formItem.key" style="width: 30%" :label="formItem.label">
+					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
+						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 					</el-select>
-					<el-input
-						v-else-if="formItem.type == 'input'"
-						v-model="queryForm[formItem.key]"
-						style="width: 14vw"
-					/>
-					<el-date-picker
-						v-else-if="formItem.type == 'datePicker'"
-						v-model="queryForm[formItem.key]"
-						style="width: 14vw"
-						type="daterange"
-						range-separator="至"
-						start-placeholder="开始日期"
-						end-placeholder="结束日期"
-					/>
+					<el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 14vw" />
+					<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" style="width: 14vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
 				</el-form-item>
 
 				<el-form-item>
@@ -44,61 +17,29 @@
 			</el-form>
 		</el-header>
 
-		<div class="main" style="padding: 5px;">
+		<div class="main" style="padding: 5px">
 			<el-button @click="handleCreate" type="primary" icon="el-icon-plus" style="margin: 10px 0">新增</el-button>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
-					<el-table-column
-						v-for="column in columns"
-						:key="column.prop"
-						v-bind="column"
-						:show-overflow-tooltip="true"
-					/>
+					<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row, 'detail')">详情</el-button>
 							<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row, 'edit')">编辑</el-button>
 							<el-button type="text" size="small" @click="handlePerson(scope.$index, scope.row)">从业人员</el-button>
 
-							<el-button
-								slot="reference"
-								type="text"
-								size="small"
-								@click="handleRemove(scope.$index, scope.row)"
-							>删除</el-button>
+							<el-button slot="reference" type="text" size="small" @click="handleRemove(scope.$index, scope.row)">删除</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
 			</div>
 		</div>
 		<el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-			<el-pagination
-				@size-change="handleSizeChange"
-				@current-change="handleCurrentChange"
-				:page-sizes="pagesizes"
-				:page-size="pager.pagesize"
-				background
-				layout="total, sizes, prev, pager, next, jumper"
-				:total="tableDataCount"
-			/>
+			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 		</el-footer>
 
-		<el-dialog
-			class="hotel-base-add"
-			:title="dialogTittle"
-			:visible.sync="dialogVisible"
-			width="70%"
-			top="4vh"
-			:close-on-click-modal="false"
-		>
-			<el-form
-				ref="addEditForm"
-				:model="addEditForm"
-				label-width="10vw"
-				:inline="true"
-				label-suffix=":"
-				:disabled="flag == 'detail'"
-			>
+		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh" :close-on-click-modal="false">
+			<el-form ref="addEditForm" :model="addEditForm" label-width="10vw" :inline="true" label-suffix=":" :disabled="flag == 'detail'">
 				<div style="display: flex; justify-content: space-around">
 					<el-form-item label="申报方式" required>
 						<el-radio-group v-model="addEditForm.declare_type">
@@ -118,50 +59,18 @@
 					<el-row v-for="(row, rowIndex) in cardItem" :key="rowIndex">
 						<el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
 							<el-form-item v-if="formItem.type !== 'standard_address'" :label="formItem.label">
-								<el-select
-									v-if="formItem.type == 'select'"
-									v-model="addEditForm[formItem.key]"
-									style="width: 11vw"
-									placeholder="请选择"
-								>
-									<el-option
-										v-for="option in formItem.options"
-										:key="option.value"
-										:value="option.value"
-										:label="option.label"
-									/>
+								<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 11vw" placeholder="请选择">
+									<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
 								</el-select>
-								<el-input
-									v-else-if="formItem.type == 'input'"
-									v-model="addEditForm[formItem.key]"
-									style="width: 11vw"
-								/>
-								<el-input
-									v-else-if="formItem.type == 'textarea'"
-									v-model="addEditForm[formItem.key]"
-									type="textarea"
-									style="width: 500px"
-								/>
-								<el-date-picker
-									v-else-if="formItem.type == 'datePicker'"
-									v-model="addEditForm[formItem.key]"
-									style="width: 11vw"
-									type="date"
-									placeholder="请选择日期"
-								/>
+								<el-input v-else-if="formItem.type == 'input'" v-model="addEditForm[formItem.key]" style="width: 11vw" />
+								<el-input v-else-if="formItem.type == 'textarea'" v-model="addEditForm[formItem.key]" type="textarea" style="width: 500px" />
+								<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="addEditForm[formItem.key]" style="width: 11vw" type="date" placeholder="请选择日期" />
 								<el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
-									<el-radio
-										v-for="option in formItem.options"
-										:key="option.value"
-										:label="option.value"
-									>{{ option.label }}</el-radio>
+									<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
 								</el-radio-group>
 							</el-form-item>
 							<!-- 标准地址根据用户选择 显示   这里单独处理 -->
-							<el-form-item
-								v-else-if="formItem.type == 'standard_address' && addEditForm.is_standard_address == 1"
-								:label="formItem.label"
-							>
+							<el-form-item v-else-if="formItem.type == 'standard_address' && addEditForm.is_standard_address == 1" :label="formItem.label">
 								<el-input v-model="addEditForm.standard_address" style="width: 11vw" />
 							</el-form-item>
 						</el-col>
@@ -223,6 +132,12 @@ export default {
 					type: 'input'
 				},
 				{
+					key: 'check_state',
+					label: '核查状态',
+					type: 'select',
+					options: mapToArray(MAP.check_state)
+				},
+				{
 					key: 'business_state',
 					label: '营业状态',
 					type: 'select',
@@ -239,6 +154,7 @@ export default {
 				{ prop: 'business_state', label: '营业状态', width: 80, formatter: (row, col, cell) => MAP.business_state[cell] },
 				{ prop: 'sign_name', label: '招牌名称', width: 200 },
 				{ prop: 'police_unit', label: '管辖单位', width: 180, formatter: (row, col, cell) => MAP.jurisdiction_unit[cell] },
+				{ prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => MAP.check_state[cellValue] },
 				// { prop: 'logout', label: '注销状态', width: 80 },
 				// { prop: 'licenseStatus', label: '许可证状态', width: 80 },
 				// { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
@@ -281,7 +197,12 @@ export default {
 							label: '许可备案公安机关',
 							type: 'input',
 						},
-
+						{
+							key: 'check_state',
+							label: '核查状态',
+							type: 'select',
+							options: mapToArray(MAP.check_state)
+						},
 					],
 
 					[
