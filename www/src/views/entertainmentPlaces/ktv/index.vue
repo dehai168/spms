@@ -17,7 +17,7 @@
 			</el-form>
 		</el-header>
 		<div class="ktv-body" style="padding: 5px">
-			<!-- <el-button @click="dialogVisible = true">新增</el-button> -->
+			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px" type="primary">新增</el-button>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop" v-bind="column" />
@@ -116,9 +116,9 @@ export default {
 					{ label: '娱乐服务场所治安级别', key: 'security_level', options: mapToArray(MAP.security_level), type: 'select' },
 					{ label: '营业执照编号', key: 'license_code', type: 'input' },
 					{ label: '营业执照发证机关', key: 'license_org', type: 'input' },
-					{ label: '营业执照起始日期', key: 'license_begin', type: 'input' },
-					{ label: '营业执照截止日期', key: 'license_end', type: 'input' },
-					{ label: '营业执照登记日期', key: 'license_register_date', type: 'input' },
+					{ label: '营业执照起始日期', key: 'license_begin', type: 'datePicker' },
+					{ label: '营业执照截止日期', key: 'license_end', type: 'datePicker' },
+					{ label: '营业执照登记日期', key: 'license_register_date', type: 'datePicker' },
 					{ label: '组织机构代码', key: 'group_code', type: 'input' },
 					{
 						label: '是否有证', key: 'is_permit', options: [
@@ -128,8 +128,8 @@ export default {
 					},
 					{ label: '娱乐经营许可证号', key: 'permit_code', type: 'input' },
 					{ label: '娱乐经营许可证发证机关', key: 'permit_org', type: 'input' },
-					{ label: '娱乐经营许可证起始日期', key: 'permit_begin', type: 'input' },
-					{ label: '娱乐经营许可证截止日期', key: 'permit_end', type: 'input' },
+					{ label: '娱乐经营许可证起始日期', key: 'permit_begin', type: 'datePicker' },
+					{ label: '娱乐经营许可证截止日期', key: 'permit_end', type: 'datePicker' },
 					{ label: '股东情况', key: 'shareholders', type: 'input' },
 					// { label: '娱乐项目内容', key: '营业性娱乐场所' ,type: 'input'},
 				],
@@ -147,7 +147,7 @@ export default {
 					{ label: '经岗位培训人数（人）', key: 'post_train_persons', type: 'input' },
 					{ label: '保安公司意见', key: 'security_unit_opinion', type: 'input' },
 					{ label: '备注', key: 'remark', type: 'input' },
-					{ label: '录入时间', key: 'input_time', type: 'input' },
+					{ label: '录入时间', key: 'input_time', type: 'datePicker' },
 				]
 			},
 			formItems: [
@@ -359,7 +359,8 @@ export default {
 			this.getList()
 		},
 		handleAdd() {
-
+			this.flag = 'add'
+			this.dialogVisible = true
 		},
 		handleCancel() {
 			this.dialogVisible = false;
