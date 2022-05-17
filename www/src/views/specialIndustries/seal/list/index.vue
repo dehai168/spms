@@ -138,6 +138,12 @@ export default {
 					options: mapToArray(MAP.check_state)
 				},
 				{
+					key: 'iscase',
+					label: '是否涉案',
+					type: 'select',
+					options: mapToArray(MAP.iscase)
+				},
+				{
 					key: 'business_state',
 					label: '营业状态',
 					type: 'select',
@@ -155,6 +161,7 @@ export default {
 				{ prop: 'sign_name', label: '招牌名称', width: 200 },
 				{ prop: 'police_unit', label: '管辖单位', width: 180, formatter: (row, col, cell) => MAP.jurisdiction_unit[cell] },
 				{ prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => MAP.check_state[cellValue] },
+				{ prop: 'iscase', label: '是否涉案', width: 80, formatter: (row, column, cellValue, index) => MAP.iscase[cellValue] },
 				// { prop: 'logout', label: '注销状态', width: 80 },
 				// { prop: 'licenseStatus', label: '许可证状态', width: 80 },
 				// { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
@@ -202,6 +209,12 @@ export default {
 							label: '核查状态',
 							type: 'select',
 							options: mapToArray(MAP.check_state)
+						},
+						{
+							key: 'iscase',
+							label: '是否涉案',
+							type: 'select',
+							options: mapToArray(MAP.iscase)
 						},
 					],
 

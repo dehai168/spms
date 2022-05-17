@@ -95,6 +95,12 @@ export default {
 						type: 'select',
 						options: mapToArray(MAP.check_state)
 					},
+					{
+						key: 'iscase',
+						label: '是否涉案',
+						type: 'select',
+						options: mapToArray(MAP.iscase)
+					},
 					{ label: '户外悬挂', key: 'outdoor_hang', type: 'input' },
 					{ label: '联系电话', key: 'telephone', type: 'input' },
 					{ label: '邮政编码', key: 'post_code', type: 'input' },
@@ -227,6 +233,12 @@ export default {
 					type: 'select',
 					options: mapToArray(MAP.check_state)
 				},
+				{
+					key: 'iscase',
+					label: '是否涉案',
+					type: 'select',
+					options: mapToArray(MAP.iscase)
+				},
 				// {
 				// 	key: 'outdoor_hang',
 				// 	label: '户外悬挂',
@@ -263,6 +275,7 @@ export default {
 				{ prop: 'security_level', label: '治安级别', formatter: (row, col, cell) => MAP.security_level[cell], width: 100 },
 				{ prop: 'persons', label: '总人数', width: 80 },
 				{ prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => MAP.check_state[cellValue] },
+				{ prop: 'iscase', label: '是否涉案', width: 80, formatter: (row, column, cellValue, index) => MAP.iscase[cellValue] },
 				{ prop: 'security_manage_unit', label: '治安管理机构', formatter: (row, col, cell) => MAP.jurisdiction_unit[cell] },
 			],
 			dialogVisible: false

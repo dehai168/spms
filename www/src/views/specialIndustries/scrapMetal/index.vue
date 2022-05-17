@@ -141,6 +141,12 @@ export default {
 						options: mapToArray(map.check_state)
 					},
 					{
+						key: 'iscase',
+						label: '是否涉案',
+						type: 'select',
+						options: mapToArray(map.iscase)
+					},
+					{
 						key: 'is_record_register', label: '是否备案登记', type: 'select', options: [
 							{ label: '是', value: 1 },
 							{ label: '否', value: 0 }
@@ -165,6 +171,7 @@ export default {
 				{ prop: 'chief_certificate_code', label: '负责人证件号码', minWidth: 160, },
 				{ prop: 'chief_person', label: '单位负责人', minWidth: 90, },
 				{ prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => map.check_state[cellValue] },
+				{ prop: 'iscase', label: '是否涉案', width: 80, formatter: (row, column, cellValue, index) => map.iscase[cellValue] },
 				{ prop: 'is_record_register', label: '是否备案登记', minWidth: 100, formatter: (r, c, value) => value ? '是' : '否' },
 				{ prop: 'district', label: '行政区划', minWidth: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
 			]
@@ -198,6 +205,12 @@ export default {
 					label: '核查状态',
 					type: 'select',
 					options: mapToArray(map.check_state)
+				},
+				{
+					key: 'iscase',
+					label: '是否涉案',
+					type: 'select',
+					options: mapToArray(map.iscase)
 				},
 				{
 					key: 'economic_type',
