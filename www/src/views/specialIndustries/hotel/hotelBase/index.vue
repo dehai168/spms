@@ -257,16 +257,16 @@ export default {
         ],
         [
           { key: 'enterprise', label: '企业名称', type: 'input' },
-          { key: 'sign_name', label: '招牌名称', type: 'input' },
+          // { key: 'sign_name', label: '招牌名称', type: 'input' },
           { key: 'credit_code', label: '社会统一信用代码', type: 'input' },
-        ],
-        [
           {
             key: 'business_state',
             label: '营业状态',
             type: 'select',
             options: mapToArray(map.business_state)
           },
+        ],
+        [
            {
             key: 'check_state',
             label: '核查状态',
@@ -279,9 +279,10 @@ export default {
             type: 'select',
             options: mapToArray(map.install_state)
           },
+          { key: 'inputTime', label: '录入时间', type: 'datePicker', width: '14vw' },
         ],
         [
-          { key: 'inputTime', label: '录入时间', type: 'datePicker', width: '14vw' },
+          
           { key: 'btn', type: 'btn' }
         ],
         // [
@@ -352,7 +353,7 @@ export default {
         { prop: 'enterprise_code', label: '企业编码', width: 100 },
         { prop: 'legal_person', label: '法人姓名', width: 80 },
         { prop: 'jurisdiction_unit', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => this.enumData[2].find(i => i.value === cellValue)?.label },
-        { prop: 'sign_name', label: '招牌名称', minWidth: 120 },
+        // { prop: 'sign_name', label: '招牌名称', minWidth: 120 },
         { prop: 'enterprise_telephone', label: '联系电话', width: 140 },
         { prop: 'business_state', label: '营业状态', width: 80, formatter: (row, column, cellValue, index) => map.business_state[cellValue] },
         { prop: 'check_state', label: '核查状态', width: 80, formatter: (row, column, cellValue, index) => map.check_state[cellValue] },
@@ -392,7 +393,7 @@ export default {
           ],
           [
             { key: 'enterprise_code', label: '企业编码', type: 'input' },
-            { key: 'sign_name', label: '招牌名称', type: 'input' },
+            { key: 'sign_name', label: '企业名称', type: 'input' },
             { key: 'area', label: '占地面积（平米）', type: 'input' },
           ],
           [
