@@ -256,9 +256,10 @@ export default {
         { prop: 'enterprise_detail_address', label: '企业详址', minWidth: 160 },
         { prop: 'economic_type', label: '经济类型', minWidth: 120, formatter: (r, c, value) => map.economic_type[value] },
         { prop: 'security_level', label: '治安级别', formatter: (r, c, value) => map.security_level[value] },
+        { prop: 'legal_person', label: '法人', minWidth: 90, },
         { prop: 'legal_certificate_code', label: '法人证件号码', minWidth: 160, },
-        { prop: 'chief_certificate_code', label: '负责人证件号码', minWidth: 160, },
         { prop: 'chief_person', label: '单位负责人', minWidth: 90, },
+        { prop: 'chief_certificate_code', label: '负责人证件号码', minWidth: 160, },
         { prop: 'is_record_register', label: '是否备案登记', minWidth: 100, formatter: (r, c, value) => value ? '是' : '否' },
         { prop: 'district', label: '行政区划', minWidth: 180, formatter: (r, c, value) => this.enumData[3].find(i => i.value === value)?.label },
       ]
