@@ -110,7 +110,7 @@ export default {
       // 初始化异步操作，例如数据字典
       callback()
     },
-    handleQuery() {
+    handleQuery(flag) {
       this.tableLoading = true
       if (this.queryForm.daterange.length > 0) {
         this.queryForm.begindate = this.queryForm.daterange[0]
@@ -118,6 +118,9 @@ export default {
       } else {
         this.queryForm.begindate = ''
         this.queryForm.enddate = ''
+      }
+      if(!flag){
+        this.queryForm.pageindex = 1
       }
       items(this.queryForm)
         .then(res => {
@@ -143,7 +146,7 @@ export default {
     },
     handleCurrentChange(pageindex) {
       this.queryForm.pageindex = pageindex
-      this.handleQuery()
+      this.handleQuery(true)
     }
   }
 }

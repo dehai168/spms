@@ -330,7 +330,7 @@ export default {
       // 初始化异步操作，例如数据字典
       callback()
     },
-    handleQuery() {
+    handleQuery(flag) {
       this.tableLoading = true
       if (this.queryForm.daterange.length > 0) {
         this.queryForm.reg_begin = this.queryForm.daterange[0]
@@ -338,6 +338,9 @@ export default {
       } else {
         this.queryForm.reg_begin = ''
         this.queryForm.reg_end = ''
+      }
+      if(!flag){
+        this.queryForm.pageindex = 1
       }
       this.queryForm.fence_name = this.queryForm.fence_name_temp.join('/')
       items(this.queryForm)
@@ -502,7 +505,7 @@ export default {
     },
     handleCurrentChange(index) {
       this.queryForm.index = index
-      this.handleQuery()
+      this.handleQuery(true)
     },
     handleView(index, row) {
       this.formClear(false)
@@ -567,9 +570,6 @@ export default {
                     message: '操作成功!',
                     type: 'success'
                   })
-                  if (1 === this.tableDataCount && this.queryForm.index !== 1) {
-                    this.queryForm.index = 1
-                  }
                   this.handleQuery()
                 } else {
                   this.$message({

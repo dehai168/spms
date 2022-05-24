@@ -12,7 +12,7 @@
               </el-col>
               <el-col :span="4">
                 <el-form-item prop="state" label="状态">
-                  <el-select v-model="queryForm.state" placeholder="请选择" style="width:100px;">
+                  <el-select v-model="queryForm.state" placeholder="请选择" style="width: 100px">
                     <el-option v-for="item in stateList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                   </el-select>
                 </el-form-item>
@@ -24,7 +24,7 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item prop="certificate_code" label="证件号码">
-                  <el-input v-model="queryForm.certificate_code" maxlength="20" style="width:150px;"></el-input>
+                  <el-input v-model="queryForm.certificate_code" maxlength="20" style="width: 150px"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -46,7 +46,7 @@
         <el-table-column prop="certificate_code" label="证件号码"> </el-table-column>
         <el-table-column prop="state" label="状态" width="80">
           <template slot-scope="scope">
-            <el-tag type="success" v-if="scope.row.state === 1">已处理</el-tag>
+            <el-tag type="success" v-if="scope.row.state === 1">已推送</el-tag>
             <el-tag type="danger" v-else>未处理</el-tag>
           </template>
         </el-table-column>
@@ -168,7 +168,7 @@ export default {
       stateList: [
         { value: -1, label: '所有' },
         { value: 0, label: '待处理' },
-        { value: 1, label: '已处理' }
+        { value: 1, label: '已推送' }
       ],
       detailDialogVisible: false,
       disposeDialogVisible: false,
@@ -192,7 +192,7 @@ export default {
       // 初始化异步操作，例如数据字典
       callback()
     },
-    handleQuery() {
+    handleQuery(flag) {
       if (this.queryForm.daterange.length > 0) {
         this.queryForm.begindate = this.queryForm.daterange[0]
         this.queryForm.enddate = this.queryForm.daterange[1]
@@ -200,6 +200,10 @@ export default {
         this.queryForm.begindate = ''
         this.queryForm.enddate = ''
       }
+      if(!flag){
+        this.queryForm.pageindex = 1
+      }
+      
       const queryObj = { ...this.queryForm }
       if (this.queryForm.state === -1) {
         delete queryObj.state
@@ -256,7 +260,7 @@ export default {
     },
     handleCurrentChange(pageindex) {
       this.queryForm.pageindex = pageindex
-      this.handleQuery()
+      this.handleQuery(true)
     },
     handleView(index, row) {
       this.form = { ...row }

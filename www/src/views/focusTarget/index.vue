@@ -286,8 +286,11 @@ export default {
       // 初始化异步操作，例如数据字典
       callback()
     },
-    handleQuery() {
+    handleQuery(flag) {
       this.tableLoading = true
+      if(!flag){
+        this.queryForm.pageindex = 1
+      }
       if (this.queryForm.daterange.length > 0) {
         this.queryForm.begindate = this.queryForm.daterange[0]
         this.queryForm.enddate = this.queryForm.daterange[1]
@@ -456,7 +459,7 @@ export default {
     },
     handleCurrentChange(pageindex) {
       this.queryForm.pageindex = pageindex
-      this.handleQuery()
+      this.handleQuery(true)
     },
     handleView(index, row) {
       this.formClear(false)
@@ -519,9 +522,6 @@ export default {
                     message: '操作成功!',
                     type: 'success'
                   })
-                  if (1 === this.tableDataCount && this.queryForm.pageindex !== 1) {
-                    this.queryForm.pageindex = 1
-                  }
                   this.handleQuery()
                 } else {
                   this.$message({
