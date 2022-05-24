@@ -15,11 +15,13 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import MyCard from './views/specialIndustries/hotel/hotelBase/MyCard.vue'
+import Detail from './components/Detail'
 
 Vue.use(ElementUI, {
   size: 'mini',
 })
 Vue.component('my-card', MyCard)
+Vue.component('Detail', Detail)
 Vue.config.productionTip = false
 Vue.prototype.$succ = () => {
   ElementUI.Notification({

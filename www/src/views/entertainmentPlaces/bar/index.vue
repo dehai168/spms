@@ -35,27 +35,8 @@
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
-		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" dest top="4vh" @close="addEditForm = {}" destroy-on-close :close-on-click-modal="false">
-			<el-form ref="addEditForm" :model="addEditForm" label-width="120px" :inline="true" :disabled="flag == 'detail'">
-				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
-					<el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
-						<el-select v-if="formItem.type == 'select'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" style="width: 150px" placeholder="请选择">
-							<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
-						</el-select>
-						<el-input v-else-if="formItem.type == 'input'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" style="width: 150px" />
-						<el-input v-else-if="formItem.type == 'textarea'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" type="textarea" style="width: 500px" />
-						<el-date-picker v-else-if="formItem.type == 'datePicker'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]" type="date" value-format="yyyy-MM-dd" format="yyyy-MM-dd" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
-						<el-radio-group v-else-if="formItem.type == 'radio'" :disabled="formItem.disabled" v-model="addEditForm[formItem.key]">
-							<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
-						</el-radio-group>
-					</el-form-item>
-				</my-card>
-			</el-form>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
-			</span>
-		</el-dialog>
+
+		<Detail ref="detalDialog" :dialogTittle="dialogTittle" enterprise_id_key="barid" :flag="flag" :dialogVisible.sync="dialogVisible" @submit="handleSubmit" :submitDisabled="submitDisabled" :addEditformItems="addEditformItems"></Detail>
 	</div>
 </template>
 
@@ -79,83 +60,81 @@ export default {
 			},
 			detail: {},
 			addEditForm: {},
-			addEditformItems: {
-				'场所基本信息': [
-					{ label: '酒吧编号', key: 'barid', type: 'input', disabled: true },
-					{ label: '行业类别', key: 'trade_type', options: mapToArray(MAP.entertainment_type), type: 'select' },
-					{ label: '治安管理机构', key: 'security_manage_unit', type: 'select', options: mapToArray(MAP.jurisdiction_unit, 'string') },
-					{ label: '场所分类', key: 'place_main_type', type: 'input' },
-					{ label: '场所分类（副）', key: 'place_vice_type', type: 'input' },
-					{ label: '场所备案编号', key: 'record_code', type: 'input' },
-					{ label: '娱乐场所名称', key: 'recreation_place_name', type: 'input' },
-					{ label: '简称', key: 'recreation_place_short', type: 'input' },
-					{
-						key: 'check_state',
-						label: '核查状态',
-						type: 'select',
-						options: mapToArray(MAP.check_state)
-					},
-					{
-						key: 'iscase',
-						label: '是否涉案',
-						type: 'select',
-						options: mapToArray(MAP.iscase)
-					},
-					{ label: '户外悬挂', key: 'outdoor_hang', type: 'input' },
-					{ label: '联系电话', key: 'telephone', type: 'input' },
-					{ label: '邮政编码', key: 'post_code', type: 'input' },
-					{ label: '传真', key: 'fax', type: 'input' },
-					{ label: '经济类型', key: 'economic_type', options: mapToArray(MAP.economic_type), type: 'select' },
-					{ label: '注册资金（万元）', key: 'register_cost', type: 'input' },
-					{ label: '经营范围（主营）', key: 'operate_scale', type: 'input' },
-					{ label: '经营范围（兼营）', key: 'concurrently_scale', type: 'input' },
-					{ label: '经营面积', key: 'operate_area', type: 'input' },
-					{ label: '法定代表人姓名', key: 'legal_person', type: 'input' },
-					{ label: '法人证件类型', key: 'legal_certificate_type', options: mapToArray(MAP.legal_certificate_type), type: 'select' },
-					{ label: '法人证件号码', key: 'legal_certificate_code', type: 'input' },
-					{ label: '法人联系方式', key: 'legal_telephone', type: 'input' },
-					{ label: '开业日期', key: 'open_date', type: 'input' },
-					{ label: '营业时间', key: 'operate_time', type: 'input' },
-					{ label: '单位负责人', key: 'chief_person', type: 'input' },
-					{ label: '单位负责人联系方式', key: 'chief_telephone', type: 'input' },
-					{ label: '单位负责人身份证号', key: 'chief_certificate_code', type: 'input' },
-					{ label: '娱乐服务场所治安级别', key: 'security_level', options: mapToArray(MAP.security_level), type: 'select' },
-					{ label: '营业执照编号', key: 'license_code', type: 'input' },
-					{ label: '营业执照发证机关', key: 'license_org', type: 'input' },
-					{ label: '营业执照起始日期', key: 'license_begin', type: 'datePicker' },
-					{ label: '营业执照截止日期', key: 'license_end', type: 'datePicker' },
-					{ label: '营业执照登记日期', key: 'license_register_date', type: 'datePicker' },
-					{ label: '组织机构代码', key: 'group_code', type: 'input' },
-					{
-						label: '是否有证', key: 'is_permit', options: [
-							{ label: '是', value: true },
-							{ label: '否', value: false },
-						], type: 'select'
-					},
-					{ label: '娱乐经营许可证号', key: 'permit_code', type: 'input' },
-					{ label: '娱乐经营许可证发证机关', key: 'permit_org', type: 'input' },
-					{ label: '娱乐经营许可证起始日期', key: 'permit_begin', type: 'datePicker' },
-					{ label: '娱乐经营许可证截止日期', key: 'permit_end', type: 'datePicker' },
-					{ label: '股东情况', key: 'shareholders', type: 'input' },
-					// { label: '娱乐项目内容', key: '营业性娱乐场所' ,type: 'input'},
-				],
-				'场地设备及人员情况': [
-					{ label: '消防合格证号', key: 'fire_qualify_code', type: 'input' },
-					{ label: '消防审核单位', key: 'fire_check_unit', type: 'input' },
-					{ label: '经度', key: 'lng', type: 'input' },
-					{ label: '纬度', key: 'lat', type: 'input' },
-					{ label: '核定消费者数量（人）', key: 'max_consumers', type: 'input' },
-					{ label: '安全出口数量（个）', key: 'exit_total', type: 'input' },
-					{ label: '包厢包间数量（个）', key: 'rooms', type: 'input' },
-					{ label: '总人数（人）', key: 'persons', type: 'input' },
-					{ label: '治安负责人', key: 'security_chief_person', type: 'input' },
-					{ label: '保安人数（人）', key: 'security_persons', type: 'input' },
-					{ label: '经岗位培训人数（人）', key: 'post_train_persons', type: 'input' },
-					{ label: '保安公司意见', key: 'security_unit_opinion', type: 'input' },
-					{ label: '备注', key: 'remark', type: 'input' },
-					{ label: '录入时间', key: 'input_time', type: 'datePicker' },
-				]
-			},
+			addEditformItems: [
+				{ label: '酒吧编号', key: 'barid', type: 'input', disabled: true },
+				{ label: '行业类别', key: 'trade_type', options: mapToArray(MAP.entertainment_type), type: 'select' },
+				{ label: '治安管理机构', key: 'security_manage_unit', type: 'select', options: mapToArray(MAP.jurisdiction_unit, 'string') },
+				{ label: '场所分类', key: 'place_main_type', type: 'input' },
+				{ label: '场所分类（副）', key: 'place_vice_type', type: 'input' },
+				{ label: '场所备案编号', key: 'record_code', type: 'input' },
+				{ label: '娱乐场所名称', key: 'recreation_place_name', type: 'input' },
+				{ label: '简称', key: 'recreation_place_short', type: 'input' },
+				{
+					key: 'check_state',
+					label: '核查状态',
+					type: 'select',
+					options: mapToArray(MAP.check_state)
+				},
+				{
+					key: 'iscase',
+					label: '是否涉案',
+					type: 'select',
+					options: mapToArray(MAP.iscase)
+				},
+				{ label: '户外悬挂', key: 'outdoor_hang', type: 'input' },
+				{ label: '联系电话', key: 'telephone', type: 'input' },
+				{ label: '邮政编码', key: 'post_code', type: 'input' },
+				{ label: '传真', key: 'fax', type: 'input' },
+				{ label: '经济类型', key: 'economic_type', options: mapToArray(MAP.economic_type), type: 'select' },
+				{ label: '注册资金（万元）', key: 'register_cost', type: 'input' },
+				{ label: '经营范围（主营）', key: 'operate_scale', type: 'input' },
+				{ label: '经营范围（兼营）', key: 'concurrently_scale', type: 'input' },
+				{ label: '经营面积', key: 'operate_area', type: 'input' },
+				{ label: '法定代表人姓名', key: 'legal_person', type: 'input' },
+				{ label: '法人证件类型', key: 'legal_certificate_type', options: mapToArray(MAP.legal_certificate_type), type: 'select' },
+				{ label: '法人证件号码', key: 'legal_certificate_code', type: 'input' },
+				{ label: '法人联系方式', key: 'legal_telephone', type: 'input' },
+				{ label: '开业日期', key: 'open_date', type: 'input' },
+				{ label: '营业时间', key: 'operate_time', type: 'input' },
+				{ label: '单位负责人', key: 'chief_person', type: 'input' },
+				{ label: '单位负责人联系方式', key: 'chief_telephone', type: 'input' },
+				{ label: '单位负责人身份证号', key: 'chief_certificate_code', type: 'input' },
+				{ label: '娱乐服务场所治安级别', key: 'security_level', options: mapToArray(MAP.security_level), type: 'select' },
+				{ label: '营业执照编号', key: 'license_code', type: 'input' },
+				{ label: '营业执照发证机关', key: 'license_org', type: 'input' },
+				{ label: '营业执照起始日期', key: 'license_begin', type: 'datePicker' },
+				{ label: '营业执照截止日期', key: 'license_end', type: 'datePicker' },
+				{ label: '营业执照登记日期', key: 'license_register_date', type: 'datePicker' },
+				{ label: '组织机构代码', key: 'group_code', type: 'input' },
+				{
+					label: '是否有证', key: 'is_permit', options: [
+						{ label: '是', value: true },
+						{ label: '否', value: false },
+					], type: 'select'
+				},
+				{ label: '娱乐经营许可证号', key: 'permit_code', type: 'input' },
+				{ label: '娱乐经营许可证发证机关', key: 'permit_org', type: 'input' },
+				{ label: '娱乐经营许可证起始日期', key: 'permit_begin', type: 'datePicker' },
+				{ label: '娱乐经营许可证截止日期', key: 'permit_end', type: 'datePicker' },
+				{ label: '股东情况', key: 'shareholders', type: 'input' },
+				// { label: '娱乐项目内容', key: '营业性娱乐场所' ,type: 'input'},
+
+				{ label: '消防合格证号', key: 'fire_qualify_code', type: 'input' },
+				{ label: '消防审核单位', key: 'fire_check_unit', type: 'input' },
+				{ label: '经度', key: 'lng', type: 'input' },
+				{ label: '纬度', key: 'lat', type: 'input' },
+				{ label: '核定消费者数量（人）', key: 'max_consumers', type: 'input' },
+				{ label: '安全出口数量（个）', key: 'exit_total', type: 'input' },
+				{ label: '包厢包间数量（个）', key: 'rooms', type: 'input' },
+				{ label: '总人数（人）', key: 'persons', type: 'input' },
+				{ label: '治安负责人', key: 'security_chief_person', type: 'input' },
+				{ label: '保安人数（人）', key: 'security_persons', type: 'input' },
+				{ label: '经岗位培训人数（人）', key: 'post_train_persons', type: 'input' },
+				{ label: '保安公司意见', key: 'security_unit_opinion', type: 'input' },
+				{ label: '备注', key: 'remark', type: 'input' },
+				{ label: '录入时间', key: 'input_time', type: 'datePicker' },
+			],
+
 			formItems: [
 				// {
 				// 	key: 'trade_type',
@@ -284,6 +263,17 @@ export default {
 	created() {
 		this.getList()
 	},
+	watch: {
+		addEditForm: {
+			handler(val) {
+				if (this.$refs.detalDialog) {
+					this.$refs.detalDialog.addEditForm = val
+				}
+			},
+			deep: true,
+			immediate: true
+		}
+	},
 	computed: {
 		dialogTittle() {
 			let tittle = '';
@@ -386,14 +376,14 @@ export default {
 			this.pager.pageindex = pageindex
 			this.getList()
 		},
-		async handleSubmit() {
+		async handleSubmit(addEditForm) {
 			if (this.flag === 'add') {
-				await API.add(this.addEditForm)
+				await API.add(addEditForm)
 				await this.getList()
 				this.$succ()
 			}
 			if (this.flag === 'edit') {
-				await API.update(this.addEditForm)
+				await API.update(addEditForm)
 				await this.getList()
 				this.$succ()
 			}

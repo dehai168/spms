@@ -37,25 +37,7 @@
 			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 		</el-footer>
 		<!-- 新增 编辑 -->
-		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh" :close-on-click-modal="false">
-			<el-form ref="addEditForm" :model="addEditForm" label-width="160px" :inline="true" :disabled="flag == 'detail'">
-				<el-form-item v-for="formItem in addEditformItems" :key="formItem.key" :label="formItem.label">
-					<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 200px" placeholder="请选择">
-						<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
-					</el-select>
-					<el-input v-else-if="formItem.type == 'input'" v-model="addEditForm[formItem.key]" style="width: 200px" />
-					<el-input v-else-if="formItem.type == 'textarea'" v-model="addEditForm[formItem.key]" type="textarea" style="width: 500px" />
-					<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="addEditForm[formItem.key]" type="date" placeholder="请选择日期" style="width: 200px" />
-					<el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
-						<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
-					</el-radio-group>
-				</el-form-item>
-			</el-form>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
-			</span>
-		</el-dialog>
+		<Detail ref="detalDialog" :dialogTittle="dialogTittle" enterprise_id_key="scrap_metal_recycleid" :flag="flag" :dialogVisible.sync="dialogVisible" @submit="handleSubmit" :submitDisabled="submitDisabled" :addEditformItems="addEditformItems"></Detail>
 	</el-container>
 </template>
 
@@ -259,6 +241,17 @@ export default {
 			that.handleQuery()
 		})
 	},
+	watch: {
+		addEditForm: {
+			handler(val) {
+				if (this.$refs.detalDialog) {
+					this.$refs.detalDialog.addEditForm = val
+				}
+			},
+			deep: true,
+			immediate: true
+		}
+	},
 	methods: {
 		init(callback) {
 			// 初始化异步操作，例如数据字典
@@ -351,7 +344,7 @@ export default {
 		handleCreate() {
 			this.formClear('add', true)
 		},
-		handleSubmit() {
+		handleSubmit(addEditForm) {
 
 			this.submitDisabled = true // 防止重复提交
 
@@ -363,7 +356,7 @@ export default {
 				input_time,
 				save_time,
 				...rest
-			} = this.addEditForm;
+			} = addEditForm;
 			const requestData = {
 				open_date: open_date ? formatDate('date', open_date) : undefined,
 				stop_date: stop_date ? formatDate('date', stop_date) : undefined,

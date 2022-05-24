@@ -38,50 +38,7 @@
 			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 		</el-footer>
 
-		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" top="4vh" :close-on-click-modal="false">
-			<el-form ref="addEditForm" :model="addEditForm" label-width="10vw" :inline="true" label-suffix=":" :disabled="flag == 'detail'">
-				<div style="display: flex; justify-content: space-around">
-					<el-form-item label="申报方式" required>
-						<el-radio-group v-model="addEditForm.declare_type">
-							<el-radio :label="0">告知承诺制</el-radio>
-							<el-radio :label="1">一般审批制</el-radio>
-						</el-radio-group>
-					</el-form-item>
-					<el-form-item label="工商类型" required>
-						<el-radio-group v-model="addEditForm.business_type">
-							<el-radio :label="0">个体工商户</el-radio>
-							<el-radio :label="2">工商企业</el-radio>
-						</el-radio-group>
-					</el-form-item>
-				</div>
-
-				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
-					<el-row v-for="(row, rowIndex) in cardItem" :key="rowIndex">
-						<el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
-							<el-form-item v-if="formItem.type !== 'standard_address'" :label="formItem.label">
-								<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 11vw" placeholder="请选择">
-									<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
-								</el-select>
-								<el-input v-else-if="formItem.type == 'input'" v-model="addEditForm[formItem.key]" style="width: 11vw" />
-								<el-input v-else-if="formItem.type == 'textarea'" v-model="addEditForm[formItem.key]" type="textarea" style="width: 500px" />
-								<el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="addEditForm[formItem.key]" style="width: 11vw" type="date" placeholder="请选择日期" />
-								<el-radio-group v-else-if="formItem.type == 'radio'" v-model="addEditForm[formItem.key]">
-									<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
-								</el-radio-group>
-							</el-form-item>
-							<!-- 标准地址根据用户选择 显示   这里单独处理 -->
-							<el-form-item v-else-if="formItem.type == 'standard_address' && addEditForm.is_standard_address == 1" :label="formItem.label">
-								<el-input v-model="addEditForm.standard_address" style="width: 11vw" />
-							</el-form-item>
-						</el-col>
-					</el-row>
-				</my-card>
-			</el-form>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="primary" :disabled="submitDisabled" @click="handleSubmit">确 定</el-button>
-			</span>
-		</el-dialog>
+		<Detail ref="detalDialog" :dialogTittle="dialogTittle" :flag="flag" :dialogVisible.sync="dialogVisible" @submit="handleSubmit" :submitDisabled="submitDisabled" :addEditformItems="addEditformItems"></Detail>
 	</div>
 </template>
 
@@ -237,7 +194,7 @@ export default {
 								{ label: '否', value: 0 }
 							]
 						},
-						{ key: 'standard_address', label: '标准经营地址', type: 'standard_address' },
+						{ key: 'standard_address', label: '标准经营地址', type: 'standardAddress' },
 
 					]
 				],
@@ -316,6 +273,17 @@ export default {
 			}
 
 			return tittle;
+		}
+	},
+	watch: {
+		addEditForm: {
+			handler(val) {
+				if (this.$refs.detalDialog) {
+					this.$refs.detalDialog.addEditForm = val
+				}
+			},
+			deep: true,
+			immediate: true
 		}
 	},
 	methods: {
@@ -408,10 +376,10 @@ export default {
 			this.addEditForm = { ...row, is_standard_address: +row.is_standard_address };
 			this.dialogVisible = true;
 		},
-		handleSubmit() {
+		handleSubmit(addEditForm) {
 			this.submitDisabled = true // 防止重复提交
 
-			const { fire_opinion_date, is_standard_address, ...rest } = this.addEditForm;
+			const { fire_opinion_date, is_standard_address, ...rest } = addEditForm;
 			const requestData = {
 				fire_opinion_date: formatDate('date', fire_opinion_date),
 				is_standard_address: !!is_standard_address,
