@@ -62,37 +62,37 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/home',
+    redirect: '/home'
   },
   {
     path: '/home',
     component: Layout,
-    redirect: '/home/index',
+    redirect: '/home/index'
   },
   {
     path: '/basicinfomg',
     component: Layout,
-    redirect: '/basicinfo/specialindustries/hotel/base',
+    redirect: '/basicinfo/specialindustries/hotel/base'
   },
   {
     path: '/generalinfo',
     component: Layout,
-    redirect: '/generalinfo/index',
+    redirect: '/generalinfo/index'
   },
   {
     path: '/analysis',
     component: Layout,
-    redirect: '/analysis/focusareas',
+    redirect: '/analysis/focusareas'
   },
   {
     path: '/datacount',
     component: Layout,
-    redirect: '/datacount/index',
+    redirect: '/datacount/priview'
   },
   {
     path: '/systemmanage',
     component: Layout,
-    redirect: '/systemmanage/checklist',
+    redirect: '/systemmanage/checklist'
   },
   // 二级路由
   {
@@ -102,7 +102,7 @@ export const constantRoutes = [
       {
         path: 'index',
         name: 'Home',
-        component: () => import("@/views/home/index"),
+        component: () => import('@/views/home/index')
       }
     ]
   },
@@ -181,7 +181,7 @@ export const constantRoutes = [
                 meta: { title: '公章备案管理', icon: 'el-icon-s-check' }
               }
             ]
-          },
+          }
         ]
       },
       {
@@ -193,13 +193,13 @@ export const constantRoutes = [
           {
             path: 'ktv',
             component: () => import('@/views/entertainmentPlaces/ktv/index'),
-            meta: { title: 'KTV', icon: 'el-icon-mic' },
+            meta: { title: 'KTV', icon: 'el-icon-mic' }
           },
           {
             path: 'bar',
             component: () => import('@/views/entertainmentPlaces/bar/index'),
-            meta: { title: '酒吧', icon: 'el-icon-goblet' },
-          },
+            meta: { title: '酒吧', icon: 'el-icon-goblet' }
+          }
         ]
       },
       {
@@ -211,20 +211,20 @@ export const constantRoutes = [
           {
             path: 'domestic',
             component: () => import('@/views/employees/domestic/index'),
-            meta: { title: '国内从业人员', icon: 'el-icon-user-solid' },
+            meta: { title: '国内从业人员', icon: 'el-icon-user-solid' }
           },
           {
             path: 'overseas',
             component: () => import('@/views/employees/overseas/index'),
-            meta: { title: '境外从业人员', icon: 'el-icon-user' },
-          },
+            meta: { title: '境外从业人员', icon: 'el-icon-user' }
+          }
         ]
       },
       {
         path: 'black-list',
         meta: { title: '企业黑名单', icon: 'el-icon-set-up' },
-        component: () => import('@/views/blackList'),
-      },
+        component: () => import('@/views/blackList')
+      }
     ]
   },
   {
@@ -234,7 +234,7 @@ export const constantRoutes = [
       {
         path: 'index',
         name: 'generalInfo',
-        component: () => import("@/views/generalInfo/index"),
+        component: () => import('@/views/generalInfo/index')
       }
     ]
   },
@@ -246,25 +246,25 @@ export const constantRoutes = [
       {
         path: 'focusareas',
         name: 'focusareas',
-        component: () => import('@/views/focusAreas/index'),
+        component: () => import('@/views/analysis/focusAreas/index'),
         meta: { title: '重点地区管理', icon: 'el-icon-s-shop' }
       },
       {
         path: 'focustarget',
         name: 'focustarget',
-        component: () => import('@/views/focusTarget/index'),
+        component: () => import('@/views/analysis/focusTarget/index'),
         meta: { title: '重点关注对象管理', icon: 'el-icon-s-cooperation' }
       },
       {
         path: 'fugitives',
         name: 'fugitives',
-        component: () => import('@/views/fugitives/index'),
+        component: () => import('@/views/analysis/fugitives/index'),
         meta: { title: '全国在逃人员', icon: 'el-icon-aim' }
       },
       {
         path: 'earlywarn',
         name: 'earlywarn',
-        component: () => import('@/views/earlyWarn/index'),
+        component: () => import('@/views/analysis/earlyWarn/index'),
         meta: { title: '预警查询', icon: 'el-icon-search' }
       }
     ]
@@ -275,10 +275,46 @@ export const constantRoutes = [
     meta: { title: '数据统计分析', icon: 'el-icon-s-data' },
     children: [
       {
-        path: 'index',
-        name: 'Index',
-        meta: { title: '分析', icon: 'el-icon-school' },
-        component: () => import("@/views/datacount/index"),
+        path: 'priview',
+        name: 'Priview',
+        meta: { title: '系统概览', icon: 'el-icon-school' },
+        component: () => import('@/views/datacount/priview/index')
+      },
+      {
+        path: 'alarmcount',
+        name: 'AlarmCount',
+        meta: { title: '报警统计', icon: 'el-icon-bell' },
+        component: () => import('@/views/datacount/alarmcount/index')
+      },
+      {
+        path: 'focustarget',
+        name: 'FocusTarget',
+        meta: { title: '关注对象统计', icon: 'el-icon-s-cooperation' },
+        component: () => import('@/views/datacount/focustarget/index')
+      },
+      {
+        path: 'construction',
+        name: 'Construction',
+        meta: { title: '建设运行情况', icon: 'el-icon-s-shop' },
+        component: () => import('@/views/datacount/construction/index')
+      },
+      {
+        path: 'domestic',
+        name: 'Domestic',
+        meta: { title: '旅客入住统计', icon: 'el-icon-user' },
+        component: () => import('@/views/datacount/domestic/index')
+      },
+      {
+        path: 'guestcheckin',
+        name: 'GuestCheckIn',
+        meta: { title: '境内旅客来源', icon: 'el-icon-user-solid' },
+        component: () => import('@/views/datacount/guestcheckin/index')
+      },
+      {
+        path: 'outbound',
+        name: 'Outbound',
+        meta: { title: '境外旅客来源统计', icon: 'el-icon-user' },
+        component: () => import('@/views/datacount/outbound/index')
       }
     ]
   },
@@ -291,13 +327,13 @@ export const constantRoutes = [
         path: 'checklist',
         name: 'CheckList',
         meta: { title: '检查项管理', icon: 'el-icon-s-order' },
-        component: () => import("@/views/systemmanage/checklist"),
+        component: () => import('@/views/systemmanage/checklist')
       },
       {
         path: 'daycheck',
         name: 'DayCheck',
         meta: { title: '日常检查管理', icon: 'el-icon-s-claim' },
-        component: () => import("@/views/systemmanage/daycheck"),
+        component: () => import('@/views/systemmanage/daycheck')
       }
     ]
   },

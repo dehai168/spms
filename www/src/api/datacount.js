@@ -1,0 +1,58 @@
+import request from '@/utils/request'
+import { getToken } from '@/utils/auth'
+
+export function systemlist(params) {
+  return request({
+    url: '/police/outline/system/list?token=' + getToken(),
+    method: 'get',
+    params
+  })
+}
+
+export function enterpriselist(params) {
+  return request({
+    url: '/police/outline/enterprise/list?token=' + getToken(),
+    method: 'get',
+    params
+  })
+}
+
+export function travellerlist(params) {
+  return request({
+    url: '/police/outline/traveller/list?token=' + getToken(),
+    method: 'get',
+    params
+  })
+}
+
+export function travellerdomesticregion(params) {
+  return request({
+    url: '/police/outline/traveller/domestic/region?token=' + getToken(),
+    method: 'get',
+    params
+  })
+}
+
+export function travellerabroadnationality(params) {
+  return request({
+    url: '/police/outline/traveller/abroad/nationality?token=' + getToken(),
+    method: 'get',
+    params
+  })
+}
+
+export function alarmlist(params) {
+  return request({
+    url: '/police/outline/alarm/list?token=' + getToken(),
+    method: 'get',
+    params
+  })
+}
+
+export function importantlist(params) {
+  return request({
+    url: '/police/outline/important/list?token=' + getToken(),
+    method: 'get',
+    params
+  })
+}
