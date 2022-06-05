@@ -6,14 +6,16 @@
           <el-col :span="8">
             <el-form-item prop="police_unit" label="管辖单位">
               <el-select v-model="queryForm.police_unit" placeholder="请选择">
-                <el-option v-for="item in unitList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in unitList" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item prop="trade_type" label="行业类别">
               <el-select v-model="queryForm.trade_type" placeholder="请选择">
-                <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -27,6 +29,7 @@
     <el-main class="main">
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%">
         <el-table-column prop="police_unit" label="管辖单位"> </el-table-column>
+        <el-table-column prop="type" label="行业类别"> </el-table-column>
         <el-table-column prop="enterprises" label="企业总数"> </el-table-column>
         <el-table-column prop="business_size" label="营业数"> </el-table-column>
         <el-table-column prop="un_business_size" label="未营业数"> </el-table-column>
@@ -35,7 +38,9 @@
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
+        :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper"
+        :total="tableDataCount"> </el-pagination>
     </el-footer>
   </el-container>
 </template>
@@ -56,7 +61,6 @@ export default {
       queryForm: {
         police_unit: null,
         trade_type: null,
-        daterange: [],
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
@@ -74,8 +78,8 @@ export default {
       that.handleQuery()
     })
   },
-  mounted() {},
-  destroyed() {},
+  mounted() { },
+  destroyed() { },
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
@@ -83,7 +87,6 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.unitList = handleEnum(res.data)[2]
-            console.log(this.unitList)
             callback()
           }
         })
@@ -95,13 +98,6 @@ export default {
       this.$refs.queryForm.resetFields()
     },
     handleQuery(flag) {
-      if (this.queryForm.daterange.length > 0) {
-        this.queryForm.fromtime = this.queryForm.daterange[0]
-        this.queryForm.totime = this.queryForm.daterange[1]
-      } else {
-        this.queryForm.fromtime = ''
-        this.queryForm.totime = ''
-      }
       if (flag === undefined) {
         this.queryForm.pageindex = 1
       }
@@ -113,6 +109,12 @@ export default {
       enterpriselist(queryObj)
         .then(res => {
           if (res.code === 200) {
+            res.data.forEach(element => {
+              const unit = this.unitList.find(i => i.value === element.police_unit)
+              element.police_unit = unit.label;
+              const typeItem = this.typeList.find(i => i.value === element.type);
+              element.type = typeItem.label;
+            });
             this.tableData = res.data
             this.tableDataCount = res.size
           }
@@ -139,6 +141,7 @@ export default {
   height: calc(100vh - 110px);
   width: 100%;
 }
+
 .main {
   height: calc(100vh - 152px);
   width: 100%;

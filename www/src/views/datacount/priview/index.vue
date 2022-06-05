@@ -55,7 +55,7 @@
     <el-main>
       <el-tabs v-model="activeName" @tab-click="handleTabsClick">
         <el-tab-pane label="当前企业总数" name="company">
-          <div id="chart_company" style="width: 600px; height: 400px"></div>
+          <div id="chart_company" style="width: 100%; height: 600px"></div>
         </el-tab-pane>
         <el-tab-pane label="住宿统计" name="room">
           <el-container>
@@ -66,7 +66,9 @@
                     <el-row>
                       <el-col :span="24">
                         <el-form-item prop="daterange" label="日期">
-                          <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="max-width: 220px"> </el-date-picker>
+                          <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange"
+                            range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true"
+                            style="max-width: 220px"> </el-date-picker>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -79,8 +81,12 @@
             </el-header>
             <el-main>
               <el-row>
-                <el-col :span="12"> <div id="chart_in_detail" style="width: 500px; height: 400px"></div></el-col>
-                <el-col :span="12"> <div id="chart_in_source" style="width: 500px; height: 400px"></div></el-col>
+                <el-col :span="12">
+                  <div id="chart_in_detail" style="width: 100%; height: 600px"></div>
+                </el-col>
+                <el-col :span="12">
+                  <div id="chart_in_source" style="width: 100%; height: 600px"></div>
+                </el-col>
               </el-row>
             </el-main>
           </el-container>
@@ -91,15 +97,29 @@
 </template>
 <script>
 import { systemlist, enterpriselist, travellerlist, travellerdomesticregion } from '@/api/datacount'
+import handleEnum from '@/utils/handleEnum'
+import { enumsItems } from '@/api/common'
+import provinces from '../../analysis/focusAreas/provinces'
 export default {
   name: 'Priview',
   components: {},
   props: {},
   data() {
+    const now = new Date();
+    const start = new Date();
+    if (now.getDate() === 1) {
+      start.setMonth(now.getMonth() - 1);
+      start.setDate(1);
+      now.setDate(now.getDate() - 1)
+    } else {
+      start.setDate(1);
+      now.setDate(now.getDate() - 1)
+    }
     return {
       queryForm: {
-        daterange: []
+        daterange: [start, now]
       },
+      unitList: [],
       activeName: 'company',
       count: {
         escapee_alarms: 0,
@@ -116,14 +136,25 @@ export default {
     const that = this
     this.init(function () {
       that.handleQueryCount()
-      //that.handleQuery()
+      that.handleQueryCompany()
+      that.handleQueryDation()
     })
   },
-  mounted() {},
-  destroyed() {},
+  mounted() { },
+  destroyed() { },
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
+      enumsItems({ types: [2] })
+        .then(res => {
+          if (res.code === 200) {
+            this.unitList = handleEnum(res.data)[2]
+            callback()
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
       callback()
     },
     handleQueryCount() {
@@ -144,10 +175,16 @@ export default {
             const array = res.data
             const xDatas = []
             const yDatas = []
-            array.forEach(element => {
-              xDatas.push(element.police_unit)
-              yDatas.push(element.enterprises)
-            })
+            this.unitList = this.unitList.sort((a, b) => { if (a.value > b.value) { return 1 } else { return -1 } })
+            this.unitList.forEach(element => {
+              const list = array.filter(i => i.police_unit === element.value);
+              let count = 0;
+              list.forEach(item => {
+                count += item.enterprises;
+              });
+              xDatas.push(element.label.replace('重庆市渝中', ''));
+              yDatas.push(count);
+            });
             this.initCompanyChart(xDatas, yDatas)
           }
         })
@@ -156,11 +193,16 @@ export default {
         })
     },
     initCompanyChart(xDatas, yDatas) {
-      const myChart = echarts.init(document.getElementById('chart_company'))
+      const myChart = this.$echarts.init(document.getElementById('chart_company'))
       const option = {
+        title: {
+          text: '重庆市渝中区企业总数',
+          left: 'center'
+        },
         xAxis: {
           type: 'category',
-          data: xDatas
+          data: xDatas,
+          axisLabel: { interval: 0, rotate: 30 }
         },
         yAxis: {
           type: 'value'
@@ -177,12 +219,16 @@ export default {
         ]
       }
       myChart.setOption(option)
+      this.companyChart = myChart;
     },
     handleQueryDation() {
       const queryObj = {}
-      if (this.queryForm.daterange.length > 0) {
+      if (this.queryForm.daterange) {
         queryObj.fromtime = this.queryForm.daterange[0]
         queryObj.totime = this.queryForm.daterange[1]
+      } else {
+        queryObj.fromtime = ''
+        queryObj.totime = ''
       }
       travellerlist(queryObj)
         .then(res => {
@@ -191,7 +237,8 @@ export default {
             const xDatas = []
             const yDatas = []
             array.forEach(element => {
-              xDatas.push(element.police_unit)
+              const unit = this.unitList.find(i => i.value === element.police_unit)
+              xDatas.push(unit.label.replace('重庆市渝中', ''))
               yDatas.push(element.persons)
             })
             this.initInDetailChart(xDatas, yDatas)
@@ -205,12 +252,17 @@ export default {
           if (res.code === 200) {
             const array = res.data
             const datas = []
-            array.forEach(element => {
+            provinces.provinces.forEach((province) => {
+              const list = array.filter(i => i.region === province.code);
+              let count = 0;
+              list.forEach(item => {
+                count += item.persons;
+              });
               datas.push({
-                name: element.region,
-                value: element.size
+                name: province.name,
+                value: count
               })
-            })
+            });
             this.initInSourceChart(datas)
           }
         })
@@ -219,7 +271,7 @@ export default {
         })
     },
     initInDetailChart(xDatas, yDatas) {
-      const myChart = echarts.init(document.getElementById('chart_in_detail'))
+      const myChart = this.$echarts.init(document.getElementById('chart_in_detail'))
       const option = {
         title: {
           text: '境内入住记录',
@@ -227,7 +279,8 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: xDatas
+          data: xDatas,
+          axisLabel: { interval: 0, rotate: 30 }
         },
         yAxis: {
           type: 'value'
@@ -244,9 +297,10 @@ export default {
         ]
       }
       myChart.setOption(option)
+      this.inDetailChart = myChart;
     },
     initInSourceChart(datas) {
-      const myChart = echarts.init(document.getElementById('chart_in_source'))
+      const myChart = this.$echarts.init(document.getElementById('chart_in_source'))
       const option = {
         title: {
           text: '境内旅客来源',
@@ -276,8 +330,21 @@ export default {
         ]
       }
       myChart.setOption(option)
+      this.inSourceChart = myChart;
     },
-    handleTabsClick(name) {}
+    handleTabsClick(item) {
+      if (item.index === '1') {
+        this.$nextTick(() => {
+          this.inSourceChart.resize();
+          this.inDetailChart.resize();
+        })
+      } else {
+        this.$nextTick(() => {
+          this.companyChart.resize();
+        })
+
+      }
+    }
   }
 }
 </script>
@@ -286,32 +353,41 @@ export default {
   margin-top: 20px;
   color: white;
 }
+
 .title {
   text-align: center;
   height: 80px;
 }
+
 .title i {
   font-size: 40px;
 }
+
 .title span {
   margin-top: 10px;
-  display: inline-block;
+  display: block;
 }
+
 .green {
   background-color: #67c23a;
 }
+
 .blue {
   background-color: #409eff;
 }
+
 .origen {
   background-color: #e6a23c;
 }
+
 .red {
   background-color: #f56c6c;
 }
+
 .gray {
   background-color: #bfcbd9;
 }
+
 .gray2 {
   background-color: #606266;
 }
