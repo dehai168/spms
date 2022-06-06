@@ -6,16 +6,13 @@
           <el-col :span="8">
             <el-form-item prop="police_unit" label="管辖单位">
               <el-select v-model="queryForm.police_unit" placeholder="请选择">
-                <el-option v-for="item in unitList" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
+                <el-option v-for="item in unitList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item prop="daterange" label="统计日期">
-              <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange"
-                range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true"
-                style="max-width: 220px"> </el-date-picker>
+              <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" style="width: 230px"> </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -35,26 +32,27 @@ import defaultSettings from '@/settings'
 import { travellerabroadnationality } from '@/api/datacount'
 import handleEnum from '@/utils/handleEnum'
 import { enumsItems } from '@/api/common'
+import { parseTime } from '@/utils/index'
 export default {
   name: 'Domestic',
   components: {},
   props: {},
   data() {
-    const now = new Date();
-    const start = new Date();
+    const now = new Date()
+    const start = new Date()
     if (now.getDate() === 1) {
-      start.setMonth(now.getMonth() - 1);
-      start.setDate(1);
+      start.setMonth(now.getMonth() - 1)
+      start.setDate(1)
       now.setDate(now.getDate() - 1)
     } else {
-      start.setDate(1);
+      start.setDate(1)
       now.setDate(now.getDate() - 1)
     }
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
         police_unit: null,
-        daterange: [start, now]
+        daterange: [parseTime(start, '{y}-{m}-{d}'), parseTime(now, '{y}-{m}-{d}')]
       },
       unitList: []
     }
@@ -66,8 +64,8 @@ export default {
       that.handleQuery()
     })
   },
-  mounted() { },
-  destroyed() { },
+  mounted() {},
+  destroyed() {},
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典

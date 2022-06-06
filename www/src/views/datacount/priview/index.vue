@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="container">
     <el-header height="80">
       <el-row :gutter="20">
         <el-col :span="4">
@@ -52,23 +52,21 @@
         </el-col>
       </el-row>
     </el-header>
-    <el-main>
+    <el-main class="main">
       <el-tabs v-model="activeName" @tab-click="handleTabsClick">
         <el-tab-pane label="当前企业总数" name="company">
           <div id="chart_company" style="width: 100%; height: 600px"></div>
         </el-tab-pane>
         <el-tab-pane label="住宿统计" name="room">
           <el-container>
-            <el-header height="34px" style="border-bottom:1px solid #EBEEF5">
+            <el-header height="34px" style="border-bottom: 1px solid #ebeef5">
               <el-row>
                 <el-col :span="8">
                   <el-form ref="queryForm" :inline="true" :model="queryForm">
                     <el-row>
                       <el-col :span="24">
                         <el-form-item prop="daterange" label="日期">
-                          <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange"
-                            range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true"
-                            style="max-width: 220px"> </el-date-picker>
+                          <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" style="width: 230px"> </el-date-picker>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -105,14 +103,14 @@ export default {
   components: {},
   props: {},
   data() {
-    const now = new Date();
-    const start = new Date();
+    const now = new Date()
+    const start = new Date()
     if (now.getDate() === 1) {
-      start.setMonth(now.getMonth() - 1);
-      start.setDate(1);
+      start.setMonth(now.getMonth() - 1)
+      start.setDate(1)
       now.setDate(now.getDate() - 1)
     } else {
-      start.setDate(1);
+      start.setDate(1)
       now.setDate(now.getDate() - 1)
     }
     return {
@@ -140,8 +138,8 @@ export default {
       that.handleQueryDation()
     })
   },
-  mounted() { },
-  destroyed() { },
+  mounted() {},
+  destroyed() {},
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
@@ -175,16 +173,22 @@ export default {
             const array = res.data
             const xDatas = []
             const yDatas = []
-            this.unitList = this.unitList.sort((a, b) => { if (a.value > b.value) { return 1 } else { return -1 } })
+            this.unitList = this.unitList.sort((a, b) => {
+              if (a.value > b.value) {
+                return 1
+              } else {
+                return -1
+              }
+            })
             this.unitList.forEach(element => {
-              const list = array.filter(i => i.police_unit === element.value);
-              let count = 0;
+              const list = array.filter(i => i.police_unit === element.value)
+              let count = 0
               list.forEach(item => {
-                count += item.enterprises;
-              });
-              xDatas.push(element.label.replace('重庆市渝中', ''));
-              yDatas.push(count);
-            });
+                count += item.enterprises
+              })
+              xDatas.push(element.label.replace('重庆市渝中', ''))
+              yDatas.push(count)
+            })
             this.initCompanyChart(xDatas, yDatas)
           }
         })
@@ -219,7 +223,7 @@ export default {
         ]
       }
       myChart.setOption(option)
-      this.companyChart = myChart;
+      this.companyChart = myChart
     },
     handleQueryDation() {
       const queryObj = {}
@@ -252,17 +256,17 @@ export default {
           if (res.code === 200) {
             const array = res.data
             const datas = []
-            provinces.provinces.forEach((province) => {
-              const list = array.filter(i => i.region === province.code);
-              let count = 0;
+            provinces.provinces.forEach(province => {
+              const list = array.filter(i => i.region === province.code)
+              let count = 0
               list.forEach(item => {
-                count += item.persons;
-              });
+                count += item.persons
+              })
               datas.push({
                 name: province.name,
                 value: count
               })
-            });
+            })
             this.initInSourceChart(datas)
           }
         })
@@ -297,7 +301,7 @@ export default {
         ]
       }
       myChart.setOption(option)
-      this.inDetailChart = myChart;
+      this.inDetailChart = myChart
     },
     initInSourceChart(datas) {
       const myChart = this.$echarts.init(document.getElementById('chart_in_source'))
@@ -330,25 +334,35 @@ export default {
         ]
       }
       myChart.setOption(option)
-      this.inSourceChart = myChart;
+      this.inSourceChart = myChart
     },
     handleTabsClick(item) {
       if (item.index === '1') {
         this.$nextTick(() => {
-          this.inSourceChart.resize();
-          this.inDetailChart.resize();
+          this.inSourceChart.resize()
+          this.inDetailChart.resize()
         })
       } else {
         this.$nextTick(() => {
-          this.companyChart.resize();
+          this.companyChart.resize()
         })
-
       }
     }
   }
 }
 </script>
 <style scoped>
+.container {
+  height: calc(100vh - 110px);
+  width: 100%;
+}
+
+.main {
+  height: calc(100vh - 152px);
+  width: 100%;
+  padding: 5px;
+  overflow: auto;
+}
 .box-card {
   margin-top: 20px;
   color: white;
