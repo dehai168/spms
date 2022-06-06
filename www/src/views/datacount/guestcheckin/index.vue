@@ -96,6 +96,7 @@ export default {
         this.queryForm.totime = ''
       }
       const queryObj = { ...this.queryForm }
+      delete queryObj.daterange;
       if (this.queryForm.unit === null) {
         delete queryObj.unit
       }

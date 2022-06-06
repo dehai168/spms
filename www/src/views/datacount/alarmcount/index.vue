@@ -109,6 +109,7 @@ export default {
         this.queryForm.pageindex = 1
       }
       const queryObj = { ...this.queryForm }
+      delete queryObj.daterange;
       if (this.queryForm.unit === null) {
         delete queryObj.unit
       }
