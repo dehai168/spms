@@ -39,7 +39,7 @@
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
-        :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper"
+        :page-size="queryForm.size" background layout="total, sizes, prev, pager, next, jumper"
         :total="tableDataCount"> </el-pagination>
     </el-footer>
   </el-container>
@@ -61,8 +61,8 @@ export default {
       queryForm: {
         police_unit: null,
         trade_type: null,
-        pagesize: defaultSettings.pageSizes[0],
-        pageindex: 1
+        size: defaultSettings.pageSizes[0],
+        index: 1
       },
       unitList: [],
       typeList: mapToArray(map.trade_type2),
@@ -99,7 +99,7 @@ export default {
     },
     handleQuery(flag) {
       if (flag === undefined) {
-        this.queryForm.pageindex = 1
+        this.queryForm.index = 1
       }
       const queryObj = { ...this.queryForm }
       if (this.queryForm.unit === null) {
@@ -125,12 +125,12 @@ export default {
           console.error(e)
         })
     },
-    handleSizeChange(pagesize) {
-      this.queryForm.pagesize = pagesize
+    handleSizeChange(size) {
+      this.queryForm.size = size
       this.handleQuery(true)
     },
-    handleCurrentChange(pageindex) {
-      this.queryForm.pageindex = pageindex
+    handleCurrentChange(index) {
+      this.queryForm.index = index
       this.handleQuery(true)
     }
   }
