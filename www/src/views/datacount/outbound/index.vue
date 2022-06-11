@@ -104,7 +104,7 @@ export default {
             array.forEach(element => {
               datas.push({
                 name: element.nationality,
-                value: element.size
+                value: element.persons
               })
             })
             this.initInSourceChart(datas)
