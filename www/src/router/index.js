@@ -334,6 +334,12 @@ export const constantRoutes = [
         name: 'DayCheck',
         meta: { title: '日常检查管理', icon: 'el-icon-s-claim' },
         component: () => import('@/views/systemmanage/daycheck')
+      },
+      {
+        path: 'knowledge',
+        name: 'KnowLedge',
+        meta: { title: '知识库管理', icon: 'el-icon-notebook-1' },
+        component: () => import('@/views/systemmanage/knowledge')
       }
     ]
   },

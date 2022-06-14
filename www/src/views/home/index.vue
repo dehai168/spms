@@ -100,9 +100,9 @@ export default {
           id: 1,
           to: '/basicinfo/specialindustries/hotel/base',
           enterprise: '旅馆',
-          count: 1,
-          abroad_persons: 1,
-          domestic_persons: 1
+          count: 0,
+          abroad_persons: 0,
+          domestic_persons: 0
         },
         {
           id: 5,
@@ -226,9 +226,11 @@ export default {
                 return v.id === element.type
               })
               if (index > -1) {
-                this.countList[index].count++
-                this.countList[index].abroad_persons += element.abroad_persons
-                this.countList[index].domestic_persons += element.domestic_persons
+                const temp = this.countList[index]
+                temp.count++
+                temp.abroad_persons += element.abroad_persons
+                temp.domestic_persons += element.domestic_persons
+                this.countList.splice(index, 1, temp)
               }
             })
 

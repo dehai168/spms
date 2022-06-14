@@ -222,7 +222,10 @@ export default {
       // 初始化异步操作，例如数据字典
       callback()
     },
-    handleQuery() {
+    handleQuery(flag) {
+      if (flag === undefined) {
+        this.queryForm.pageindex = 1
+      }
       this.tableLoading = true
       if (this.queryForm.daterange.length > 0) {
         this.queryForm.fromtime = this.queryForm.daterange[0]
@@ -336,11 +339,11 @@ export default {
     },
     handleSizeChange(pagesize) {
       this.queryForm.pagesize = pagesize
-      this.handleQuery()
+      this.handleQuery(true)
     },
     handleCurrentChange(pageindex) {
       this.queryForm.pageindex = pageindex
-      this.handleQuery()
+      this.handleQuery(true)
     },
     handleView(index, row) {
       this.formClear(false)

@@ -4,15 +4,13 @@
       <el-form ref="queryForm" :inline="true" :model="queryForm">
         <el-row>
           <el-col :span="6">
-            <el-form-item prop="type" label="行业类型">
-              <el-select v-model="queryForm.type" placeholder="请选择" clearable>
-                <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select>
+            <el-form-item prop="daterange" label="上传日期">
+              <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" style="width: 230px"> </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item prop="check_name" label="检查事项" style="width: 100%">
-              <el-input v-model="queryForm.check_name"></el-input>
+            <el-form-item prop="title" label="标题" style="width: 100%">
+              <el-input v-model="queryForm.title"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -29,29 +27,18 @@
       </el-row>
       <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="index"> </el-table-column>
-        <el-table-column prop="typename" label="行业类型"> </el-table-column>
-        <el-table-column prop="check_name" label="检查事项"> </el-table-column>
-        <el-table-column prop="input_type" label="输入类型" width="80">
-          <template slot-scope="scope">
-            {{ scope.row.input_type ? '输入' : '选择' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="isrequired" label="是否必填" width="80">
-          <template slot-scope="scope">
-            {{ scope.row.isrequired ? '是' : '否' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="use_check" label="企业核查用途" width="105">
-          <template slot-scope="scope">
-            {{ scope.row.use_check ? '是' : '否' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="score" label="分数" width="60"> </el-table-column>
-        <el-table-column prop="input_time" label="时间" width="135"> </el-table-column>
+        <el-table-column prop="title" label="标题"> </el-table-column>
+        <el-table-column prop="author" label="作者"> </el-table-column>
+        <el-table-column prop="filecode" label="文件编号"> </el-table-column>
+        <el-table-column prop="user" label="上传用户"> </el-table-column>
+        <el-table-column prop="input_time" label="上传时间" width="135"> </el-table-column>
+        <el-table-column prop="remark" label="备注"> </el-table-column>
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
+            <el-button type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
             <el-button type="text" @click="handleUpdate(scope.$index, scope.row)">编辑</el-button>
             <el-button type="text" @click="handleRemove(scope.$index, scope.row)">删除</el-button>
+            <el-button type="text" v-if="scope.row.filename.length > 0" @click="handleDownload(scope.$index, scope.row)">下载</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -61,29 +48,30 @@
     </el-footer>
     <el-dialog :title="addflag ? '添加' : '编辑'" :visible.sync="dialogVisible" width="45%" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="formRules" label-width="120px">
-        <el-form-item prop="type" label="行业类型">
-          <el-select v-model="form.type" placeholder="请选择" style="width: 100%">
-            <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-          </el-select>
+        <el-form-item prop="title" label="标题">
+          <el-input type="text" v-model="form.title" maxlength="50" :disabled="isView"></el-input>
         </el-form-item>
-        <el-form-item prop="check_name" label="检查事项">
-          <el-input type="textarea" :rows="3" v-model="form.check_name" maxlength="250" show-word-limit></el-input>
+        <el-form-item prop="author" label="作者">
+          <el-input type="text" v-model="form.author" maxlength="50" :disabled="isView"></el-input>
         </el-form-item>
-        <el-form-item prop="input_type" label="输入类型">
-          <el-select v-model="form.input_type" placeholder="请选择" style="width: 100%">
-            <el-option v-for="item in inputTypeList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-          </el-select>
+        <el-form-item prop="filecode" label="文件编号">
+          <el-input type="text" v-model="form.filecode" maxlength="50" :disabled="isView"></el-input>
         </el-form-item>
-        <el-form-item prop="score" label="分数">
-          <el-select v-model="form.score" placeholder="请选择" style="width: 100%">
-            <el-option v-for="item in scoreList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-          </el-select>
+        <el-form-item prop="msg" label="内容">
+          <el-input type="textarea" :rows="3" v-model="form.msg" maxlength="350" show-word-limit :disabled="isView"></el-input>
         </el-form-item>
-        <el-form-item prop="isrequired" label="是否必填">
-          <el-checkbox v-model="form.isrequired"></el-checkbox>
+        <el-form-item prop="remark" label="备注">
+          <el-input type="text" v-model="form.remark" maxlength="50" :disabled="isView"></el-input>
         </el-form-item>
-        <el-form-item prop="use_check" label="企业核查用途">
-          <el-checkbox v-model="form.use_check"></el-checkbox>
+        <el-form-item label="上传文件">
+          <el-upload ref="upload" drag :action="uploadUrl" :on-error="handleUploadError" :on-success="handleUploadSuccess" :before-upload="beforeUpload">
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">
+              注意:只能上传<strong>{{ whiteList }}</strong
+              >文件，且不超过<strong>{{ fileSize }}MB</strong>
+            </div>
+          </el-upload>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -95,65 +83,63 @@
 </template>
 <script>
 import defaultSettings from '@/settings'
-import { items, create, update, remove } from '@/api/checklist'
+import { items, create, update, remove, uploadUrl, download } from '@/api/knowledge'
+import { parseTime } from '@/utils/index'
 export default {
-  name: 'CheckList',
+  name: 'Knowledge',
   components: {},
   props: {},
   data() {
+    const now = new Date()
+    const start = new Date()
+    if (now.getDate() === 1) {
+      start.setMonth(now.getMonth() - 1)
+      start.setDate(1)
+      now.setDate(now.getDate() - 1)
+    } else {
+      start.setDate(1)
+      now.setDate(now.getDate() - 1)
+    }
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
-        check_name: '',
-        type: null,
+        title: '',
+        daterange: [parseTime(start, '{y}-{m}-{d}'), parseTime(now, '{y}-{m}-{d}')],
+        fromtime: '',
+        totime: '',
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1
       },
       form: {
-        checkid: -1,
-        type: 1,
-        check_name: '',
-        input_type: 0,
-        isrequred: false,
-        use_check: false,
-        score: 1,
+        knowledgeid: -1,
+        title: '',
+        author: '',
+        filecode: '',
+        filename: '',
+        msg: '',
         remark: ''
       },
       formRules: {
-        check_name: [{ required: true, trigger: 'blur', message: '该项是必填项' }]
+        title: [{ required: true, trigger: 'blur', message: '该项是必填项' }]
         // certificate_code: [{ required: true, trigger: 'blur', message: '该项是必填项' }]
       },
-      inputTypeList: [
-        { value: 0, label: '选择' },
-        { value: 1, label: '输入' }
-      ],
-      scoreList: [
-        { value: 1, label: '1' },
-        { value: 2, label: '2' },
-        { value: 3, label: '3' },
-        { value: 4, label: '4' },
-        { value: 5, label: '5' }
-      ],
-      typeList: [
-        { value: 1, label: '旅馆业' },
-        { value: 2, label: '旧货交易' },
-        { value: 3, label: '机动车修理业' },
-        { value: 4, label: '废旧金属回收' },
-        { value: 5, label: '公章刻制业' },
-        { value: 6, label: 'KTV' },
-        { value: 7, label: '酒吧' }
-      ],
       addflag: true,
+      isView: false,
       dialogVisible: false,
       submitDisabled: false,
-      submitImportDisabled: false,
       tableLoading: false,
       tableData: [],
       tableDataCount: 0,
-      tableSelected: []
+      tableSelected: [],
+      whiteList: 'wps/doc/docx/ppt/pptx/xls/xlsx/pdf/zip/rar',
+      fileSize: 20
     }
   },
-  computed: {},
+  computed: {
+    uploadUrl() {
+      return uploadUrl()
+    }
+  },
   created() {
     const that = this
     this.init(function () {
@@ -171,16 +157,20 @@ export default {
       if (flag === undefined) {
         this.queryForm.pageindex = 1
       }
+      if (this.queryForm.daterange) {
+        this.queryForm.fromtime = this.queryForm.daterange[0]
+        this.queryForm.totime = this.queryForm.daterange[1]
+      } else {
+        this.queryForm.fromtime = ''
+        this.queryForm.totime = ''
+      }
+      const queryObj = { ...this.queryForm }
+      console.log(queryObj)
+      delete queryObj.daterange
       this.tableLoading = true
-      items(this.queryForm)
+      items(queryObj)
         .then(res => {
           if (res.code === 200) {
-            const that = this
-            res.data.forEach(element => {
-              element.typename = that.typeList.find(v => {
-                return v.value === element.type
-              }).label
-            })
             this.tableData = res.data
             this.tableDataCount = res.size
           }
@@ -198,8 +188,8 @@ export default {
       const ids = []
       const names = []
       this.tableSelected.forEach(element => {
-        ids.push(element.checkid)
-        names.push(element.check_name)
+        ids.push(element.knowledgeid)
+        names.push(element.title)
       })
       if (ids.length > 0) {
         this.removeData(ids, names)
@@ -215,6 +205,9 @@ export default {
       this.addflag = flag
       if (this.$refs.form) {
         this.$refs.form.resetFields()
+      }
+      if (this.$refs.upload) {
+        this.$refs.upload.clearFiles()
       }
     },
     handleCreate() {
@@ -287,15 +280,22 @@ export default {
       this.queryForm.pageindex = pageindex
       this.handleQuery(true)
     },
+    handleView(index, row) {
+      this.formClear(false)
+      this.isView = true
+      this.form = { ...row }
+      this.dialogVisible = true
+      return
+    },
     handleUpdate(index, row) {
       this.formClear(false)
       this.form = { ...row }
       this.dialogVisible = true
     },
     handleRemove(index, row) {
-      this.removeData(row.checkid, row.check_name)
+      this.removeData(row.knowledge, row.title)
     },
-    removeData(checkid, names) {
+    removeData(knowledge, names) {
       this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -303,7 +303,7 @@ export default {
       })
         .then(() => {
           remove({
-            checkid,
+            knowledge,
             names
           })
             .then(res => {
@@ -330,6 +330,48 @@ export default {
             })
         })
         .catch(() => {})
+    },
+    handleDownload(index, row) {
+      download(row.filename)
+    },
+    beforeUpload(file) {
+      const whiteListArray = this.whiteList.split('/')
+      let isWhite = false
+      whiteListArray.forEach(element => {
+        console.log(file.name + ',' + element)
+        if (file.name.indexOf(element) > -1) {
+          isWhite = true
+        }
+      })
+      whiteListArray.indexOf(file.name) > -1
+      const islimit = file.size / 1024 / 1024 < this.fileSize
+
+      if (!isWhite) {
+        this.$message.error('上传文件格式不支持!')
+      }
+      if (!islimit) {
+        this.$message.error('上传文件体积过大!')
+      }
+      return isWhite && islimit
+    },
+    handleUploadSuccess(res, file, filelist) {
+      if (res.code === 200) {
+        if (this.form.filecode.length === 0) {
+          this.form.filecode = file.name
+        }
+        this.form.filename = res.data
+      } else {
+        this.$message({
+          message: '文件上传失败,请重新上传!',
+          type: 'warning'
+        })
+      }
+    },
+    handleUploadError() {
+      this.$message({
+        message: '文件上传失败,请重新上传!',
+        type: 'warning'
+      })
     }
   }
 }
