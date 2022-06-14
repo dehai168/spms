@@ -94,6 +94,10 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/systemmanage/checklist'
   },
+  {
+    path:'/mp32text',
+    component:() => import('@/views/systemmanage/mp32text')
+  },
   // 二级路由
   {
     path: '/home',

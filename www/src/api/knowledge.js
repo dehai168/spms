@@ -34,5 +34,13 @@ export function uploadUrl() {
   return '/police/upload/file?token=' + getToken()
 }
 export function download(filename) {
-  window.open('/' + filename)
+  //window.open(window.origin + filename)
+  //window.location.href = window.origin + filename
+  fetch(window.origin + filename).then(res => res.blob()).then(blob => { // 将链接地址字符内容转变成blob地址
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = '' // 下载文件的名字
+    document.body.appendChild(a)
+    a.click()
+  })
 }

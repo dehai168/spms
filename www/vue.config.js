@@ -46,6 +46,14 @@ module.exports = {
         target:'http://159.75.81.99:6800',
         changeOrigin:true,
       },
+      '/files':{
+        target:'http://159.75.81.99:7001',
+        changeOrigin:true,
+      },
+      '/alarm':{
+        target:'http://159.75.81.99:6801',
+        changeOrigin:true,
+      },
     }
   },
   configureWebpack: {

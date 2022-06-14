@@ -33,12 +33,12 @@
         <el-table-column prop="user" label="上传用户"> </el-table-column>
         <el-table-column prop="input_time" label="上传时间" width="135"> </el-table-column>
         <el-table-column prop="remark" label="备注"> </el-table-column>
-        <el-table-column fixed="right" label="操作" width="120">
+        <el-table-column fixed="right" label="操作" width="180">
           <template slot-scope="scope">
             <el-button type="text" @click="handleView(scope.$index, scope.row)">详情</el-button>
             <el-button type="text" @click="handleUpdate(scope.$index, scope.row)">编辑</el-button>
             <el-button type="text" @click="handleRemove(scope.$index, scope.row)">删除</el-button>
-            <el-button type="text" v-if="scope.row.filename.length > 0" @click="handleDownload(scope.$index, scope.row)">下载</el-button>
+            <el-button type="text" v-if="scope.row.filename" @click="handleDownload(scope.$index, scope.row)">下载</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -104,7 +104,7 @@ export default {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
         title: '',
-        daterange: [parseTime(start, '{y}-{m}-{d}'), parseTime(now, '{y}-{m}-{d}')],
+        daterange: [],
         fromtime: '',
         totime: '',
         pagesize: defaultSettings.pageSizes[0],
@@ -157,7 +157,7 @@ export default {
       if (flag === undefined) {
         this.queryForm.pageindex = 1
       }
-      if (this.queryForm.daterange) {
+      if (this.queryForm.daterange && this.queryForm.daterange.length > 0) {
         this.queryForm.fromtime = this.queryForm.daterange[0]
         this.queryForm.totime = this.queryForm.daterange[1]
       } else {
@@ -165,7 +165,6 @@ export default {
         this.queryForm.totime = ''
       }
       const queryObj = { ...this.queryForm }
-      console.log(queryObj)
       delete queryObj.daterange
       this.tableLoading = true
       items(queryObj)
@@ -289,13 +288,14 @@ export default {
     },
     handleUpdate(index, row) {
       this.formClear(false)
+      this.isView = false
       this.form = { ...row }
       this.dialogVisible = true
     },
     handleRemove(index, row) {
-      this.removeData(row.knowledge, row.title)
+      this.removeData(row.knowledgeid, row.title)
     },
-    removeData(knowledge, names) {
+    removeData(knowledgeid, names) {
       this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -303,7 +303,7 @@ export default {
       })
         .then(() => {
           remove({
-            knowledge,
+            knowledgeid,
             names
           })
             .then(res => {
@@ -338,7 +338,6 @@ export default {
       const whiteListArray = this.whiteList.split('/')
       let isWhite = false
       whiteListArray.forEach(element => {
-        console.log(file.name + ',' + element)
         if (file.name.indexOf(element) > -1) {
           isWhite = true
         }
@@ -361,6 +360,7 @@ export default {
         }
         this.form.filename = res.data
       } else {
+        this.$refs.upload.clearFiles()
         this.$message({
           message: '文件上传失败,请重新上传!',
           type: 'warning'
