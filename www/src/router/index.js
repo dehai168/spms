@@ -344,6 +344,12 @@ export const constantRoutes = [
         name: 'KnowLedge',
         meta: { title: '知识库管理', icon: 'el-icon-notebook-1' },
         component: () => import('@/views/systemmanage/knowledge')
+      },
+      {
+        path: 'viewmanage',
+        name: 'ViewManage',
+        meta: { title: '视图库管理', icon: 'el-icon-video-camera' },
+        component: () => import('@/views/systemmanage/viewmanage')
       }
     ]
   },
