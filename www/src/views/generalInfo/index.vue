@@ -21,7 +21,7 @@
       <Medialist @openVideo="viewVideo" @openImage="viewImage"></Medialist>
     </el-dialog>
     <el-dialog :title="imageName" :visible.sync="viewImageDialogVisible" width="50%" :close-on-click-modal="false">
-      <Viewimage></Viewimage>
+      <viewimage></viewimage>
     </el-dialog>
     <iframe id="targetFrame" width="0" height="0" frameborder="0"></iframe>
   </div>
@@ -41,14 +41,14 @@ import card from '../home/components/card.vue'
 import gcoodrd from 'gcoord'
 import Markerdetail from '../home/components/markerdetail.vue'
 import Medialist from '../home/components/medialist.vue'
-import Viewimage from '../home/components/viewimage.vue'
+import viewimage from '@/components/viewimage/index.vue'
 export default {
   name: 'GeneralInfo',
   components: {
     card,
     Markerdetail,
     Medialist,
-    Viewimage
+    viewimage
   },
   data() {
     return {

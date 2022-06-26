@@ -1,30 +1,60 @@
 <template>
   <div class="container map-container" id="spms_map">
     <el-card class="top-card">
-      <card v-for="item in countList" v-bind:key="item.id" :id="item.id" :to="item.to" :enterprise="item.enterprise" :count="item.count" :abroad_persons="item.abroad_persons" :domestic_persons="item.domestic_persons" />
+      <card v-for="item in countList" v-bind:key="item.id" :id="item.id" :to="item.to" :enterprise="item.enterprise"
+        :count="item.count" :abroad_persons="item.abroad_persons" :domestic_persons="item.domestic_persons" />
     </el-card>
     <el-card class="right-card">
       <fieldset>
         <legend>特殊行业</legend>
         <ul>
-          <li><el-checkbox v-model="checkList[0]" @change="handleCheck(0)" class="marginRight">旅馆业</el-checkbox><img :src="imgList[0]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[4]" @change="handleCheck(4)" class="marginRight">公章刻制业</el-checkbox><img :src="imgList[1]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[1]" @change="handleCheck(1)" class="marginRight">旧货交易</el-checkbox><img :src="imgList[2]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[2]" @change="handleCheck(2)" class="marginRight">机动车维修</el-checkbox><img :src="imgList[3]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[3]" @change="handleCheck(3)" class="marginRight">废旧金属回收</el-checkbox><img :src="imgList[4]" alt="" srcset="" /></li>
+          <li>
+            <el-checkbox v-model="checkList[0]" @change="handleCheck(0)" class="marginRight">旅馆业</el-checkbox><img
+              :src="imgList[0]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[4]" @change="handleCheck(4)" class="marginRight">公章刻制业</el-checkbox><img
+              :src="imgList[1]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[1]" @change="handleCheck(1)" class="marginRight">旧货交易</el-checkbox><img
+              :src="imgList[2]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[2]" @change="handleCheck(2)" class="marginRight">机动车维修</el-checkbox><img
+              :src="imgList[3]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[3]" @change="handleCheck(3)" class="marginRight">废旧金属回收</el-checkbox><img
+              :src="imgList[4]" alt="" srcset="" />
+          </li>
         </ul>
       </fieldset>
       <fieldset>
         <legend>娱乐场所</legend>
         <ul>
-          <li><el-checkbox v-model="checkList[6]" @change="handleCheck(6)" class="marginRight">酒吧</el-checkbox><img :src="imgList[5]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[5]" @change="handleCheck(5)" class="marginRight">KTV</el-checkbox><img :src="imgList[6]" alt="" srcset="" /></li>
+          <li>
+            <el-checkbox v-model="checkList[6]" @change="handleCheck(6)" class="marginRight">酒吧</el-checkbox><img
+              :src="imgList[5]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[5]" @change="handleCheck(5)" class="marginRight">KTV</el-checkbox><img
+              :src="imgList[6]" alt="" srcset="" />
+          </li>
         </ul>
       </fieldset>
       <fieldset>
         <legend>监控设备</legend>
         <ul>
-          <li><el-checkbox v-model="cameraVisable" @change="handleCameraVisable()" class="marginRight">摄像头</el-checkbox><img :src="cameraImg" alt="" srcset="" /></li>
+          <li>
+            <el-checkbox v-model="cameraVisable" @change="handleCameraVisable()" class="marginRight">视频设备</el-checkbox>
+            <img :src="cameraImg" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="captureVisable" @change="handleCaptureVisable()" class="marginRight">抓拍设备
+            </el-checkbox>
+            <img :src="captureImg" alt="" srcset="" />
+          </li>
         </ul>
       </fieldset>
     </el-card>
@@ -32,8 +62,10 @@
       <!-- <el-input placeholder="搜索场所(企业)名称" v-model="keywords" style="width: 280px">
         <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
       </el-input> -->
-      <el-select v-model="keywords" filterable remote placeholder="搜索场所(企业)名称" :remote-method="remoteMethod" :loading="loading" clearable @change="handleSelect" style="width: 280px; z-index: 999999">
-        <el-option v-for="item in searchResultList" :key="item.systemid" :label="item.enterprise" :value="item.systemid">
+      <el-select v-model="keywords" filterable remote placeholder="搜索场所(企业)名称" :remote-method="remoteMethod"
+        :loading="loading" clearable @change="handleSelect" style="width: 280px; z-index: 999999">
+        <el-option v-for="item in searchResultList" :key="item.systemid" :label="item.enterprise"
+          :value="item.systemid">
           <div>
             <div>{{ item.enterprise }}</div>
             <div style="color: #8492a6; font-size: 12px">负责人:{{ item.chief_person }}</div>
@@ -50,7 +82,25 @@
       <Medialist @openVideo="viewVideo" @openImage="viewImage"></Medialist>
     </el-dialog>
     <el-dialog :title="imageName" :visible.sync="viewImageDialogVisible" width="50%" :close-on-click-modal="false">
-      <Viewimage></Viewimage>
+      <viewimage></viewimage>
+    </el-dialog>
+    <el-dialog :title="captureName" :visible.sync="viewCaptureDialogVisible" width="50%" :close-on-click-modal="false">
+      <el-container>
+        <el-header height="42px" style="border-bottom:1px solid #DCDFE6">
+          <el-date-picker v-model="queryForm_capture.daterange" value-format="yyyy-MM-dd" type="daterange"
+            range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="width: 230px"
+            @change="handleQueryImage"> </el-date-picker>
+          抓拍图片共计:{{ tableDataCount_capture }}张
+        </el-header>
+        <el-main>
+          <viewimage ref="viewcapture" />
+        </el-main>
+        <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
+            :page-size="queryForm_capture.size" background layout="total, sizes, prev, pager, next, jumper"
+            :total="tableDataCount_capture"> </el-pagination>
+        </el-footer>
+      </el-container>
     </el-dialog>
     <iframe id="targetFrame" width="0" height="0" frameborder="0"></iframe>
   </div>
@@ -58,7 +108,7 @@
 <script>
 import defaultSettings from '@/settings'
 import Vue from 'vue/dist/vue.js'
-import { position, detail, list, devicelist } from '@/api/home'
+import { position, detail, list, devicelist, devicelist_yt, imagelist_yt } from '@/api/home'
 import location_1 from '@/assets/map/location_1.png'
 import location_2 from '@/assets/map/location_2.png'
 import location_3 from '@/assets/map/location_3.png'
@@ -67,31 +117,46 @@ import location_5 from '@/assets/map/location_5.png'
 import location_6 from '@/assets/map/location_6.png'
 import location_7 from '@/assets/map/location_7.png'
 import camera from '@/assets/map/camera.png'
+import capture from '@/assets/map/capture.png'
 import camera_cluter from '@/assets/map/camera_cluster.png'
 import card from './components/card.vue'
 import gcoodrd from 'gcoord'
 import Markerdetail from './components/markerdetail.vue'
 import Medialist from './components/medialist.vue'
-import Viewimage from './components/viewimage.vue'
+import viewimage from '@/components/viewimage/index.vue'
+import { parseTime } from '@/utils/index'
 export default {
   name: 'Home',
   components: {
     card,
     Markerdetail,
     Medialist,
-    Viewimage
+    viewimage
   },
   data() {
+    const now = new Date()
+    const start = new Date()
+    if (now.getDate() === 1) {
+      start.setMonth(now.getMonth() - 1)
+      start.setDate(1)
+      now.setDate(now.getDate() - 1)
+    } else {
+      start.setDate(1)
+      now.setDate(now.getDate() - 1)
+    }
     return {
       map: null,
       popup: null,
       imgList: [location_1, location_2, location_3, location_4, location_5, location_6, location_7],
       cameraImg: camera,
+      captureImg: capture,
       camera_cluterImg: camera_cluter,
       cameraVisable: true,
+      captureVisable: true,
       checkList: [true, true, true, true, true, true, true, true],
       infoList: [],
       cameraDeviceList: [],
+      captureDeviceList: [],
       keywords: '',
       loading: false,
       searchResultList: [],
@@ -161,7 +226,20 @@ export default {
       mediaListDialogVisible: false,
       mediaName: '',
       viewImageDialogVisible: false,
-      imageName: ''
+      imageName: '',
+      captureName: '',
+      viewCaptureDialogVisible: false,
+      queryForm_capture: {
+        id: -1,
+        daterange: [parseTime(start, '{y}-{m}-{d}'), parseTime(now, '{y}-{m}-{d}')],
+        fromtime: '',
+        totime: '',
+        size: defaultSettings.pageSizes[0],
+        index: 1
+      },
+      pagesizes: defaultSettings.pageSizes,
+      tableData_capture: [],
+      tableDataCount_capture: 0,
     }
   },
   mounted() {
@@ -171,7 +249,7 @@ export default {
     const that = this
   },
   methods: {
-    init() {},
+    init() { },
     initMap() {
       mapabcgl.accessToken = defaultSettings.mapabcToken
       if (!mapabcgl.supported()) {
@@ -192,13 +270,14 @@ export default {
           that.loadMarkerImage()
           that.loadDataAndCount()
           that.loadCameraList()
+          that.loadCaptureList()
         })
       }
     },
     loadMarkerImage() {
       const that = this
       for (let index = 0; index < 7; index++) {
-        ;(function (index) {
+        ; (function (index) {
           that.map.loadImage(that.imgList[index], function (error, image) {
             that.map.addImage('location_' + index, image)
           })
@@ -206,6 +285,9 @@ export default {
       }
       that.map.loadImage(this.cameraImg, function (error, image) {
         that.map.addImage('camera', image)
+      })
+      that.map.loadImage(this.captureImg, function (error, image) {
+        that.map.addImage('capture', image)
       })
       that.map.loadImage(this.camera_cluterImg, function (error, image) {
         that.map.addImage('camera_cluter', image)
@@ -254,6 +336,24 @@ export default {
           })
 
           this.loadCameraCluster()
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+    loadCaptureList() {
+      devicelist_yt({})
+        .then(res => {
+          this.captureDeviceList.length = 0
+          this.captureDeviceList = res.data
+          this.captureDeviceList.forEach(element => {
+            // 纠偏
+            const transform = gcoodrd.transform([element.lng, element.lat], gcoodrd.WGS84, gcoodrd.GCJ02)
+            element.lng = transform[0]
+            element.lat = transform[1]
+          })
+
+          this.loadCaptureCluster()
         })
         .catch(e => {
           console.error(e)
@@ -308,6 +408,28 @@ export default {
         clusterRadius: 50
       })
       this.refreshCameraCluster()
+    },
+    loadCaptureCluster() {
+      const sourceName = 'earthquakes_capture'
+      const features = []
+      this.captureDeviceList.forEach(element => {
+        features.push({
+          type: 'Feature',
+          properties: element,
+          geometry: { type: 'Point', coordinates: [element.lng, element.lat, 0.0] }
+        })
+      })
+      this.map.addSource(sourceName, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features
+        },
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50
+      })
+      this.refreshCaptureCluster()
     },
     refreshCluster(index, checked) {
       const sourceName = 'earthquakes_' + index
@@ -427,6 +549,69 @@ export default {
           let features = e.features[0].properties
           that.videoObject.src = features.code
           that.play()
+        })
+        this.map.on('mouseenter', unclusterPointName, function () {
+          that.map.getCanvas().style.cursor = 'pointer'
+        })
+        this.map.on('mouseleave', unclusterPointName, function () {
+          that.map.getCanvas().style.cursor = ''
+        })
+      } else {
+        if (this.map.getLayer(unclusterPointName)) {
+          this.map.removeLayer(unclusterPointName)
+        }
+        if (this.map.getLayer(clustersCountName)) {
+          this.map.removeLayer(clustersCountName)
+        }
+        if (this.map.getLayer(clustersName)) {
+          this.map.removeLayer(clustersName)
+        }
+      }
+    },
+    refreshCaptureCluster() {
+      const sourceName = 'earthquakes_capture'
+      const clustersName = 'clusters_capture'
+      const clustersCountName = 'cluster-count_capture'
+      const unclusterPointName = 'unclustered-point_capture'
+      const that = this
+      if (this.captureVisable) {
+        this.map.addLayer({
+          id: clustersName,
+          type: 'circle',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
+            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+          }
+        })
+        this.map.addLayer({
+          id: clustersCountName,
+          type: 'symbol',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          layout: {
+            'text-field': '{point_count_abbreviated}',
+            'text-font': ['sourcehansanscn-normal'],
+            'text-size': 12
+          }
+        })
+        this.map.addLayer({
+          id: unclusterPointName,
+          type: 'symbol',
+          source: sourceName,
+          filter: ['!has', 'point_count'],
+          layout: {
+            'icon-image': 'capture',
+            'icon-size': 1
+          }
+        })
+        this.map.on('click', clustersName, function (e) {
+          console.log(e)
+        })
+        this.map.on('click', unclusterPointName, function (e) {
+          let features = e.features[0].properties
+          that.viewCapture(features)
         })
         this.map.on('mouseenter', unclusterPointName, function () {
           that.map.getCanvas().style.cursor = 'pointer'
@@ -570,6 +755,52 @@ export default {
       this.imageName = this.mediaName + '-' + row.name
       this.viewImageDialogVisible = true
     },
+    viewCapture(item) {
+      this.captureName = item.name;
+      this.queryForm_capture.id = item.id;
+      this.viewCaptureDialogVisible = true;
+      this.handleQueryImage();
+    },
+    handleQueryImage(flag) {
+      if (this.queryForm_capture.daterange) {
+        this.queryForm_capture.fromtime = this.queryForm_capture.daterange[0]
+        this.queryForm_capture.totime = this.queryForm_capture.daterange[1]
+      } else {
+        this.queryForm_capture.fromtime = ''
+        this.queryForm_capture.totime = ''
+      }
+      if (flag === undefined) {
+        this.queryForm_capture.index = 1
+      }
+      const queryObj = { ...this.queryForm_capture }
+      delete queryObj.daterange;
+      imagelist_yt(queryObj)
+        .then(res => {
+          const list = [];
+          if (res.code === 200) {
+            res.data.forEach(element => {
+              list.push({
+                title: element.time,
+                src: element.picture_uri,
+                width: element.width,
+                height: element.height,
+              })
+            });
+          }
+          this.$refs.viewcapture.load(list);
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+    handleSizeChange(pagesize) {
+      this.queryForm_capture.size = pagesize
+      this.handleQueryImage()
+    },
+    handleCurrentChange(pageindex) {
+      this.queryForm_capture.index = pageindex
+      this.handleQueryImage()
+    },
     // search() {
     //   if (this.keywords.length > 0) {
     //     detail({ key: this.keywords })
@@ -622,6 +853,9 @@ export default {
     handleCameraVisable() {
       this.refreshCameraCluster()
     },
+    handleCaptureVisable() {
+      this.refreshCaptureCluster()
+    },
     full() {
       const url = 'VideoMap://fullscreen'
       const tf = document.getElementById('targetFrame')
@@ -656,6 +890,7 @@ export default {
   height: calc(100vh - 60px);
   width: 100%;
 }
+
 .top-card {
   position: absolute;
   display: inline-flex;
@@ -668,6 +903,7 @@ export default {
   margin: auto;
   padding: 15px;
 }
+
 .right-card {
   position: absolute;
   display: inline-flex;
@@ -677,6 +913,7 @@ export default {
   z-index: 999;
   padding: 20px;
 }
+
 .right-search-card {
   position: absolute;
   display: inline-flex;
@@ -685,18 +922,23 @@ export default {
   width: 300px;
   z-index: 2000;
 }
+
 .el-select-dropdown__item {
   height: 100px;
 }
-.el-card >>> .el-card__body {
+
+.el-card>>>.el-card__body {
   padding: 5px;
 }
+
 .marginRight {
   margin-right: 10px;
 }
+
 ul li {
   line-height: 24px;
 }
+
 ul li img {
   width: 16px;
   height: 16px;

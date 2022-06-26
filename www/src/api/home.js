@@ -29,3 +29,17 @@ export function devicelist(params) {
         params
     })
 }
+export function devicelist_yt(params) {
+    return request({
+        url: '/police/yt/device/list?token=' + getToken(),
+        method: 'get',
+        params
+    })
+}
+export function imagelist_yt(params) {
+    return request({
+        url: '/police/yt/images/list?token=' + getToken(),
+        method: 'get',
+        params
+    })
+}

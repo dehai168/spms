@@ -1,72 +1,117 @@
 <template>
   <el-container class="container">
-    <el-aside width="600px">
-      <el-container>
-        <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 42px">
-          <el-form ref="queryForm" :inline="true" :model="queryForm">
-            <el-row>
-              <el-col :span="14">
-                <el-input v-model="queryForm.name" placeholder="模糊搜索名称"></el-input>
-              </el-col>
-              <el-col :span="10" style="padding-left: 10px">
-                <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
-                <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
-              </el-col>
-            </el-row>
-            <el-row> </el-row>
-          </el-form>
-        </el-header>
-        <el-main class="main">
-          <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%" @row-click="handleRowClick">
+    <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 42px">
+      <el-form ref="queryForm" :inline="true" :model="queryForm">
+        <el-row>
+          <el-col :span="14">
+            <el-input v-model="queryForm.name" placeholder="模糊搜索名称"></el-input>
+          </el-col>
+          <el-col :span="10" style="padding-left: 10px">
+            <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+            <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
+          </el-col>
+        </el-row>
+        <el-row> </el-row>
+      </el-form>
+    </el-header>
+    <el-main class="main">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="视频设备" name="video">
+          <el-table ref="tableData" :data="tableData" v-loading="tableLoading" border style="width: 100%">
             <el-table-column type="index"> </el-table-column>
             <el-table-column prop="name" label="名称">
               <template slot-scope="scope">
-                <el-button type="text" @click="handleVideo(scope.$index, scope.row)">{{ scope.row.name }}</el-button>
+                <el-button type="text" @click="handleVideo(scope.$index, scope.row)">{{ scope.row.name }}
+                </el-button>
               </template>
             </el-table-column>
             <el-table-column prop="code" label="编码"> </el-table-column>
           </el-table>
-        </el-main>
-        <!-- <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount"> </el-pagination>
-        </el-footer> -->
-      </el-container>
-    </el-aside>
-    <el-main>
-      <el-image fit="contain" :src="viewSrc" :preview-src-list="srcList">
-        <div slot="error" class="image-slot">
-          <i class="el-icon-picture-outline"></i>
-        </div>
-      </el-image>
+        </el-tab-pane>
+        <el-tab-pane label="抓拍设备" name="capture">
+          <el-container class="capture_main">
+            <el-aside width="600px" style="height:100%">
+              <el-table ref="tableData_capture" :data="tableData_capture" v-loading="tableLoading" border
+                style="width: 100%">
+                <el-table-column type="index"> </el-table-column>
+                <el-table-column prop="name" label="名称">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="handleCapture(scope.$index, scope.row)">{{ scope.row.name }}
+                    </el-button>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="type" label="类型"> </el-table-column>
+              </el-table>
+            </el-aside>
+            <el-container>
+              <el-header height="42px" style="border-bottom:1px solid #DCDFE6">
+                {{ capturename }}
+                <el-date-picker v-model="queryForm_capture.daterange" value-format="yyyy-MM-dd" type="daterange"
+                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false"
+                  style="width: 230px" @change="handleQueryImage"> </el-date-picker>
+                抓拍图片共计:{{ tableDataCount_capture }}张
+              </el-header>
+              <el-main>
+                <viewimage ref="viewimage" />
+              </el-main>
+              <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                  :page-sizes="pagesizes" :page-size="queryForm_capture.size" background
+                  layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount_capture"> </el-pagination>
+              </el-footer>
+            </el-container>
+          </el-container>
+        </el-tab-pane>
+      </el-tabs>
     </el-main>
     <iframe id="targetFrame" width="0" height="0" frameborder="0"></iframe>
   </el-container>
 </template>
 <script>
 import defaultSettings from '@/settings'
-import { devicelist } from '@/api/home'
+import { devicelist, devicelist_yt, imagelist_yt } from '@/api/home'
+import viewimage from '@/components/viewimage/index.vue'
+import { parseTime } from '@/utils/index'
 export default {
   name: 'ViewManage',
-  components: {},
+  components: { viewimage },
   props: {},
   data() {
+    const now = new Date()
+    const start = new Date()
+    if (now.getDate() === 1) {
+      start.setMonth(now.getMonth() - 1)
+      start.setDate(1)
+      now.setDate(now.getDate() - 1)
+    } else {
+      start.setDate(1)
+      now.setDate(now.getDate() - 1)
+    }
     return {
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
         name: '',
-        pagesize: defaultSettings.pageSizes[0],
-        pageindex: 1
       },
       videoObject: {
         src: ''
       },
-      viewSrc: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-      srcList: ['https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg', 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'],
       tableLoading: false,
       tableData: [],
-      tableDataCount: 0,
+      queryForm_capture: {
+        id: -1,
+        daterange: [parseTime(start, '{y}-{m}-{d}'), parseTime(now, '{y}-{m}-{d}')],
+        fromtime: '',
+        totime: '',
+        size: defaultSettings.pageSizes[0],
+        index: 1
+      },
+      tableData_capture: [],
+      tableDataCount_capture: 0,
       tableSelected: [],
-      cacheList: []
+      cacheList: [],
+      cacheList_capture: [],
+      activeName: 'video',
+      capturename: "",
     }
   },
   computed: {},
@@ -76,24 +121,32 @@ export default {
       that.handleQuery()
     })
   },
-  mounted() {},
-  destroyed() {},
+  mounted() { },
+  destroyed() { },
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
       callback()
     },
-    handleQuery(flag) {
-      if (flag === undefined) {
-        this.queryForm.pageindex = 1
-      }
+    handleQuery() {
       this.tableLoading = true
       devicelist(this.queryForm)
         .then(res => {
           if (res.code === 200) {
             this.cacheList = res.data
             this.tableData = res.data
-            this.tableDataCount = res.size
+          }
+          this.tableLoading = false
+        })
+        .catch(e => {
+          this.tableLoading = false
+          console.error(e)
+        })
+      devicelist_yt(this.queryForm)
+        .then(res => {
+          if (res.code === 200) {
+            this.cacheList_capture = res.data
+            this.tableData_capture = res.data
           }
           this.tableLoading = false
         })
@@ -107,29 +160,67 @@ export default {
         this.tableData = this.cacheList.filter(v => {
           return v.name.indexOf(this.queryForm.name) > -1
         })
+        this.tableData_capture = this.cacheList_capture.filter(v => {
+          return v.name.indexOf(this.queryForm.name) > -1
+        })
       }
     },
     handleReset() {
       this.queryForm.name = ''
       this.tableData = this.cacheList
-    },
-    handleRowClick(row, column, event) {
-      if (column.label !== '名称') {
-        // 加载刷新图片
-        console.log(row)
-      }
+      this.tableData_capture = this.cacheList_capture
     },
     handleSizeChange(pagesize) {
-      this.queryForm.pagesize = pagesize
-      this.handleQuery(true)
+      this.queryForm_capture.size = pagesize
+      this.handleQueryImage()
     },
     handleCurrentChange(pageindex) {
-      this.queryForm.pageindex = pageindex
-      this.handleQuery(true)
+      this.queryForm_capture.index = pageindex
+      this.handleQueryImage()
     },
     handleVideo(index, row) {
       this.videoObject.src = row.code
       this.play()
+    },
+    handleCapture(index, row) {
+      this.queryForm_capture.id = row.id;
+      this.capturename = row.name;
+      this.handleQueryImage()
+    },
+    handleQueryImage(flag) {
+      if (this.queryForm_capture.daterange) {
+        this.queryForm_capture.fromtime = this.queryForm_capture.daterange[0]
+        this.queryForm_capture.totime = this.queryForm_capture.daterange[1]
+      } else {
+        this.queryForm_capture.fromtime = ''
+        this.queryForm_capture.totime = ''
+      }
+      if (flag === undefined) {
+        this.queryForm_capture.index = 1
+      }
+      const queryObj = { ...this.queryForm_capture }
+      delete queryObj.daterange;
+      imagelist_yt(queryObj)
+        .then(res => {
+          const list = [];
+          if (res.code === 200) {
+            res.data.forEach(element => {
+              list.push({
+                title: element.time,
+                src: element.picture_uri,
+                width: element.width,
+                height: element.height,
+              })
+            });
+          }
+          this.$refs.viewimage.load(list);
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+    handleClick(tab, event) {
+
     },
     full() {
       const url = 'VideoMap://fullscreen'
@@ -155,7 +246,7 @@ export default {
       const url = 'VideoPlay://exit'
       const tf = document.getElementById('targetFrame')
       tf.setAttribute('src', url)
-    }
+    },
   }
 }
 </script>
@@ -164,9 +255,14 @@ export default {
   height: calc(100vh - 110px);
   width: 100%;
 }
+
 .main {
   height: calc(100vh - 152px);
   width: 100%;
   padding: 5px;
+}
+
+.capture_main {
+  height: calc(100vh - 216px);
 }
 </style>
