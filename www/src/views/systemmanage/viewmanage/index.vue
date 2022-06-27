@@ -51,7 +51,7 @@
                   style="width: 230px" @change="handleQueryImage"> </el-date-picker>
                 抓拍图片共计:{{ tableDataCount_capture }}张
               </el-header>
-              <el-main>
+              <el-main v-loading="viewimageLoading" style="padding:0 150px">
                 <viewimage ref="viewimage" />
               </el-main>
               <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
@@ -87,8 +87,9 @@ export default {
       start.setDate(1)
       now.setDate(now.getDate() - 1)
     }
+    const pagesizes = [5, 10, 20];
     return {
-      pagesizes: defaultSettings.pageSizes,
+      pagesizes: pagesizes,
       queryForm: {
         name: '',
       },
@@ -102,9 +103,10 @@ export default {
         daterange: [parseTime(start, '{y}-{m}-{d}'), parseTime(now, '{y}-{m}-{d}')],
         fromtime: '',
         totime: '',
-        size: defaultSettings.pageSizes[0],
+        size: pagesizes[0],
         index: 1
       },
+      viewimageLoading: false,
       tableData_capture: [],
       tableDataCount_capture: 0,
       tableSelected: [],
@@ -200,6 +202,7 @@ export default {
       }
       const queryObj = { ...this.queryForm_capture }
       delete queryObj.daterange;
+      this.viewimageLoading = true;
       imagelist_yt(queryObj)
         .then(res => {
           const list = [];
@@ -212,8 +215,10 @@ export default {
                 height: element.height,
               })
             });
+            this.tableDataCount_capture = res.size;
           }
           this.$refs.viewimage.load(list);
+          this.viewimageLoading = false;
         })
         .catch(e => {
           console.error(e)
@@ -238,7 +243,7 @@ export default {
       tf.setAttribute('src', url)
     },
     play() {
-      const url = 'VideoPlay://index=' + this.videoObject.src + '&pos=0_0_200_200&fullscreen=true'
+      const url = 'VideoPlay://index=' + this.videoObject.src + '&pos=0_0_200_200&fullscreen=false'
       const tf = document.getElementById('targetFrame')
       tf.setAttribute('src', url)
     },

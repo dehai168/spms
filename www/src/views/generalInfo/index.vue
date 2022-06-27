@@ -328,7 +328,7 @@ export default {
       tf.setAttribute('src', url)
     },
     play() {
-      const url = 'VideoPlay://index=' + this.videoObject.src + '&pos=0_0_200_200&fullscreen=true'
+      const url = 'VideoPlay://index=' + this.videoObject.src + '&pos=0_0_200_200&fullscreen=false'
       const tf = document.getElementById('targetFrame')
       tf.setAttribute('src', url)
     },

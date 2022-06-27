@@ -92,7 +92,7 @@
             @change="handleQueryImage"> </el-date-picker>
           抓拍图片共计:{{ tableDataCount_capture }}张
         </el-header>
-        <el-main>
+        <el-main v-loading="viewimageLoading">
           <viewimage ref="viewcapture" />
         </el-main>
         <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
@@ -144,6 +144,7 @@ export default {
       start.setDate(1)
       now.setDate(now.getDate() - 1)
     }
+    const pagesizes = [5, 10, 20];
     return {
       map: null,
       popup: null,
@@ -234,10 +235,11 @@ export default {
         daterange: [parseTime(start, '{y}-{m}-{d}'), parseTime(now, '{y}-{m}-{d}')],
         fromtime: '',
         totime: '',
-        size: defaultSettings.pageSizes[0],
+        size: pagesizes[0],
         index: 1
       },
-      pagesizes: defaultSettings.pageSizes,
+      viewimageLoading: false,
+      pagesizes: pagesizes,
       tableData_capture: [],
       tableDataCount_capture: 0,
     }
@@ -539,7 +541,8 @@ export default {
           filter: ['!has', 'point_count'],
           layout: {
             'icon-image': 'camera',
-            'icon-size': 1
+            'icon-size': 1,
+            'icon-anchor': 'bottom'
           }
         })
         this.map.on('click', clustersName, function (e) {
@@ -774,6 +777,7 @@ export default {
       }
       const queryObj = { ...this.queryForm_capture }
       delete queryObj.daterange;
+      this.viewimageLoading = true;
       imagelist_yt(queryObj)
         .then(res => {
           const list = [];
@@ -786,6 +790,8 @@ export default {
                 height: element.height,
               })
             });
+            this.tableDataCount_capture = res.size;
+            this.viewimageLoading = false;
           }
           this.$refs.viewcapture.load(list);
         })
@@ -872,7 +878,7 @@ export default {
       tf.setAttribute('src', url)
     },
     play() {
-      const url = 'VideoPlay://index=' + this.videoObject.src + '&pos=0_0_200_200&fullscreen=true'
+      const url = 'VideoPlay://index=' + this.videoObject.src + '&pos=0_0_200_200&fullscreen=false'
       const tf = document.getElementById('targetFrame')
       tf.setAttribute('src', url)
     },
