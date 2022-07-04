@@ -17,7 +17,7 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
 
-    config.headers[defaultSetting.csrfTokenName] = Cookies.get('csrfToken');
+    config.headers[defaultSetting.csrfTokenName] = Cookies.get('csrfToken')
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
@@ -39,7 +39,7 @@ service.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
    * Please return  response => response
-  */
+   */
 
   /**
    * Determine the request status by custom code
@@ -49,40 +49,27 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 200) {
-      Message({
-        message: res.data || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('您已经被注销，您可以继续留在当前页面或是重新登录！', '注销确认', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-      }
-      if (res.code === 998) {
-        MessageBox.confirm('您的license已经过期!请联系供应商解决!', '提醒', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-
-        }).catch(() => {
-
-        })
-      }
-      return Promise.reject(new Error(res.message || 'Error'))
+    if (res.redirect_url) {
+      window.location.href = res.redirect_url
     } else {
-      return res
+      if (res.code !== 200) {
+        let msg = ''
+        if (res.code === 998) {
+          msg = '您的license已经过期!请联系供应商解决!'
+        } else if (res.code === 201) {
+          msg = res.reason
+        } else {
+          msg = '服务器内部错误'
+        }
+        Message({
+          message: msg || 'Error',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        return Promise.reject(new Error(res.message || 'Error'))
+      } else {
+        return res
+      }
     }
   },
   error => {
