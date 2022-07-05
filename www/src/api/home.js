@@ -43,3 +43,10 @@ export function imagelist_yt(params) {
         params
     })
 }
+export function userinfo(params) {
+    return request({
+        url: '/police/login/user?token=' + getToken(),
+        method: 'get',
+        params
+    })
+}

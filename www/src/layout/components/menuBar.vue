@@ -5,7 +5,7 @@
       <img class="logo" :src="logoSrc" alt="" />
       <span class="title">{{ title }}</span>
     </el-col>
-    <el-col :span="16">
+    <el-col :span="15">
       <ul>
         <li style="width:100px;" :class="{ active: activeMenu.indexOf('/home/') > -1 }">
           <app-link to="/home"> <i class="el-icon-s-platform"></i> 首页 </app-link>
@@ -27,38 +27,11 @@
         </li>
       </ul>
     </el-col>
-    <el-col :span="1">
-      <div class="right-menu">
-        <el-dropdown class="avatar-container" trigger="click">
-          <div class="avatar-wrapper">
-            <svg-icon icon-class="user" />
-            <i class="el-icon-caret-bottom" />
-          </div>
-          <el-dropdown-menu slot="dropdown" class="user-dropdown">
-            <el-dropdown-item @click.native="changePwd">修改密码</el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">
-              <span style="display: block">注销</span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+    <el-col :span="2">
+      <div class="userinfo">
+        <svg-icon icon-class="user" />
+        <span>{{ username }}</span>
       </div>
-      <el-dialog title="修改密码" width="25%" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-        <el-form ref="form" :model="form" :rules="formRules">
-          <el-form-item prop="oldpwd" label="旧密码">
-            <el-input v-model="form.oldpwd" type="password"></el-input>
-          </el-form-item>
-          <el-form-item prop="newpwd1" label="新密码">
-            <el-input v-model="form.newpwd1" type="password"></el-input>
-          </el-form-item>
-          <el-form-item prop="newpwd2" label="确认新密码">
-            <el-input v-model="form.newpwd2" type="password"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleModifyPwd">确 定</el-button>
-        </div>
-      </el-dialog>
     </el-col>
   </el-row>
 </template>
@@ -66,6 +39,7 @@
 <script>
 import defaultSettings from '@/settings'
 import { logout, pwdvalid, changepwd } from '@/api/auth'
+import { userinfo } from '@/api/home'
 import { mapGetters } from 'vuex'
 import AppLink from './Sidebar/Link'
 import logoSrc from "@/assets/logo.png";
@@ -131,7 +105,8 @@ export default {
         oldpwd: [{ required: true, trigger: 'blur', validator: validateOldpwd }],
         newpwd1: [{ required: true, trigger: 'blur', validator: validateNewPwd1 }],
         newpwd2: [{ required: true, trigger: 'blur', validator: validateNewPwd2 }]
-      }
+      },
+      username: ''
     }
   },
   computed: {
@@ -146,7 +121,21 @@ export default {
       return path
     }
   },
+  created() {
+    this.initUser();
+  },
   methods: {
+    initUser() {
+      userinfo({})
+        .then(res => {
+          if (res.code === 200) {
+            this.username = res.data.name + '(' + res.data.code + ')';
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
     logout() {
       this.$confirm('是否确认退出系统？', '提示', {
         confirmButtonText: '确定',
@@ -159,7 +148,7 @@ export default {
             this.$router.push(`/login?redirect=${this.$route.fullPath}`)
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     changePwd() {
       this.dialogFormVisible = true
@@ -191,7 +180,7 @@ export default {
                 }
               }
             })
-            .catch(e => {})
+            .catch(e => { })
         }
       })
     }
@@ -200,6 +189,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '~@/styles/variables.scss';
+
 .container {
   height: 100%;
   width: 100%;
@@ -207,6 +197,7 @@ export default {
   padding: 0;
   background-color: $menuHover;
   color: $menuText;
+
   .logo {
     width: 32px;
     height: 32px;
@@ -214,6 +205,7 @@ export default {
     margin-left: 8px;
     margin-right: 8px;
   }
+
   .title {
     display: inline-block;
     margin: 0;
@@ -224,11 +216,13 @@ export default {
     font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
     vertical-align: middle;
   }
+
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
     margin-left: 5px;
+
     li {
       margin: 0;
       float: left;
@@ -238,6 +232,7 @@ export default {
       line-height: 60px;
       font-size: 20px;
     }
+
     li:hover {
       background-color: $menuBg;
       cursor: pointer;
@@ -245,65 +240,21 @@ export default {
       color: $menuActiveText;
     }
   }
+
   .active {
     color: $menuActiveText;
     background-color: $menuBg;
   }
 }
-.right-menu {
-  float: right;
-  height: 100%;
-  line-height: 50px;
 
-  &:focus {
-    outline: none;
-  }
+.userinfo {
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
 
-  .right-menu-item {
-    display: inline-block;
-    padding: 0 8px;
-    height: 100%;
-    font-size: 18px;
-    color: #5a5e66;
-    vertical-align: text-bottom;
-
-    &.hover-effect {
-      cursor: pointer;
-      transition: background 0.3s;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.025);
-      }
-    }
-  }
-
-  .avatar-container {
-    margin-right: 30px;
-
-    .avatar-wrapper {
-      margin-top: 5px;
-      position: relative;
-      font-size: 24px;
-      color: $menuText;
-
-      .user-avatar {
-        cursor: pointer;
-        width: 60px;
-        height: 60px;
-        border-radius: 10px;
-      }
-
-      .el-icon-caret-bottom {
-        cursor: pointer;
-        position: absolute;
-        right: -20px;
-        top: 18px;
-        font-size: 18px;
-      }
-    }
-    .user-dropdown {
-      padding: 10px;
-    }
+  svg {
+    font-size: 24px;
   }
 }
 </style>
