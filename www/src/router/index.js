@@ -319,6 +319,12 @@ export const constantRoutes = [
         name: 'Outbound',
         meta: { title: '境外旅客来源统计', icon: 'el-icon-user' },
         component: () => import('@/views/datacount/outbound/index')
+      },
+      {
+        path: 'loginfo',
+        name: 'LogInfo',
+        meta: { title: '日志查询', icon: 'el-icon-document' },
+        component: () => import('@/views/datacount/loginfo/index')
       }
     ]
   },

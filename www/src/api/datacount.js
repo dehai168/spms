@@ -56,3 +56,19 @@ export function importantlist(params) {
     params
   })
 }
+
+export function systemlog(data) {
+  return request({
+    url: '/police/systemlog/list?token='+getToken(),
+    method: 'post',
+    data
+  })
+}
+
+export function userlog(data) {
+  return request({
+    url: '/police/log/list?token='+getToken(),
+    method: 'post',
+    data
+  })
+}

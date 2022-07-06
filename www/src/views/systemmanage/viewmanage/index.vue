@@ -21,8 +21,7 @@
             <el-table-column type="index"> </el-table-column>
             <el-table-column prop="name" label="名称">
               <template slot-scope="scope">
-                <el-button type="text" @click="handleVideo(scope.$index, scope.row)">{{ scope.row.name }}
-                </el-button>
+                <el-button type="text" @click="handleVideo(scope.$index, scope.row)">{{ scope.row.name }} </el-button>
               </template>
             </el-table-column>
             <el-table-column prop="code" label="编码"> </el-table-column>
@@ -30,34 +29,28 @@
         </el-tab-pane>
         <el-tab-pane label="抓拍设备" name="capture">
           <el-container class="capture_main">
-            <el-aside width="600px" style="height:100%">
-              <el-table ref="tableData_capture" :data="tableData_capture" v-loading="tableLoading" border
-                style="width: 100%">
+            <el-aside width="600px" style="height: 100%">
+              <el-table ref="tableData_capture" :data="tableData_capture" v-loading="tableLoading" border style="width: 100%">
                 <el-table-column type="index"> </el-table-column>
                 <el-table-column prop="name" label="名称">
                   <template slot-scope="scope">
-                    <el-button type="text" @click="handleCapture(scope.$index, scope.row)">{{ scope.row.name }}
-                    </el-button>
+                    <el-button type="text" @click="handleCapture(scope.$index, scope.row)">{{ scope.row.name }} </el-button>
                   </template>
                 </el-table-column>
                 <el-table-column prop="type" label="类型"> </el-table-column>
               </el-table>
             </el-aside>
             <el-container>
-              <el-header height="42px" style="border-bottom:1px solid #DCDFE6">
+              <el-header height="42px" style="border-bottom: 1px solid #dcdfe6">
                 {{ capturename }}
-                <el-date-picker v-model="queryForm_capture.daterange" value-format="yyyy-MM-dd" type="daterange"
-                  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false"
-                  style="width: 230px" @change="handleQueryImage"> </el-date-picker>
+                <el-date-picker v-model="queryForm_capture.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="width: 230px" @change="handleQueryImage"> </el-date-picker>
                 抓拍图片共计:{{ tableDataCount_capture }}张
               </el-header>
-              <el-main v-loading="viewimageLoading" style="padding:0 150px">
+              <el-main v-loading="viewimageLoading" style="padding: 0 150px">
                 <viewimage ref="viewimage" />
               </el-main>
               <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                  :page-sizes="pagesizes" :page-size="queryForm_capture.size" background
-                  layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount_capture"> </el-pagination>
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm_capture.size" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount_capture"> </el-pagination>
               </el-footer>
             </el-container>
           </el-container>
@@ -87,11 +80,11 @@ export default {
       start.setDate(1)
       now.setDate(now.getDate() - 1)
     }
-    const pagesizes = [5, 10, 20];
+    const pagesizes = [5, 10, 20]
     return {
       pagesizes: pagesizes,
       queryForm: {
-        name: '',
+        name: ''
       },
       videoObject: {
         src: ''
@@ -113,7 +106,7 @@ export default {
       cacheList: [],
       cacheList_capture: [],
       activeName: 'video',
-      capturename: "",
+      capturename: ''
     }
   },
   computed: {},
@@ -123,8 +116,8 @@ export default {
       that.handleQuery()
     })
   },
-  mounted() { },
-  destroyed() { },
+  mounted() {},
+  destroyed() {},
   methods: {
     init(callback) {
       // 初始化异步操作，例如数据字典
@@ -185,8 +178,8 @@ export default {
       this.play()
     },
     handleCapture(index, row) {
-      this.queryForm_capture.id = row.id;
-      this.capturename = row.name;
+      this.queryForm_capture.id = row.id
+      this.capturename = row.name
       this.handleQueryImage()
     },
     handleQueryImage(flag) {
@@ -201,32 +194,30 @@ export default {
         this.queryForm_capture.index = 1
       }
       const queryObj = { ...this.queryForm_capture }
-      delete queryObj.daterange;
-      this.viewimageLoading = true;
+      delete queryObj.daterange
+      this.viewimageLoading = true
       imagelist_yt(queryObj)
         .then(res => {
-          const list = [];
+          const list = []
           if (res.code === 200) {
             res.data.forEach(element => {
               list.push({
                 title: element.time,
                 src: element.picture_uri,
                 width: element.width,
-                height: element.height,
+                height: element.height
               })
-            });
-            this.tableDataCount_capture = res.size;
+            })
+            this.tableDataCount_capture = res.size
           }
-          this.$refs.viewimage.load(list);
-          this.viewimageLoading = false;
+          this.$refs.viewimage.load(list)
+          this.viewimageLoading = false
         })
         .catch(e => {
           console.error(e)
         })
     },
-    handleClick(tab, event) {
-
-    },
+    handleClick(tab, event) {},
     full() {
       const url = 'VideoMap://fullscreen'
       const tf = document.getElementById('targetFrame')
@@ -251,7 +242,7 @@ export default {
       const url = 'VideoPlay://exit'
       const tf = document.getElementById('targetFrame')
       tf.setAttribute('src', url)
-    },
+    }
   }
 }
 </script>
