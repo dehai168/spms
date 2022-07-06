@@ -5,15 +5,11 @@
         <el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
           <el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
             <el-form-item :label="formItem.label">
-              <el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width:18vw"
-                placeholder="请选择" :clearable="true">
-                <el-option v-for="option in formItem.options" :key="option.value" :value="option.value"
-                  :label="option.label" />
+              <el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 18vw" placeholder="请选择" :clearable="true">
+                <el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
               </el-select>
-              <el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width:18vw" />
-              <el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]"
-                style="width:18vw" type="daterange" range-separator="至" start-placeholder="开始日期"
-                end-placeholder="结束日期" />
+              <el-input v-else-if="formItem.type == 'input'" v-model="queryForm[formItem.key]" style="width: 18vw" />
+              <el-date-picker v-else-if="formItem.type == 'datePicker'" v-model="queryForm[formItem.key]" style="width: 18vw" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
               <div v-else-if="formItem.type == 'btn'">
                 <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
                 <el-button @click="handleReset" icon="el-icon-delete">重置</el-button>
@@ -25,8 +21,7 @@
     </el-header>
     <el-main class="main">
       <el-button @click="handleBack" icon="el-icon-back" style="margin-bottom: 10px" v-if="showBack">返回</el-button>
-      <el-table v-loading="tableLoading" :data="tableData" border :height="showBack ? 'calc(100% - 39px)' : '100%'"
-        style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table v-loading="tableLoading" :data="tableData" border :height="showBack ? 'calc(100% - 39px)' : '100%'" style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
         <el-table-column prop="operate" label="操作" width="80" fixed="right">
           <template slot-scope="scope">
@@ -36,19 +31,13 @@
       </el-table>
     </el-main>
     <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
-        :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper"
-        :total="tableDataCount" />
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
     </el-footer>
     <!-- 详情 -->
-    <el-dialog class="domestic-traveler-detail" title="境内旅客详情" :visible.sync="dialogVisible" width="70%" top="4vh"
-      :close-on-click-modal="false">
+    <el-dialog class="domestic-traveler-detail" title="境内旅客详情" :visible.sync="dialogVisible" width="70%" top="4vh" :close-on-click-modal="false">
       <el-form label-width="120px" :inline="true" label-suffix=":">
         <my-card v-for="(cardItem, title, index) in detailItems" :key="index" :title="title">
-          <el-form-item v-for="item in cardItem.items" :key="item.key" :label="item.label"
-            :style="{ width: cardItem.width }">{{ item.formatter ? item.formatter(detailData[item.key]) :
-                detailData[item.key]
-            }}</el-form-item>
+          <el-form-item v-for="item in cardItem.items" :key="item.key" :label="item.label" :style="{ width: cardItem.width }">{{ item.formatter ? item.formatter(detailData[item.key]) : detailData[item.key] }}</el-form-item>
         </my-card>
         <div class="photo-coantainer">
           <el-image style="width: 100px; height: 100px" :src="detailData.certificate_image" fit="fill" />
@@ -67,9 +56,9 @@
 <script>
 import defaultSettings from '@/settings'
 import { items } from '@/api/domesticTraveler'
-import mapToArray from '@/utils/mapToArray';
-import map from '@/const/map';
-import handleEnum from '@/utils/handleEnum';
+import mapToArray from '@/utils/mapToArray'
+import map from '@/const/map'
+import handleEnum from '@/utils/handleEnum'
 import { enumsItems } from '@/api/common'
 import { formatDate } from '@/utils/index'
 import MyCard from './MyCard.vue'
@@ -78,13 +67,16 @@ export default {
     MyCard
   },
   data() {
+    const now = new Date()
+    now.setTime(now.getTime() - 3600 * 24 * 1000)
     return {
       showBack: false,
       pagesizes: defaultSettings.pageSizes,
       queryForm: {
         pagesize: defaultSettings.pageSizes[0],
         pageindex: 1,
-        enterprise: ''
+        enterprise: '',
+        inTime: [now,now]
       },
       tableLoading: false,
       tableData: [],
@@ -92,9 +84,8 @@ export default {
       tableSelected: [],
       dialogVisible: false,
       detailData: {},
-      enumData: {},
-
-    };
+      enumData: {}
+    }
   },
   computed: {
     formItems() {
@@ -107,8 +98,7 @@ export default {
             label: '民族',
             type: 'select',
             options: mapToArray(map.nation)
-          },
-
+          }
         ],
         [
           {
@@ -121,7 +111,7 @@ export default {
             ]
           },
           { key: 'birthday', label: '出生日期', type: 'datePicker' },
-          { key: 'certificate_code', label: '证件号码', type: 'input' },
+          { key: 'certificate_code', label: '证件号码', type: 'input' }
         ],
         [
           {
@@ -131,7 +121,7 @@ export default {
             options: this.enumData[2]
           },
           { key: 'sign_name', label: '招牌名称', type: 'input' },
-          { key: 'enterprise', label: '企业名称', type: 'input' },
+          { key: 'enterprise', label: '企业名称', type: 'input' }
         ],
         [{ key: 'btn', type: 'btn' }]
       ]
@@ -150,27 +140,27 @@ export default {
         { prop: 'out_time', label: '退房时间', width: 150 },
         { prop: 'enterprise', label: '企业名称', minWidth: 200 },
         { prop: 'sign_name', label: '招牌名称', minWidth: 200 },
-        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => this.enumData[2].find(i => i.value === cellValue)?.label },
+        { prop: 'security_manage_org', label: '管辖单位', minWidth: 200, formatter: (r, c, cellValue) => this.enumData[2].find(i => i.value === cellValue)?.label }
         // { prop: '行业类型', label: '行业类型', width: 180 },
       ]
     },
     detailItems() {
       return {
-        '旅客证件信息': {
+        旅客证件信息: {
           width: '40%',
           items: [
             { key: 'realname', label: '姓名' },
             { key: 'sex', label: '性别' },
             { key: 'nation', label: '民族' },
             { key: 'birthday', label: '出生日期' },
-            { key: 'certificate_type', label: '证件类型', formatter: (value) => map.certificate_type[value] },
+            { key: 'certificate_type', label: '证件类型', formatter: value => map.certificate_type[value] },
             { key: 'certificate_code', label: '证件号码' },
             { key: 'province_city', label: '省市县' },
             { key: 'telephone', label: '联系电话' },
-            { key: 'detail_address', label: '详细地址' },
+            { key: 'detail_address', label: '详细地址' }
           ]
         },
-        '旅客入住信息': {
+        旅客入住信息: {
           width: '30%',
           items: [
             { key: 'in_room', label: '入住房间号' },
@@ -178,10 +168,10 @@ export default {
             { key: 'out_time', label: '退房时间' },
             { key: 'image_similarity', label: '人像比对相似度' },
             { key: 'image_result', label: '人像比对结果' },
-            { key: 'is_person_check', label: '是否人工复核', formatter: (value) => value ? '是' : '否' },
+            { key: 'is_person_check', label: '是否人工复核', formatter: value => (value ? '是' : '否') }
           ]
         },
-        '管理信息': {
+        管理信息: {
           width: '40%',
           items: [
             { key: 'sign_name', label: '招牌名称' },
@@ -190,9 +180,9 @@ export default {
             { key: 'standard_address', label: '标准经营地址' },
             { key: 'save_time', label: '前台保存时间' },
             { key: 'last_update_time', label: '最后更新时间' },
-            { key: 'data_upload_type', label: '数据上报形式' },
+            { key: 'data_upload_type', label: '数据上报形式' }
           ]
-        },
+        }
       }
     }
   },
@@ -217,8 +207,8 @@ export default {
       enumsItems({ types: [2] })
         .then(res => {
           if (res.code === 200) {
-            this.enumData = handleEnum(res.data);
-            callback();
+            this.enumData = handleEnum(res.data)
+            callback()
           }
         })
         .catch(e => {
@@ -227,7 +217,7 @@ export default {
     },
     handleQuery() {
       this.tableLoading = true
-      const { inTime, birthday, ...rest } = this.queryForm;
+      const { inTime, birthday, ...rest } = this.queryForm
       items({
         in_begin: inTime ? formatDate('date', inTime[0]) : undefined,
         in_end: inTime ? formatDate('date', inTime[1]) : undefined,
@@ -247,13 +237,13 @@ export default {
         })
     },
     handleDetail(index, row) {
-      this.dialogVisible = true;
-      this.detailData = row;
+      this.dialogVisible = true
+      this.detailData = row
     },
     handleReset() {
-      const { pagesize, pageindex } = this.queryForm;
-      this.queryForm = { pagesize, pageindex };
-      this.$refs.queryForm.resetFields();
+      const { pagesize, pageindex } = this.queryForm
+      this.queryForm = { pagesize, pageindex }
+      this.$refs.queryForm.resetFields()
     },
     handleSelectionChange(val) {
       this.tableSelected = val
@@ -265,10 +255,8 @@ export default {
     handleCurrentChange(pageindex) {
       this.queryForm.pageindex = pageindex
       this.handleQuery()
-    },
-
+    }
   }
-
 }
 </script>
 
