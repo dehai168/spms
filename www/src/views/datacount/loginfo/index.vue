@@ -7,7 +7,7 @@
             <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 42px">
               <el-form ref="queryForm" :inline="true" :model="queryForm">
                 <el-row>
-                  <el-col :span="5">
+                  <el-col :span="8">
                     <el-form-item prop="daterange" label="时间">
                       <el-date-picker v-model="queryForm.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" style="width: 230px"> </el-date-picker>
                     </el-form-item>
@@ -37,17 +37,17 @@
             <el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 42px">
               <el-form ref="queryForm2" :inline="true" :model="queryForm2">
                 <el-row>
-                  <el-col :span="5">
+                  <el-col :span="8">
                     <el-form-item prop="daterange" label="时间">
                       <el-date-picker v-model="queryForm2.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" style="width: 230px"> </el-date-picker>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="4">
+                  <el-col :span="8">
                     <el-form-item prop="user" label="用户">
                       <el-input v-model="queryForm2.user" maxlength="50"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="3">
+                  <el-col :span="8">
                     <el-button type="primary" icon="el-icon-search" @click="handleQuery2">查询</el-button>
                     <el-button icon="el-icon-delete" @click="handleReset2">重置</el-button>
                   </el-col>
