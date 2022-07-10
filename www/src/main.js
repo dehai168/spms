@@ -31,12 +31,14 @@ import '@/permission' // permission control
 
 import MyCard from './views/specialIndustries/hotel/hotelBase/MyCard.vue'
 import Detail from './components/Detail'
+import Import from './components/Import'
 
 Vue.use(ElementUI, {
   size: 'mini'
 })
 Vue.component('my-card', MyCard)
 Vue.component('Detail', Detail)
+Vue.component('Import', Import)
 Vue.config.productionTip = false
 Vue.prototype.$succ = () => {
   ElementUI.Notification({
@@ -52,11 +54,7 @@ Vue.prototype.$error = () => {
     type: 'error'
   })
 }
-Vue.prototype.$map = getDynamicMap
-getDynamicMap().then(res => {
-  console.log(res)
-  Vue.prototype.$map = res
-})
+
 Vue.prototype.$echarts = echarts;
 new Vue({
   el: '#app',

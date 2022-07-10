@@ -4,7 +4,7 @@ import store from '@/store'
 import Cookies from 'js-cookie'
 import defaultSetting from '@/settings'
 import { getToken } from '@/utils/auth'
-
+document.cookie = `JSESSIONID=66601ECAFD6280CB38023B9DD0594DA7`
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url

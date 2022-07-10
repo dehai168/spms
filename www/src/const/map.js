@@ -17,9 +17,18 @@ const map = {
     5: '公章刻制',
     6: 'KTV',
     7: '酒吧',
+    8: '典当业',
+    9: '开锁业',
     99: '其他',
   },
 
+  pawn_trade_type: {
+    8: '典当业'
+  },
+
+  unlock_trade_type: {
+    9: '开锁业',
+  },
 
   employee_type: {
     1: '法定代表人',
@@ -383,12 +392,12 @@ const map = {
     "14": "医学院路派出所"
   },
   // 安装状态
-  install_state:{
+  install_state: {
     "0": "未安装",
     "1": "已安装",
   },
   // 是否涉案
-  iscase:{
+  iscase: {
     0: "否",
     1: "是",
   },
@@ -399,7 +408,8 @@ const map = {
     2: '核查通过',
     3: '关停',
     99: '其他',
-  }
+  },
+
   // police_unit: {
   //   '大阳沟派出所': '大阳沟派出所',
   //   '朝天门派出所': '朝天门派出所',
@@ -425,6 +435,10 @@ export const getDynamicMap = async () => {
   const police_unit = {}
   const jurisdiction_unit = {}
   const district = {}
+  const case_source = {}
+  const case_nature = {}
+  const case_type = {}
+  const enterprise_blame = {}
   result.filter(v => v.type === 1).forEach(v => {
     police_unit[v.keyid] = v.name
   })
@@ -434,11 +448,26 @@ export const getDynamicMap = async () => {
   result.filter(v => v.type === 3).forEach(v => {
     district[v.keyid] = v.name
   })
-
+  result.filter(v => v.type === 100).forEach(v => {
+    case_source[v.keyid] = v.name
+  })
+  result.filter(v => v.type === 101).forEach(v => {
+    case_nature[v.keyid] = v.name
+  })
+  result.filter(v => v.type === 102).forEach(v => {
+    case_type[v.keyid] = v.name
+  })
+  result.filter(v => v.type === 103).forEach(v => {
+    enterprise_blame[v.keyid] = v.name
+  })
   return {
     ...map,
     police_unit,
     jurisdiction_unit,
-    district
+    district,
+    case_source,
+    case_nature,
+    case_type,
+    enterprise_blame
   }
 }

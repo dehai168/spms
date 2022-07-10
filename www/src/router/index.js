@@ -124,7 +124,7 @@ export const constantRoutes = [
         children: [
           {
             path: 'hotel',
-            meta: { title: '旅馆业', icon: 'el-icon-table-lamp' },
+            meta: { title: '旅馆业', icon: 'el-icon-s-home' },
             component: SubLayout,
             redirect: '/basicinfo/specialindustries/hotel/base',
             children: [
@@ -132,7 +132,7 @@ export const constantRoutes = [
                 path: 'base',
                 name: 'base',
                 component: () => import('@/views/specialIndustries/hotel/hotelBase/index'),
-                meta: { title: '旅馆信息', icon: 'el-icon-table-lamp' }
+                meta: { title: '旅馆信息', icon: 'el-icon-s-home' }
               },
               {
                 path: 'domestic',
@@ -164,7 +164,7 @@ export const constantRoutes = [
             path: 'scrapMetal',
             name: 'scrapMetal',
             component: () => import('@/views/specialIndustries/scrapMetal/index'),
-            meta: { title: '废旧金属回收', icon: 'el-icon-goods' }
+            meta: { title: '废旧金属回收', icon: 'el-icon-attract' }
           },
           {
             path: 'seal',
@@ -176,7 +176,7 @@ export const constantRoutes = [
                 path: 'list',
                 name: 'list',
                 component: () => import('@/views/specialIndustries/seal/list/index'),
-                meta: { title: '公章管理', icon: 'el-icon-s-check' }
+                meta: { title: '公章刻制企业信息', icon: 'el-icon-s-check' }
               },
               {
                 path: 'record',
@@ -185,7 +185,19 @@ export const constantRoutes = [
                 meta: { title: '公章备案管理', icon: 'el-icon-s-check' }
               }
             ]
-          }
+          },
+          {
+            path: 'pawn',
+            name: 'pawn',
+            component: () => import('@/views/specialIndustries/pawn/index'),
+            meta: { title: '典当', icon: 'el-icon-money' }
+          },          
+          {
+            path: 'unlock',
+            name: 'unlock',
+            component: () => import('@/views/specialIndustries/unlock/index'),
+            meta: { title: '开锁', icon: 'el-icon-unlock' }
+          },
         ]
       },
       {
@@ -344,6 +356,12 @@ export const constantRoutes = [
         name: 'DayCheck',
         meta: { title: '日常检查管理', icon: 'el-icon-s-claim' },
         component: () => import('@/views/systemmanage/daycheck')
+      },
+      {
+        path: 'case',
+        name: 'case',
+        meta: { title: '案件管理', icon: 'el-icon-tickets' },
+        component: () => import('@/views/case')
       },
       {
         path: 'knowledge',

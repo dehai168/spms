@@ -18,6 +18,7 @@
 		</el-header>
 		<div class="ktv-body"  style="padding: 5px;">
 			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px" type="primary">新增</el-button>
+			<Import @success="getList" path="employee/abroad"></Import>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :key="column.prop" :show-overflow-tooltip="true" v-bind="column"/>

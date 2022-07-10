@@ -72,3 +72,19 @@ export function userlog(data) {
     data
   })
 }
+
+export function downloadUserLog(params) {
+  return request({
+    url: '/police/log/download?token='+getToken(),
+    method: 'get',
+    params
+  })
+}
+
+export function downloadSystemLog(params) {
+  return request({
+    url: '/police/systemlog/download?token='+getToken(),
+    method: 'get',
+    params
+  })
+}

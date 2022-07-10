@@ -21,6 +21,7 @@
 		</el-header>
 		<el-main class="main">
 			<el-button icon="el-icon-plus" type="primary" @click="handleCreate">新增</el-button>
+			<Import @success="handleQuery" path="vehiclerepair"></Import>
 			<el-table v-loading="tableLoading" :data="tableData" height="calc(100% - 36px)" border style="width: 100%" @selection-change="handleSelectionChange">
 				<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">

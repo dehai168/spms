@@ -1,6 +1,6 @@
 <template>
 	<el-container class="container">
-		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 140px">
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 180px">
 			<el-form ref="queryForm" :model="queryForm" :inline="true" label-width="9.5vw">
 				<el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
 					<el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
@@ -21,6 +21,7 @@
 		</el-header>
 		<el-main class="main">
 			<el-button icon="el-icon-plus" type="primary" @click="handleCreate">新增</el-button>
+			<Import @success="handleQuery" path="scrapmetal"></Import>
 			<el-table v-loading="tableLoading" :data="tableData" height="calc(100% - 36px)" border style="width: 100%" @selection-change="handleSelectionChange">
 				<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
 				<el-table-column prop="operate" label="操作" width="200" fixed="right">
