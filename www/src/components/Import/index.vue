@@ -1,5 +1,5 @@
 <template>
-	<div style="display: inline-block; margin-left: 10px;margin-right: 10px;">
+	<div style="display: inline-block; margin-left: 10px; margin-right: 10px">
 		<el-dialog title="导入" :visible.sync="importDialogVisible" width="30%" :close-on-click-modal="false">
 			<el-form label-width="80px">
 				<el-form-item label="参考模板">
@@ -15,7 +15,7 @@
 			</el-form>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="importDialogVisible = false">取 消</el-button>
-				<el-button type="primary" :disabled="submitImportDisabled" @click="handleSubmitImport">确 定</el-button>
+				<el-button type="primary" @click="handleSubmitImport">确 定</el-button>
 			</span>
 		</el-dialog>
 		<el-button icon="el-icon-download" @click="handleImport">导入</el-button>
@@ -60,14 +60,18 @@ export default {
 				// 	this.$message.error('上传文件大小不能超过 10MB!')
 				// }
 
-				this.uploadUrl = `/police/import/${this.path}?name=${file.name}`
+				this.uploadUrl = `/police/import/${this.path}`
 				resolve()
 			})
 		},
 		handleUploadSuccess(res, file, filelist) {
-			console.log(res,this.$root)
+			console.log(res, this.$root)
 			if (res.code === 200) {
 				this.importForm.filename = res.data.sname
+				this.$message({
+					message: '导入成功',
+					type: 'success'
+				})
 				this.$emit('success')
 			} else {
 				this.$message({
@@ -116,7 +120,6 @@ export default {
 		},
 		handleImport() {
 			this.importDialogVisible = true
-			this.submitImportDisabled = false
 			this.importForm.filename = ''
 			if (this.$refs.upload) {
 				this.$refs.upload.clearFiles()

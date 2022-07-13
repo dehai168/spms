@@ -19,7 +19,7 @@
 
 		<div class="main" style="padding: 5px">
 			<el-button @click="handleCreate" type="primary" icon="el-icon-plus" style="margin: 10px 0">新增</el-button>
-			<Import @success="getList" path="pawn"></Import>
+			<Import @success="getList" path="pawns"></Import>
 			<div style="height: calc(100vh - 360px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
