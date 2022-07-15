@@ -35,10 +35,11 @@
 		<el-dialog title="公章备案详情" :visible.sync="dialogVisible" width="60%">
 			<el-tabs type="card" :value="activeName">
 				<el-tab-pane v-for="(tab, tabIdx) in detailTabs" :key="tabIdx" :label="tab.label" :name="tabIdx + 1 + ''">
-					<el-descriptions border size="medium" :column="4">
+					<el-descriptions border size="medium" :column="3">
 						<el-descriptions-item v-for="(item, idx) in recordInfo[tab.props]" :label="item.label" :key="idx">
-							<img v-if="item.type === 'img'" width="120" height="160" :src="detail[item.value]" alt="" />
-							<span v-else>{{ item.map ? item.map[detail[item.value]] : detail[item.value] }}</span>
+							<span v-if="item.type !== 'img'">{{ item.map ? item.map[detail[item.value]] : detail[item.value] }}</span>
+							<img v-if="item.type === 'img' && detail[item.value]" width="120" height="160" :src="detail[item.value]" alt="" />
+							<span v-if="item.type === 'img' && !detail[item.value]">-</span>
 						</el-descriptions-item>
 					</el-descriptions>
 				</el-tab-pane>
@@ -90,7 +91,7 @@ export default {
 				sealInfo: [
 					{ label: '印章状态', value: 'seal_state' },
 					{ label: '印章制作类型', value: 'seal_made_type' },
-					{ label: '是否有电子印章', value: 'is_e_seal' },
+					{ label: '是否有电子印章', value: 'is_e_seal',map: {'true': '是','false': '否'} },
 					{ label: '印章编码', value: 'seal_code' },
 					{ label: '印章类型', value: 'seal_type' },
 					{ label: '印章材料', value: 'seal_material' },

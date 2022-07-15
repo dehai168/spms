@@ -141,7 +141,7 @@ export const constantRoutes = [
             path: 'list',
             name: 'list',
             component: () => import('@/views/specialIndustries/seal/list/index'),
-            meta: { title: '公章管理', icon: 'el-icon-school' }
+            meta: { title: '公章刻制企业信息', icon: 'el-icon-school' }
           },
           {
             path: 'record',
