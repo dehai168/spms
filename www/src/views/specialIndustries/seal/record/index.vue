@@ -37,9 +37,9 @@
 				<el-tab-pane v-for="(tab, tabIdx) in detailTabs" :key="tabIdx" :label="tab.label" :name="tabIdx + 1 + ''">
 					<el-descriptions border size="medium" :column="3">
 						<el-descriptions-item v-for="(item, idx) in recordInfo[tab.props]" :label="item.label" :key="idx">
-							<span v-if="item.type !== 'img'">{{ item.map ? item.map[detail[item.value]] : detail[item.value] }}</span>
+							<span v-if="item.type !== 'img'&&item.type !== 'imgpreview'">{{ item.map ? item.map[detail[item.value]] : detail[item.value] }}</span>
 							<img v-if="item.type === 'img' && detail[item.value]" width="120" height="160" :src="detail[item.value]" alt="" />
-							<el-img v-if="item.type === 'imgpreview' && detail[item.value]" width="120" height="160" :src="detail[item.value]" :preview-src-list="[detail[item.value]]" />
+							<el-image v-if="item.type === 'imgpreview' && detail[item.value]" style="width:120px;height:120px" :src="detail[item.value]" :preview-src-list="[detail[item.value]]" />
 							<span v-if="(item.type === 'img'||item.type === 'imgpreview') && !detail[item.value]">-</span>
 						</el-descriptions-item>
 					</el-descriptions>
