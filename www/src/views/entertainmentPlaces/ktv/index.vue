@@ -218,6 +218,12 @@ export default {
 					type: 'select',
 					options: mapToArray(MAP.iscase)
 				},
+				{
+					key: 'iserror',
+					label: '是否异常',
+					type: 'select',
+					options: mapToArray(MAP.iserror)
+				},
 				// {
 				// 	key: 'outdoor_hang',
 				// 	label: '户外悬挂',
@@ -256,6 +262,8 @@ export default {
 				{ prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => MAP.check_state[cellValue] },
 				{ prop: 'iscase', label: '是否涉案', width: 80, formatter: (row, column, cellValue, index) => MAP.iscase[cellValue] },
 				{ prop: 'security_manage_unit', label: '治安管理机构', formatter: (row, col, cell) => MAP.jurisdiction_unit[cell] },
+				{ prop: 'iserror', label: '是否异常', width: 80, formatter: (row, column, cellValue, index) => MAP.iserror[cellValue] },
+				{ prop: 'persons', label: '总人数', width: 80 },
 			],
 			dialogVisible: false
 		};

@@ -129,6 +129,12 @@ export default {
 						type: 'select',
 						options: mapToArray(map.iscase)
 					},
+					{
+						key: 'iserror',
+						label: '是否异常',
+						type: 'select',
+						options: mapToArray(map.iserror)
+					},
 					{ key: 'btn', type: 'btn' },
 				]
 			]
@@ -150,6 +156,8 @@ export default {
 				{ prop: 'special_license', label: '特殊行业许可证', width: 180 },
 				{ prop: 'check_state', label: '核查状态', width: 120, formatter: (row, column, cellValue, index) => map.check_state[cellValue] },
 				{ prop: 'iscase', label: '是否涉案', width: 80, formatter: (row, column, cellValue, index) => map.iscase[cellValue] },
+				{ prop: 'iserror', label: '是否异常', width: 80, formatter: (row, column, cellValue, index) => map.iserror[cellValue] },
+				{ prop: 'persons', label: '总人数', width: 80 },
 			]
 		},
 		addEditformItems() {

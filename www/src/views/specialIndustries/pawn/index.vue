@@ -1,6 +1,6 @@
 <template>
 	<div class="seal-list-container">
-		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 150px">
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 190px">
 			<el-form ref="form" :model="queryForm" label-width="140px">
 				<el-form-item v-for="formItem in formItems" :key="formItem.key" style="width: 30%" :label="formItem.label">
 					<el-select v-if="formItem.type == 'select'" v-model="queryForm[formItem.key]" style="width: 14vw" placeholder="请选择">
@@ -20,7 +20,7 @@
 		<div class="main" style="padding: 5px">
 			<el-button @click="handleCreate" type="primary" icon="el-icon-plus" style="margin: 10px 0">新增</el-button>
 			<Import @success="getList" path="pawns"></Import>
-			<div style="height: calc(100vh - 360px)">
+			<div style="height: calc(100vh - 410px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
@@ -102,6 +102,12 @@ export default {
 					options: mapToArray(MAP.iscase)
 				},
 				{
+					key: 'iserror',
+					label: '是否异常',
+					type: 'select',
+					options: mapToArray(MAP.iserror)
+				},
+				{
 					key: 'business_state',
 					label: '营业状态',
 					type: 'select',
@@ -124,6 +130,8 @@ export default {
 				// { prop: 'licenseStatus', label: '许可证状态', width: 80 },
 				// { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
 				{ prop: 'input_time', label: '录入时间', width: 130 },
+				{ prop: 'iserror', label: '是否异常', width: 80, formatter: (row, column, cellValue, index) => MAP.iserror[cellValue] },
+				{ prop: 'persons', label: '总人数', width: 80 },
 				// { prop: 'origin', label: '数据来源', width: 80 }
 			],
 			dialogVisible: false,

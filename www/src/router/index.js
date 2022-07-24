@@ -145,6 +145,18 @@ export const constantRoutes = [
                 name: 'overseas',
                 component: () => import('@/views/specialIndustries/hotel/overseasTraveler/index'),
                 meta: { title: '境外旅客', icon: 'el-icon-user' }
+              },
+              {
+                path: 'realtime-domestic',
+                name: 'realtime-domestic',
+                component: () => import('@/views/specialIndustries/hotel/realTimeDomesticTraveler/index'),
+                meta: { title: '实时境内旅客查询', icon: 'el-icon-user-solid' }
+              },
+              {
+                path: 'realtime-overseas',
+                name: 'realtime-overseas',
+                component: () => import('@/views/specialIndustries/hotel/realTimeOverseasTraveler/index'),
+                meta: { title: '实时境外旅客查询', icon: 'el-icon-user' }
               }
             ]
           },
@@ -190,13 +202,19 @@ export const constantRoutes = [
             path: 'pawn',
             name: 'pawn',
             component: () => import('@/views/specialIndustries/pawn/index'),
-            meta: { title: '典当', icon: 'el-icon-money' }
+            meta: { title: '典当业', icon: 'el-icon-money' }
           },          
           {
             path: 'unlock',
             name: 'unlock',
             component: () => import('@/views/specialIndustries/unlock/index'),
-            meta: { title: '开锁', icon: 'el-icon-unlock' }
+            meta: { title: '开锁业', icon: 'el-icon-printer' }
+          },
+          {
+            path: 'print',
+            name: 'print',
+            component: () => import('@/views/specialIndustries/print/index'),
+            meta: { title: '印刷业', icon: 'el-icon-printer' }
           },
         ]
       },
@@ -240,6 +258,11 @@ export const constantRoutes = [
         path: 'black-list',
         meta: { title: '企业黑名单', icon: 'el-icon-set-up' },
         component: () => import('@/views/blackList')
+      },
+      {
+        path: 'integral',
+        meta: { title: '企业积分', icon: 'el-icon-medal-1' },
+        component: () => import('@/views/integral')
       }
     ]
   },
@@ -362,6 +385,12 @@ export const constantRoutes = [
         name: 'case',
         meta: { title: '案件管理', icon: 'el-icon-tickets' },
         component: () => import('@/views/case')
+      },
+      {
+        path: 'goods',
+        name: 'goods',
+        meta: { title: '物品信息管理', icon: 'el-icon-table-lamp' },
+        component: () => import('@/views/goods')
       },
       {
         path: 'knowledge',

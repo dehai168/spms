@@ -39,7 +39,8 @@
 						<el-descriptions-item v-for="(item, idx) in recordInfo[tab.props]" :label="item.label" :key="idx">
 							<span v-if="item.type !== 'img'">{{ item.map ? item.map[detail[item.value]] : detail[item.value] }}</span>
 							<img v-if="item.type === 'img' && detail[item.value]" width="120" height="160" :src="detail[item.value]" alt="" />
-							<span v-if="item.type === 'img' && !detail[item.value]">-</span>
+							<el-img v-if="item.type === 'imgpreview' && detail[item.value]" width="120" height="160" :src="detail[item.value]" :preview-src-list="[detail[item.value]]" />
+							<span v-if="(item.type === 'img'||item.type === 'imgpreview') && !detail[item.value]">-</span>
 						</el-descriptions-item>
 					</el-descriptions>
 				</el-tab-pane>
@@ -103,8 +104,9 @@ export default {
 					{ label: '制作时间', value: 'made_time' },
 					{ label: '印章图像宽度', value: 'seal_width' },
 					{ label: '印章图像高度', value: 'seal_height' },
-					{ label: '电子原始印模', value: 'seal_original_image', type: 'img' },
-					{ label: '实物印文图像', value: 'seal_actual_image', type: 'img' },
+					{ label: '', value: '' },
+					{ label: '电子原始印模', value: 'seal_original_image', type: 'imgpreview' },
+					{ label: '实物印文图像', value: 'seal_actual_image', type: 'imgpreview' },
 				],
 				requireDoc: [
 					{ label: '主要负责人身份证', value: 'chief_person' },

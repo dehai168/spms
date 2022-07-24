@@ -1,7 +1,7 @@
 <template>
 	<el-dialog class="hotel-base-add" :title="dialogTittle" :visible="dialogVisible" @close="onClose" width="70%" top="4vh" :close-on-click-modal="false">
 		<el-tabs v-model="activeName" stretch @tab-click="handleTab">
-			<el-tab-pane label="基础信息" name="1">
+			<el-tab-pane label="基础信息" name="1" :class="{isAdd: flag === 'add'}">
 				<el-form v-if="isSimple" ref="addEditForm" :model="addEditForm" label-width="160px" :inline="true" :disabled="flag == 'detail'">
 					<el-form-item v-for="formItem in addEditformItems" :key="formItem.key" :label="formItem.label">
 						<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 200px" placeholder="请选择">
@@ -30,17 +30,17 @@
 										<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
 									</el-radio-group>
 								</el-form-item>
-								
+
 								<!-- 标准地址根据用户选择 显示   这里单独处理 -->
 								<el-form-item v-else-if="formItem.type == 'standardAddress' && addEditForm.is_standard_address == 1" :label="formItem.label">
-									<el-input v-model="addEditForm.standardAddress" style="width: 11vw" /> 
+									<el-input v-model="addEditForm.standardAddress" style="width: 11vw" />
 								</el-form-item>
 							</el-col>
 						</el-row>
 					</my-card>
 				</el-form>
 			</el-tab-pane>
-			<el-tab-pane label="从业人员" name="2" :disabled="flag !== 'detail'">
+			<el-tab-pane label="从业人员" name="2" v-if="flag !== 'add'" :disabled="flag !== 'detail'">
 				<div>
 					<el-radio v-model="employeeType" label="domestic">国内</el-radio>
 					<el-radio v-model="employeeType" label="overseas">境外</el-radio>
@@ -54,7 +54,7 @@
 					<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-size="pager.pagesize" background layout="total, prev, pager, next, jumper" :total="employeeCount" />
 				</el-footer>
 			</el-tab-pane>
-			<el-tab-pane label="日常检查" name="3" :disabled="flag !== 'detail'">
+			<el-tab-pane label="日常检查" name="3" v-if="flag !== 'add'" :disabled="flag !== 'detail'">
 				<div>
 					<el-descriptions border :column="2" size="medium" v-if="checkData.enterprise">
 						<el-descriptions-item label="企业名称">{{ checkData.enterprise }}</el-descriptions-item>
@@ -75,6 +75,20 @@
 					</el-table>
 				</div>
 			</el-tab-pane>
+			<el-tab-pane label="案件信息" name="4" v-if="flag !== 'add'" :disabled="flag !== 'detail'">
+				<div style="margin: 20px 0">
+					<el-table :data="caseData" border height="100%">
+						<el-table-column v-for="column in caseCols" :show-overflow-tooltip="true" :key="column.prop" v-bind="column" />
+					</el-table>
+				</div>
+			</el-tab-pane>
+			<el-tab-pane label="物品信息" name="5" v-if="flag !== 'add'" :disabled="flag !== 'detail'">
+				<div style="margin: 20px 0">
+					<el-table :data="goodsData" border height="100%">
+						<el-table-column v-for="column in goodsCols" :show-overflow-tooltip="true" :key="column.prop" v-bind="column" />
+					</el-table>
+				</div>
+			</el-tab-pane>
 		</el-tabs>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="dialogVisible = false">取 消</el-button>
@@ -87,8 +101,20 @@
 import MAP from '../../const/map'
 import domesticAPI from '../../views/employees/domestic/api'
 import overseasAPI from '../../views/employees/overseas/api'
-import dailyCheckApi from './dailyCheckApi'
+import API from './api'
 
+const mapTypeId = {
+	hotelid: 1,
+	junk_tradeid: 2,
+	vehicle_repairid: 3,
+	scrap_metal_recycleid: 4,
+	seal_engrave_unitid: 5,
+	ktvid: 6,
+	barid: 7,
+	pawnid: 8,
+	unlockid: 9,
+	printid: 10
+}
 
 export default {
 	props: {
@@ -114,7 +140,7 @@ export default {
 			this.getList()
 		},
 		dialogVisible(val) {
-			if(val && this.flag == 'add') {
+			if (val && this.flag == 'add') {
 				this.addEditForm = {}
 			}
 		}
@@ -129,6 +155,8 @@ export default {
 				pageindex: 1,
 				pagesize: 20
 			},
+			goodsData: [],
+			caseData: [],
 			employeeData: [],
 			employeeCols: [
 				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
@@ -149,7 +177,39 @@ export default {
 				{ prop: 'score', label: '分数' },
 			],
 			checkList: [],
-			checkData: {}
+			checkData: {},
+			goodsCols: [
+				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
+				{ prop: 'enterprise', label: '企业名称', type: 'input' },
+				{ prop: 'enterprise_code', label: '企业编码', type: 'input' },
+				{ prop: 'type', label: '物品类型', type: 'input' },
+				{ prop: 'goods_name', label: '物品名称', type: 'input' },
+				{ prop: 'total', label: '物品数量', type: 'input' },
+				{ prop: 'unit', label: '物品数量单位', type: 'input' },
+				{ prop: 'purpose', label: '物品用途', type: 'input' },
+				{ prop: 'model', label: '物品型号', type: 'input' },
+				{ prop: 'spec', label: '物品规格', type: 'input' },
+				{
+					prop: 'is_danger', label: '是否有危险性', formatter: (row, col, cell) => cell === true ? '是' : '否'
+				},
+				{ prop: 'danger_desc', label: '危险描述', type: 'input', },
+				{ prop: 'input_time', label: '时间', type: 'datePicker' },
+			],
+			caseCols: [
+				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
+				{ prop: 'enterprise_code', label: '企业编码', type: 'input', width: 150 },
+				{ prop: 'case_code', label: '案件编号', type: 'input', width: 150 },
+				{ prop: 'case_source', label: '案件来源', type: 'select', formatter: (row, col, cell) => res.case_source[cell], width: 150 },
+				{ prop: 'case_time', label: '发案时间', type: 'dateTimePicker', width: 150 },
+				{ prop: 'case_nature', label: '案件性质', type: 'select', formatter: (row, col, cell) => res.case_nature[cell], width: 150 },
+				{ prop: 'case_type', label: '案件类别', type: 'select', formatter: (row, col, cell) => res.case_type[cell], width: 150 },
+				{ prop: 'police_unit', label: '治安管辖机构', type: 'select', formatter: (row, col, cell) => MAP.police_unit[cell], width: 150 },
+				{ prop: 'case_unit', label: '立案单位', type: 'select', formatter: (row, col, cell) => MAP.jurisdiction_unit[cell], width: 150 },
+				{ prop: 'case_date', label: '立案日期', type: 'datePicker', width: 150 },
+				{ prop: 'solve_date', label: '破案日期', type: 'datePicker', width: 150 },
+				{ prop: 'enterprise_blame', label: '企业责任', type: 'select', formatter: (row, col, cell) => res.enterprise_blame[cell], width: 150 },
+				{ prop: 'enterprise_persion', label: '企业人员/角色', type: 'input', formatter: (row, col, cell) => MAP.employee_type[cell], width: 150 },
+			]
 		}
 	},
 	methods: {
@@ -171,7 +231,7 @@ export default {
 			this.getList()
 		},
 		handleTab(tab) {
-			console.log(this.addEditForm)
+			console.log(this.addEditForm, this.addEditformItems)
 			this.pager = {
 				pageindex: 1,
 				pagesize: 20
@@ -181,6 +241,12 @@ export default {
 			}
 			if (this.activeName == '3') {
 				this.getCheckData()
+			}
+			if (this.activeName == '4') {
+				this.getCaseData()
+			}
+			if (this.activeName == '5') {
+				this.getGoodsData()
 			}
 		},
 		async getList() {
@@ -200,20 +266,12 @@ export default {
 			this.employeeCount = size
 		},
 		async getCheckData() {
-			const map = {
-				hotelid: 1,
-				junk_tradeid: 2,
-				vehicle_repairid: 3,
-				scrap_metal_recycleid: 4,
-				scrap_metal_recycleid: 5,
-				// 6	KTV
-				// 7	酒吧
-			}
+
 			const params = {
 				enterprise: this.addEditForm.enterprise,
-				type: map[this.enterprise_id_key]
+				type: mapTypeId[this.enterprise_id_key]
 			}
-			const { data } = await dailyCheckApi.list(
+			const { data } = await API.dailyCheckList(
 				{
 					index: 1,
 					size: 9999999
@@ -222,6 +280,29 @@ export default {
 			)
 			this.checkData = data[0] || {}
 			this.checkList = data[0] ? data[0].check_list : []
+		},
+		async getCaseData() {
+			const params = {
+				enterprise_id: this.addEditForm.enterprise_code,
+				trade_type: mapTypeId[this.enterprise_id_key],
+				index: 1,
+				size: 9999999
+			}
+			const { data } = await API.caseList(params)
+			this.caseData = data
+		},
+		async getGoodsData() {
+
+			const params = {
+				enterprise_id: this.addEditForm.enterprise_code,
+				trade_type: mapTypeId[this.enterprise_id_key],
+				index: 1,
+				size: 9999999
+			}
+			const { data } = await API.goodsList(
+				params
+			)
+			this.goodsData = data
 		}
 	},
 	computed: {

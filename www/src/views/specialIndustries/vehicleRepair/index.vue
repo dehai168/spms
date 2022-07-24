@@ -1,6 +1,6 @@
 <template>
 	<el-container class="container">
-		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 96px">
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 136px">
 			<el-form ref="queryForm" :model="queryForm" :inline="true" label-width="8vw">
 				<el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
 					<el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 6">
@@ -122,6 +122,12 @@ export default {
 						type: 'select',
 						options: mapToArray(map.iscase)
 					},
+					{
+						key: 'iserror',
+						label: '是否异常',
+						type: 'select',
+						options: mapToArray(map.iserror)
+					},
 					{ key: 'inputTime', label: '录入时间', type: 'datePicker', span: 8, width: '13vw' },
 					{ key: 'btn', type: 'btn', span: 4 },
 					// { key: 'enterprise_code', label: '企业编码', type: 'input' },
@@ -148,7 +154,9 @@ export default {
 
 				// { prop: 'enterprise_code', label: '企业编码', width: 120 },
 				// { prop: 'credit_code', label: '社会信用代码', minWidth: 120 },
-				{ prop: 'input_time', label: '录入时间', width: 140 }
+				{ prop: 'input_time', label: '录入时间', width: 140 },
+				{ prop: 'iserror', label: '是否异常', width: 80, formatter: (row, column, cellValue, index) => map.iserror[cellValue] },
+				{ prop: 'persons', label: '总人数', width: 80 },
 			]
 		},
 		addEditformItems() {

@@ -1,6 +1,6 @@
 <template>
 	<el-container class="container">
-		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 186px">
+		<el-header style="padding: 5px; border-bottom: 1px solid #dcdfe6; height: 226px">
 			<el-form ref="queryForm" :model="queryForm" :inline="true" label-width="10vw">
 				<el-row v-for="(row, rowIndex) in formItems" :key="rowIndex">
 					<el-col v-for="formItem in row" :key="formItem.key" :span="formItem.span || 8">
@@ -139,6 +139,12 @@ export default {
 						type: 'select',
 						options: mapToArray(map.iscase)
 					},
+					{
+						key: 'iserror',
+						label: '是否异常',
+						type: 'select',
+						options: mapToArray(map.iserror)
+					},
 					{ key: 'inputTime', label: '录入时间', type: 'datePicker', width: '14vw' },
 					{ key: 'btn', type: 'btn' }
 				]
@@ -215,7 +221,9 @@ export default {
 				{ prop: 'check_state', label: '核查状态', width: 80, formatter: (row, column, cellValue, index) => map.check_state[cellValue] },
 				{ prop: 'install_state', label: '安装状态', width: 80, formatter: (row, column, cellValue, index) => map.install_state[cellValue] },
 				{ prop: 'iscase', label: '是否涉案', width: 80, formatter: (row, column, cellValue, index) => map.iscase[cellValue] },
-				{ prop: 'input_time', label: '录入时间', width: 140 }
+				{ prop: 'input_time', label: '录入时间', width: 140 },
+				{ prop: 'iserror', label: '是否异常', width: 80, formatter: (row, column, cellValue, index) => map.iserror[cellValue] },
+				{ prop: 'persons', label: '总人数', width: 80 },
 
 				// { prop: 'checkStatus', label: '核查状态', width: 80 },
 				// { prop: 'trade_type', label: '行业类别', width: 120, formatter: (row, column, cellValue, index) => map.hotel_trade_type[cellValue] },

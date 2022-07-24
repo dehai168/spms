@@ -130,6 +130,12 @@ export default {
 						options: mapToArray(map.iscase)
 					},
 					{
+						key: 'iserror',
+						label: '是否异常',
+						type: 'select',
+						options: mapToArray(map.iserror)
+					},
+					{
 						key: 'is_record_register', label: '是否备案登记', type: 'select', options: [
 							{ label: '是', value: 1 },
 							{ label: '否', value: 0 }

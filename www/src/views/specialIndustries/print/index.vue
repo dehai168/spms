@@ -19,7 +19,7 @@
 
 		<div class="main" style="padding: 5px">
 			<el-button @click="handleCreate" type="primary" icon="el-icon-plus" style="margin: 10px 0">新增</el-button>
-			<Import @success="getList" path="sealengrave"></Import>
+			<Import @success="getList" path="prints"></Import>
 			<div style="height: calc(100vh - 410px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
@@ -45,10 +45,10 @@
 
 <script>
 import defaultSettings from '@/settings'
-import API from './api'
+import API from '@/api/print'
 import { formatDate } from '@/utils/index'
-import MAP from '../../../../const/map'
-import mapToArray from '../../../../utils/mapToArray'
+import MAP from '@/const/map'
+import mapToArray from '@/utils/mapToArray'
 export default {
 	data() {
 		return {
@@ -101,7 +101,7 @@ export default {
 					type: 'select',
 					options: mapToArray(MAP.iscase)
 				},
-								{
+				{
 					key: 'iserror',
 					label: '是否异常',
 					type: 'select',
@@ -130,7 +130,6 @@ export default {
 				// { prop: 'licenseStatus', label: '许可证状态', width: 80 },
 				// { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
 				{ prop: 'input_time', label: '录入时间', width: 130 },
-				
 				{ prop: 'iserror', label: '是否异常', width: 80, formatter: (row, column, cellValue, index) => MAP.iserror[cellValue] },
 				{ prop: 'persons', label: '总人数', width: 80 },
 				// { prop: 'origin', label: '数据来源', width: 80 }
@@ -154,7 +153,7 @@ export default {
 							key: 'trade_type',
 							label: '行业分类',
 							type: 'select',
-							options: mapToArray(MAP.seal_trade_type)
+							options: mapToArray(MAP.print_trade_type)
 						},
 						{ key: 'enterprise_code', label: '企业编码', type: 'input' },
 					],
@@ -319,7 +318,7 @@ export default {
 		},
 
 		handlePerson(index, row) {
-			this.$router.push({ path: '/basicinfo/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.seal_engrave_unitid } });
+			this.$router.push({ path: '/basicinfo/employees/domestic', query: { enterprise: row.enterprise, enterprise_id: row.printid } });
 		},
 		handleDelete() { },
 		handleSearch() { },
@@ -332,9 +331,9 @@ export default {
 
 		},
 		handleRemove(index, row) {
-			this.removeData(row.seal_engrave_unitid)
+			this.removeData(row.printid)
 		},
-		removeData(seal_engrave_unitid) {
+		removeData(printid) {
 			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
@@ -342,7 +341,7 @@ export default {
 			})
 				.then(() => {
 					API.delete({
-						seal_engrave_unitid
+						printid
 					})
 						.then(res => {
 							if (res.code === 200) {
