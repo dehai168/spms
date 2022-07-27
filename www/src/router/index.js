@@ -258,11 +258,6 @@ export const constantRoutes = [
         path: 'black-list',
         meta: { title: '企业黑名单', icon: 'el-icon-set-up' },
         component: () => import('@/views/blackList')
-      },
-      {
-        path: 'integral',
-        meta: { title: '企业积分', icon: 'el-icon-medal-1' },
-        component: () => import('@/views/integral')
       }
     ]
   },
@@ -336,6 +331,12 @@ export const constantRoutes = [
         name: 'Construction',
         meta: { title: '建设运行情况', icon: 'el-icon-s-shop' },
         component: () => import('@/views/datacount/construction/index')
+      },
+      
+      {
+        path: 'integral',
+        meta: { title: '企业积分', icon: 'el-icon-medal-1' },
+        component: () => import('@/views/integral')
       },
       {
         path: 'domestic',

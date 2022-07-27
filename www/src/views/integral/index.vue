@@ -101,6 +101,9 @@ export default {
 		},
 		async getList() {
 			const params = { ...this.queryForm }
+			const {pagesize, pageindex} = this.pager
+			params.index = pageindex
+			params.size = pagesize
 			this.formItems.forEach(v => {
 				if (v.type === 'datePicker' && params[v.key]) {
 					const range = params[v.key]
@@ -131,38 +134,6 @@ export default {
 			this.dialogVisible = true
 		},
 		handlePerson() { },
-		handleDelete(idx, { domestic_employeeid }) {
-			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			})
-				.then(() => {
-					API.delete({
-						domestic_employeeid
-					})
-						.then(res => {
-							if (res.code === 200) {
-								if (res.data) {
-									this.$message({
-										message: '操作成功!',
-										type: 'success'
-									})
-									this.getList()
-								} else {
-									this.$message({
-										message: '操作失败!',
-										type: 'warning'
-									})
-								}
-							}
-						})
-						.catch(e => {
-							console.error(e)
-						})
-				})
-				.catch(() => { })
-		},
 		handleSearch() {
 			this.getList()
 		},

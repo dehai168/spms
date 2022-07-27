@@ -22,7 +22,7 @@
 		<el-main class="main">
 			<el-button @click="handleCreate" icon="el-icon-plus" type="primary">新增</el-button>
 			<Import @success="handleQuery" path="hotels"></Import>
-			<el-table v-loading="tableLoading" :data="tableData" height="calc(100% - 36px)" border style="width: 100%" @selection-change="handleSelectionChange">
+			<el-table v-loading="tableLoading" :row-class-name="({ row }) => (row.iserror ? 'warning-row' : '')" :data="tableData" height="calc(100% - 36px)" border style="width: 100%" @selection-change="handleSelectionChange">
 				<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
 				<el-table-column prop="operate" label="操作" width="240" fixed="right">
 					<template slot-scope="scope">
@@ -315,7 +315,13 @@ export default {
 							label: '是否涉案',
 							type: 'select',
 							options: mapToArray(map.iscase)
-						}
+						},
+						{
+							key: 'iserror',
+							label: '是否异常',
+							type: 'select',
+							options: mapToArray(map.iserror)
+						},
 					],
 					[
 						{

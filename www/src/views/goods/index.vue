@@ -23,7 +23,7 @@
 			<div style="height: calc(100vh - 260px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop" v-bind="column" />
-					<el-table-column prop="operate" label="操作" width="200" fixed="right">
+					<el-table-column prop="operate" label="操作" width="140">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
 							<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -36,9 +36,27 @@
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
-		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" dest top="4vh" @close="addEditForm = {}" destroy-on-close :close-on-click-modal="false">
+		<el-dialog
+			class="hotel-base-add"
+			:title="dialogTittle"
+			:visible.sync="dialogVisible"
+			width="70%"
+			dest
+			top="4vh"
+			@close="
+				addEditForm = {}
+				enterprise = ''
+			"
+			destroy-on-close
+			:close-on-click-modal="false"
+		>
 			<el-form ref="addEditForm" :model="addEditForm" label-width="120px" :inline="true" :disabled="flag == 'detail'">
-				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
+				<el-form-item key="enterprise" label="企业名称">
+					<el-select style="width: 250px" v-model="enterprise" @change="onChange" filterable remote reserve-keyword placeholder="请输入关键词" :remote-method="remoteMethod" :loading="loading">
+						<el-option v-for="(item, idx) in options" :key="idx" :label="item.label" :value="item.value"> </el-option>
+					</el-select>
+				</el-form-item>
+				<div v-for="(cardItem, title, index) in addEditformItems" :key="index">
 					<el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
 						<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 250px" placeholder="请选择">
 							<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
@@ -61,7 +79,7 @@
 							<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
 						</el-radio-group>
 					</el-form-item>
-				</my-card>
+				</div>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
@@ -76,7 +94,7 @@ import defaultSettings from '@/settings'
 import API from './api'
 import MAP from '@/const/map'
 import mapToArray from '@/utils/mapToArray'
-import { getDynamicMap } from '@/const/map'
+
 
 export default {
 	data() {
@@ -86,26 +104,72 @@ export default {
 				pageindex: 1,
 				pagesize: 20
 			},
+			enterprise: '',
 			queryForm: { trade_type: null, enterprise: '' },
-			formItems: [],
+			formItems: [
+				{
+					key: 'trade_type',
+					label: '行业类别',
+					type: 'select',
+					options: mapToArray(MAP.trade_type2)
+				},
+				{ key: 'police_unit', label: '治安管辖机构', type: 'select', options: mapToArray(MAP.police_unit) },
+			],
 			tableDataCount: 0,
 			pagesizes: defaultSettings.pageSizes,
 			pagesize: defaultSettings.pageSizes[0],
 			pageindex: 1,
 			tableData: [],
 			columns: [
+				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell] },
+				{ prop: 'enterprise', label: '企业名称', type: 'input' },
+				{ prop: 'enterprise_code', label: '企业编码', type: 'input' },
+				{ prop: 'type', label: '物品类型', type: 'input' },
+				{ prop: 'goods_name', label: '物品名称', type: 'input' },
+				{ prop: 'total', label: '物品数量', type: 'input' },
+				{ prop: 'unit', label: '物品数量单位', type: 'input' },
+				{ prop: 'purpose', label: '物品用途', type: 'input' },
+				{ prop: 'model', label: '物品型号', type: 'input' },
+				{ prop: 'spec', label: '物品规格', type: 'input' },
+				{
+					prop: 'is_danger', label: '是否有危险性', formatter: (row, col, cell) => cell === true ? '是' : '否'
+				},
+				{ prop: 'danger_desc', label: '危险描述', type: 'input', },
+				{ prop: 'input_time', label: '时间', type: 'datePicker' },
 			],
 			dialogVisible: false,
 			submitDisabled: false,
 			flag: 'add',
 			addEditForm: {},
-			addEditformItems: {}
-
+			addEditformItems: {
+				物品信息: [
+					// { key: 'trade_type', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type2) },
+					// { key: 'enterprise', label: '企业名称', type: 'input' },
+					// { key: 'enterprise_code', label: '企业编码', type: 'input' },
+					{ key: 'type', label: '物品类型', type: 'input' },
+					{ key: 'goods_name', label: '物品名称', type: 'input' },
+					{ key: 'total', label: '物品数量', type: 'input' },
+					{ key: 'unit', label: '物品数量单位', type: 'input' },
+					{ key: 'purpose', label: '物品用途', type: 'input' },
+					{ key: 'model', label: '物品型号', type: 'input' },
+					{ key: 'spec', label: '物品规格', type: 'input' },
+					{
+						key: 'is_danger', label: '是否有危险性', type: 'select', options: [
+							{ label: '是', value: true },
+							{ label: '否', value: false },
+						]
+					},
+					{ key: 'danger_desc', label: '危险描述', type: 'input', },
+					{ key: 'input_time', label: '时间', type: 'dateTimePicker' },
+					{ key: 'remark', label: '备注', type: 'textarea' }
+				]
+			},
+			options: [],
+			loading: false
 		}
 	},
 	mounted() { },
 	created() {
-		this.getEnum()
 		// 其他页面跳转过来 填充企业名称
 		if (this.$route.query.enterprise) {
 			this.queryForm.enterprise = this.$route.query.enterprise
@@ -137,61 +201,35 @@ export default {
 		}
 	},
 	methods: {
-		getEnum() {
-			getDynamicMap().then(res => {
-				this.addEditformItems = {
-					物品信息: [
-						{ key: 'trade_type', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type2) },
-						{ key: 'enterprise', label: '企业名称', type: 'input' },
-						{ key: 'enterprise_code', label: '企业编码', type: 'input' },
-						{ key: 'type', label: '物品类型', type: 'input' },
-						{ key: 'goods_name', label: '物品名称', type: 'input' },
-						{ key: 'total', label: '物品数量', type: 'input' },
-						{ key: 'unit', label: '物品数量单位', type: 'input' },
-						{ key: 'purpose', label: '物品用途', type: 'input' },
-						{ key: 'model', label: '物品型号', type: 'input' },
-						{ key: 'spec', label: '物品规格', type: 'input' },
-						{
-							key: 'is_danger', label: '是否有危险性', type: 'select', options: [
-								{ label: '是', value: true },
-								{ label: '否', value: false },
-							]
-						},
-						{ key: 'danger_desc', label: '危险描述', type: 'input', },
-						{ key: 'input_time', label: '时间', type: 'datePicker' },
-						{ key: 'remark', label: '备注', type: 'textarea' }
-					]
-				}
-				this.columns = [
-					{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
-					{ prop: 'enterprise', label: '企业名称', type: 'input' },
-					{ prop: 'enterprise_code', label: '企业编码', type: 'input' },
-					{ prop: 'type', label: '物品类型', type: 'input' },
-					{ prop: 'goods_name', label: '物品名称', type: 'input' },
-					{ prop: 'total', label: '物品数量', type: 'input' },
-					{ prop: 'unit', label: '物品数量单位', type: 'input' },
-					{ prop: 'purpose', label: '物品用途', type: 'input' },
-					{ prop: 'model', label: '物品型号', type: 'input' },
-					{ prop: 'spec', label: '物品规格', type: 'input' },
-					{
-						prop: 'is_danger', label: '是否有危险性', formatter: (row, col, cell) => cell === true ? '是' : '否'
-					},
-					{ prop: 'danger_desc', label: '危险描述', type: 'input', },
-					{ prop: 'input_time', label: '时间', type: 'datePicker' },
-				]
-				this.formItems = [
-					{
-						key: 'trade_type',
-						label: '行业类别',
-						type: 'select',
-						options: mapToArray(MAP.trade_type2)
-					},			
-					{ key: 'police_unit', label: '治安管辖机构', type: 'select', options: mapToArray(MAP.police_unit) },
-				]
-			})
+		remoteMethod(query) {
+			if (query !== '') {
+				this.loading = true;
+				API.getEnterpriseInfo({ key: query, size: 100000, index: 1 }).then(res => {
+					if (res.data && res.data.length) {
+						this.options = res.data.map(v => ({
+							label: v.enterprise,
+							value: v.systemid + '-' + v.type + '-' + v.enterprise,
+							...v
+						}))
+						this.loading = false
+					}
+				})
+			} else {
+				this.options = [];
+			}
 		},
+
 		handleBack() {
 			this.$router.go(-1)
+		},
+		onChange(val) {
+			const [enterprise_code, trade_type, enterprise] = val.split('-')
+			this.addEditForm = {
+				...this.addEditForm,
+				enterprise_code: +enterprise_code,
+				trade_type: +trade_type,
+				enterprise
+			}
 		},
 		async getList() {
 			const params = { ...this.queryForm }
@@ -214,8 +252,17 @@ export default {
 			this.tableDataCount = size
 		},
 		handleDetail(index, row) {
-			this.addEditForm = row
+			this.addEditForm = { ...row }
 			this.flag = 'detail'
+			const { enterprise_code, trade_type, enterprise } = row
+			const enterpriseName = `${enterprise_code}-${trade_type}-${enterprise}`
+			this.options = [
+				{
+					label: enterprise,
+					value: enterpriseName
+				}
+			]
+			this.enterprise = enterpriseName
 			this.dialogVisible = true
 		},
 		handleReset() {
@@ -226,10 +273,19 @@ export default {
 		handleEdit(index, row) {
 			this.flag = 'edit'
 			this.addEditForm = { ...row }
+			const { enterprise_code, trade_type, enterprise } = row
+			const enterpriseName = `${enterprise_code}-${trade_type}-${enterprise}`
+			this.options = [
+				{
+					label: enterprise,
+					value: enterpriseName
+				}
+			]
+			this.enterprise = enterpriseName
 			this.dialogVisible = true
 		},
 		handlePerson() { },
-		handleDelete(idx, { domestic_employeeid }) {
+		handleDelete(idx, { goodsid }) {
 			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
@@ -237,7 +293,7 @@ export default {
 			})
 				.then(() => {
 					API.delete({
-						domestic_employeeid
+						goodsid
 					})
 						.then(res => {
 							if (res.code === 200) {
@@ -282,6 +338,7 @@ export default {
 			}
 			this.dialogVisible = false
 			this.addEditForm = {}
+			this.enterprise = ''
 		},
 		handleCancel() {
 			this.dialogVisible = false
@@ -318,3 +375,5 @@ export default {
 	margin-top: 20px;
 }
 </style>
+
+

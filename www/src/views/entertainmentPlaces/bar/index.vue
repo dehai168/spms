@@ -20,7 +20,7 @@
 			<el-button @click="handleAdd" icon="el-icon-plus" style="margin-bottom: 10px" type="primary">新增</el-button>
 			<Import @success="getList" path="bar"></Import>
 			<div style="height: calc(100vh - 360px)">
-				<el-table :data="tableData" border height="100%">
+				<el-table :data="tableData" border height="100%" :row-class-name="({ row }) => (row.iserror ? 'warning-row' : '')">
 					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop" v-bind="column" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
@@ -81,6 +81,12 @@ export default {
 					label: '是否涉案',
 					type: 'select',
 					options: mapToArray(MAP.iscase)
+				},
+				{
+					key: 'iserror',
+					label: '是否异常',
+					type: 'select',
+					options: mapToArray(MAP.iserror)
 				},
 				{ label: '户外悬挂', key: 'outdoor_hang', type: 'input' },
 				{ label: '联系电话', key: 'telephone', type: 'input' },

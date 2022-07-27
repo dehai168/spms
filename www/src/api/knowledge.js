@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import { getToken } from '@/utils/auth'
-
+import toQueryString from '@/utils/toQueryString'
 export function items(data) {
   return request({
     url: '/police/knowledge/list?index=' + data.pageindex + '&size=' + data.pagesize + '&token=' + getToken(),
@@ -29,6 +29,16 @@ export function remove(params) {
     params
   })
 }
+export function publish(query) {
+  return request({
+    url: toQueryString(`/police/knowledge/public`,{
+      ...query,
+      token: getToken()
+    }),
+    method: 'get',
+  })
+}
+
 
 export function uploadUrl() {
   return '/police/upload/file?token=' + getToken()

@@ -16,6 +16,7 @@ import { TitleComponent, TooltipComponent, GridComponent, DatasetComponent, Tran
 import { LabelLayout, UniversalTransition } from 'echarts/features'
 // 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
 import { CanvasRenderer } from 'echarts/renderers'
+import Print from 'vue-print-nb'
 
 // 注册必须的组件
 echarts.use([TitleComponent, TooltipComponent, GridComponent, DatasetComponent, TransformComponent, LegendComponent, BarChart, PieChart, LabelLayout, UniversalTransition, CanvasRenderer])
@@ -39,6 +40,8 @@ Vue.use(ElementUI, {
 Vue.component('my-card', MyCard)
 Vue.component('Detail', Detail)
 Vue.component('Import', Import)
+// Global instruction 
+Vue.use(Print);
 Vue.config.productionTip = false
 Vue.prototype.$succ = () => {
   ElementUI.Notification({
@@ -54,7 +57,9 @@ Vue.prototype.$error = () => {
     type: 'error'
   })
 }
-
+Vue.prototype.$print = () => {
+  window.print()
+}
 Vue.prototype.$echarts = echarts;
 new Vue({
   el: '#app',

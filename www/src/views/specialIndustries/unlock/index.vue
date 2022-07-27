@@ -21,7 +21,7 @@
 			<el-button @click="handleCreate" type="primary" icon="el-icon-plus" style="margin: 10px 0">新增</el-button>
 			<Import @success="getList" path="unlocks"></Import>
 			<div style="height: calc(100vh - 410px)">
-				<el-table :data="tableData" border height="100%">
+				<el-table :data="tableData" border height="100%" :row-class-name="({ row }) => (row.iserror ? 'warning-row' : '')">
 					<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
@@ -101,7 +101,7 @@ export default {
 					type: 'select',
 					options: mapToArray(MAP.iscase)
 				},
-								{
+				{
 					key: 'iserror',
 					label: '是否异常',
 					type: 'select',
@@ -130,7 +130,7 @@ export default {
 				// { prop: 'licenseStatus', label: '许可证状态', width: 80 },
 				// { prop: 'licenseIssueDate', label: '许可证发证日期', width: 180 },
 				{ prop: 'input_time', label: '录入时间', width: 130 },
-				
+
 				{ prop: 'iserror', label: '是否异常', width: 80, formatter: (row, column, cellValue, index) => MAP.iserror[cellValue] },
 				{ prop: 'persons', label: '总人数', width: 80 },
 				// { prop: 'origin', label: '数据来源', width: 80 }
@@ -182,6 +182,12 @@ export default {
 							label: '是否涉案',
 							type: 'select',
 							options: mapToArray(MAP.iscase)
+						},
+						{
+							key: 'iserror',
+							label: '是否异常',
+							type: 'select',
+							options: mapToArray(MAP.iserror)
 						},
 					],
 

@@ -62,6 +62,7 @@
 								<el-table-column prop="type" label="类型"> </el-table-column>
 								<el-table-column prop="msg" label="内容"> </el-table-column>
 								<el-table-column prop="user" label="用户"> </el-table-column>
+								<el-table-column prop="state" label="状态" :formatter="(a,b,cell) => cell != 1 ? '失败' : '成功'"> </el-table-column>
 								<el-table-column prop="remark" label="备注"> </el-table-column>
 								<el-table-column prop="input_time" label="录入时间"> </el-table-column>
 							</el-table>

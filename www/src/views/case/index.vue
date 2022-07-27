@@ -23,7 +23,7 @@
 			<div style="height: calc(100vh - 420px)">
 				<el-table :data="tableData" border height="100%">
 					<el-table-column v-for="column in columns" :show-overflow-tooltip="true" :key="column.prop" v-bind="column" />
-					<el-table-column prop="operate" label="操作" width="200" fixed="right">
+					<el-table-column prop="operate" label="操作" width="130">
 						<template slot-scope="scope">
 							<el-button type="text" size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
 							<el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -36,9 +36,27 @@
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="pager.pagesize" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount" />
 			</el-footer>
 		</div>
-		<el-dialog class="hotel-base-add" :title="dialogTittle" :visible.sync="dialogVisible" width="70%" dest top="4vh" @close="addEditForm = {}" destroy-on-close :close-on-click-modal="false">
+		<el-dialog
+			class="hotel-base-add"
+			:title="dialogTittle"
+			:visible.sync="dialogVisible"
+			width="70%"
+			dest
+			top="4vh"
+			@close="
+				addEditForm = {}
+				enterprise = ''
+			"
+			destroy-on-close
+			:close-on-click-modal="false"
+		>
 			<el-form ref="addEditForm" :model="addEditForm" label-width="120px" :inline="true" :disabled="flag == 'detail'">
-				<my-card v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
+				<el-form-item key="enterprise" label="企业名称">
+					<el-select style="width: 250px" v-model="enterprise" @change="onChange" filterable remote reserve-keyword placeholder="请输入关键词" :remote-method="remoteMethod" :loading="loading">
+						<el-option v-for="(item, idx) in options" :key="idx" :label="item.label" :value="item.value"> </el-option>
+					</el-select>
+				</el-form-item>
+				<div v-for="(cardItem, title, index) in addEditformItems" :key="index" :title="title">
 					<el-form-item v-for="formItem in cardItem" :key="formItem.key" :label="formItem.label">
 						<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 250px" placeholder="请选择">
 							<el-option v-for="option in formItem.options" :key="option.value" :value="option.value" :label="option.label" />
@@ -61,7 +79,7 @@
 							<el-radio v-for="option in formItem.options" :key="option.value" :label="option.value">{{ option.label }}</el-radio>
 						</el-radio-group>
 					</el-form-item>
-				</my-card>
+				</div>
 			</el-form>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
@@ -99,8 +117,10 @@ export default {
 			submitDisabled: false,
 			flag: 'add',
 			addEditForm: {},
-			addEditformItems: {}
-
+			addEditformItems: {},
+			options: [],
+			loading: false,
+			enterprise: ''
 		}
 	},
 	mounted() { },
@@ -137,13 +157,39 @@ export default {
 		}
 	},
 	methods: {
+		remoteMethod(query) {
+			if (query !== '') {
+				this.loading = true;
+				API.getEnterpriseInfo({ key: query, size: 100000, index: 1 }).then(res => {
+					if (res.data && res.data.length) {
+						this.options = res.data.map(v => ({
+							label: v.enterprise,
+							value: v.systemid + '-' + v.type + '-' + v.enterprise,
+							...v
+						}))
+						this.loading = false
+					}
+				})
+			} else {
+				this.options = [];
+			}
+		},
+		onChange(val) {
+			const [enterprise_code, trade_type, enterprise] = val.split('-')
+			this.addEditForm = {
+				...this.addEditForm,
+				enterprise_code: +enterprise_code,
+				trade_type: +trade_type,
+				enterprise
+			}
+		},
 		getEnum() {
 			getDynamicMap().then(res => {
 				this.addEditformItems = {
 					立案信息: [
-						{ key: 'trade_type', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type2) },
-						{ key: 'enterprise', label: '企业名称', type: 'input' },
-						{ key: 'enterprise_code', label: '企业编码', type: 'input' },
+						// { key: 'trade_type', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type2) },
+						// { key: 'enterprise', label: '企业名称', type: 'input' },
+						// { key: 'enterprise_code', label: '企业编码', type: 'input' },
 						{ key: 'case_code', label: '案件编号', type: 'input' },
 						{ key: 'case_source', label: '案件来源', type: 'select', options: mapToArray(res.case_source) },
 						{ key: 'case_time', label: '发案时间', type: 'dateTimePicker' },
@@ -160,19 +206,19 @@ export default {
 					]
 				}
 				this.columns = [
-					{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
-					{ prop: 'enterprise_code', label: '企业编码', type: 'input', width: 150 },
-					{ prop: 'case_code', label: '案件编号', type: 'input', width: 150 },
-					{ prop: 'case_source', label: '案件来源', type: 'select', formatter: (row, col, cell) => res.case_source[cell], width: 150 },
-					{ prop: 'case_time', label: '发案时间', type: 'dateTimePicker', width: 150 },
-					{ prop: 'case_nature', label: '案件性质', type: 'select', formatter: (row, col, cell) => res.case_nature[cell], width: 150 },
-					{ prop: 'case_type', label: '案件类别', type: 'select', formatter: (row, col, cell) => res.case_type[cell], width: 150 },
-					{ prop: 'police_unit', label: '治安管辖机构', type: 'select', formatter: (row, col, cell) => MAP.police_unit[cell], width: 150 },
-					{ prop: 'case_unit', label: '立案单位', type: 'select', formatter: (row, col, cell) => MAP.jurisdiction_unit[cell], width: 150 },
-					{ prop: 'case_date', label: '立案日期', type: 'datePicker', width: 150 },
-					{ prop: 'solve_date', label: '破案日期', type: 'datePicker', width: 150 },
-					{ prop: 'enterprise_blame', label: '企业责任', type: 'select', formatter: (row, col, cell) => res.enterprise_blame[cell], width: 150 },
-					{ prop: 'enterprise_persion', label: '企业人员/角色', type: 'input', formatter: (row, col, cell) => MAP.employee_type[cell], width: 150 },
+					{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell] },
+					{ prop: 'enterprise_code', label: '企业编码', type: 'input' },
+					{ prop: 'case_code', label: '案件编号', type: 'input' },
+					{ prop: 'case_source', label: '案件来源', type: 'select', formatter: (row, col, cell) => res.case_source[cell] },
+					{ prop: 'case_time', label: '发案时间', type: 'dateTimePicker' },
+					{ prop: 'case_nature', label: '案件性质', type: 'select', formatter: (row, col, cell) => res.case_nature[cell] },
+					{ prop: 'case_type', label: '案件类别', type: 'select', formatter: (row, col, cell) => res.case_type[cell] },
+					{ prop: 'police_unit', label: '治安管辖机构', type: 'select', formatter: (row, col, cell) => MAP.police_unit[cell] },
+					{ prop: 'case_unit', label: '立案单位', type: 'select', formatter: (row, col, cell) => MAP.jurisdiction_unit[cell] },
+					{ prop: 'case_date', label: '立案日期', type: 'datePicker' },
+					{ prop: 'solve_date', label: '破案日期', type: 'datePicker' },
+					{ prop: 'enterprise_blame', label: '企业责任', type: 'select', formatter: (row, col, cell) => res.enterprise_blame[cell] },
+					{ prop: 'enterprise_persion', label: '企业人员/角色', type: 'input', formatter: (row, col, cell) => MAP.employee_type[cell] },
 				]
 				this.formItems = [
 					{
@@ -223,6 +269,15 @@ export default {
 		},
 		handleDetail(index, row) {
 			this.addEditForm = row
+			const { enterprise_code, trade_type, enterprise } = row
+			const enterpriseName = `${enterprise_code}-${trade_type}-${enterprise}`
+			this.options = [
+				{
+					label: enterprise,
+					value: enterpriseName
+				}
+			]
+			this.enterprise = enterpriseName
 			this.flag = 'detail'
 			this.dialogVisible = true
 		},
@@ -234,10 +289,19 @@ export default {
 		handleEdit(index, row) {
 			this.flag = 'edit'
 			this.addEditForm = { ...row }
+			const { enterprise_code, trade_type, enterprise } = row
+			const enterpriseName = `${enterprise_code}-${trade_type}-${enterprise}`
+			this.options = [
+				{
+					label: enterprise,
+					value: enterpriseName
+				}
+			]
+			this.enterprise = enterpriseName
 			this.dialogVisible = true
 		},
 		handlePerson() { },
-		handleDelete(idx, { domestic_employeeid }) {
+		handleDelete(idx, { caseid }) {
 			this.$confirm('此操作将删除该信息且不可恢复, 是否继续?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
@@ -245,7 +309,7 @@ export default {
 			})
 				.then(() => {
 					API.delete({
-						domestic_employeeid
+						caseid
 					})
 						.then(res => {
 							if (res.code === 200) {
@@ -290,6 +354,7 @@ export default {
 			}
 			this.dialogVisible = false
 			this.addEditForm = {}
+			this.enterprise = ''
 		},
 		handleCancel() {
 			this.dialogVisible = false

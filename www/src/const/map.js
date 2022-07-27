@@ -437,7 +437,7 @@ export default map
 
 export const getDynamicMap = async () => {
   const res = await enumsItems({
-    types: [1, 2, 3]
+    types: [1, 2, 3,4,100,101,102,103]
   })
   const result = res.data
   const police_unit = {}

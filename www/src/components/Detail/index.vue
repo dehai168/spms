@@ -283,7 +283,7 @@ export default {
 		},
 		async getCaseData() {
 			const params = {
-				enterprise_id: this.addEditForm.enterprise_code,
+				enterprise_id: this.addEditForm[this.enterprise_id_key],
 				trade_type: mapTypeId[this.enterprise_id_key],
 				index: 1,
 				size: 9999999
@@ -294,7 +294,7 @@ export default {
 		async getGoodsData() {
 
 			const params = {
-				enterprise_id: this.addEditForm.enterprise_code,
+				enterprise_id: this.addEditForm[this.enterprise_id_key],
 				trade_type: mapTypeId[this.enterprise_id_key],
 				index: 1,
 				size: 9999999

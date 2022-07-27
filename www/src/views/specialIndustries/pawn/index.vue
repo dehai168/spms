@@ -21,7 +21,7 @@
 			<el-button @click="handleCreate" type="primary" icon="el-icon-plus" style="margin: 10px 0">新增</el-button>
 			<Import @success="getList" path="pawns"></Import>
 			<div style="height: calc(100vh - 410px)">
-				<el-table :data="tableData" border height="100%">
+				<el-table :data="tableData" border height="100%" :row-class-name="({ row }) => (row.iserror ? 'warning-row' : '')">
 					<el-table-column v-for="column in columns" :key="column.prop" v-bind="column" :show-overflow-tooltip="true" />
 					<el-table-column prop="operate" label="操作" width="200" fixed="right">
 						<template slot-scope="scope">
@@ -181,6 +181,12 @@ export default {
 							label: '是否涉案',
 							type: 'select',
 							options: mapToArray(MAP.iscase)
+						},
+						{
+							key: 'iserror',
+							label: '是否异常',
+							type: 'select',
+							options: mapToArray(MAP.iserror)
 						},
 					],
 

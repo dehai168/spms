@@ -6,4 +6,5 @@ export default {
     add: (data = {}) => request.post('/police/goods/add',data),
     update: (data = {}) => request.post('/police/goods/update',data),
     delete: (query = {}) => request.get(toQueryString('/police/goods/delete',query)),
+    getEnterpriseInfo: (query = {}) => request.get(toQueryString(`/police/enterprise/list`,query))
 }
