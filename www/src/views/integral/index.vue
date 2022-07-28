@@ -47,7 +47,7 @@ export default {
 			},
 			queryForm: { },
 			formItems: [
-				{ key: 'police_unit', label: '治安管辖机构', type: 'select', options: mapToArray(MAP.police_unit) },
+				{ key: 'police_unit', label: '治安管辖机构', type: 'select', options: mapToArray(MAP.jurisdiction_unit) },
 				{ key: 'date', label: '时间', type: 'datePicker' },
 			],
 			tableDataCount: 0,
@@ -57,7 +57,7 @@ export default {
 			tableData: [],
 			columns: [
 				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
-				{ prop: 'police_unit', label: '管辖单位', type: 'input' , options: mapToArray(MAP.police_unit) },
+				{ prop: 'police_unit', label: '管辖单位', type: 'input' , options: mapToArray(MAP.jurisdiction_unit) },
 				{ prop: 'enterpriseid', label: '企业编码', type: 'input' },
 				{ prop: 'enterpriseid', label: '企业名称', type: 'input' },
 				{ prop: 'type', label: '扣分类型', type: 'input' },

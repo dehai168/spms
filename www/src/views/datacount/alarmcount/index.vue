@@ -18,7 +18,7 @@
                 style="width: 230px"> </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="8">
             <el-button type="primary" icon="el-icon-search" @click="handleQuery">查询</el-button>
             <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
             <el-button icon="el-icon-printer" v-print>打印</el-button>

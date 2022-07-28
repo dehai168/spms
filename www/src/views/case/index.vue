@@ -175,10 +175,10 @@ export default {
 			}
 		},
 		onChange(val) {
-			const [enterprise_code, trade_type, enterprise] = val.split('-')
+			const [enterprise_id, trade_type, enterprise] = val.split('-')
 			this.addEditForm = {
 				...this.addEditForm,
-				enterprise_code: +enterprise_code,
+				enterprise_id: +enterprise_id,
 				trade_type: +trade_type,
 				enterprise
 			}
@@ -189,7 +189,7 @@ export default {
 					立案信息: [
 						// { key: 'trade_type', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type2) },
 						// { key: 'enterprise', label: '企业名称', type: 'input' },
-						// { key: 'enterprise_code', label: '企业编码', type: 'input' },
+						// { key: 'enterprise_id', label: '企业编码', type: 'input' },
 						{ key: 'case_code', label: '案件编号', type: 'input' },
 						{ key: 'case_source', label: '案件来源', type: 'select', options: mapToArray(res.case_source) },
 						{ key: 'case_time', label: '发案时间', type: 'dateTimePicker' },
@@ -207,7 +207,7 @@ export default {
 				}
 				this.columns = [
 					{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell] },
-					{ prop: 'enterprise_code', label: '企业编码', type: 'input' },
+					{ prop: 'enterprise_id', label: '企业编码', type: 'input' },
 					{ prop: 'case_code', label: '案件编号', type: 'input' },
 					{ prop: 'case_source', label: '案件来源', type: 'select', formatter: (row, col, cell) => res.case_source[cell] },
 					{ prop: 'case_time', label: '发案时间', type: 'dateTimePicker' },
@@ -269,8 +269,8 @@ export default {
 		},
 		handleDetail(index, row) {
 			this.addEditForm = row
-			const { enterprise_code, trade_type, enterprise } = row
-			const enterpriseName = `${enterprise_code}-${trade_type}-${enterprise}`
+			const { enterprise_id, trade_type, enterprise } = row
+			const enterpriseName = `${enterprise_id}-${trade_type}-${enterprise}`
 			this.options = [
 				{
 					label: enterprise,
@@ -289,8 +289,8 @@ export default {
 		handleEdit(index, row) {
 			this.flag = 'edit'
 			this.addEditForm = { ...row }
-			const { enterprise_code, trade_type, enterprise } = row
-			const enterpriseName = `${enterprise_code}-${trade_type}-${enterprise}`
+			const { enterprise_id, trade_type, enterprise } = row
+			const enterpriseName = `${enterprise_id}-${trade_type}-${enterprise}`
 			this.options = [
 				{
 					label: enterprise,

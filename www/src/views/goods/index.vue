@@ -123,7 +123,7 @@ export default {
 			columns: [
 				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell] },
 				{ prop: 'enterprise', label: '企业名称', type: 'input' },
-				{ prop: 'enterprise_code', label: '企业编码', type: 'input' },
+				{ prop: 'enterprise_id', label: '企业编码', type: 'input' },
 				{ prop: 'type', label: '物品类型', type: 'input' },
 				{ prop: 'goods_name', label: '物品名称', type: 'input' },
 				{ prop: 'total', label: '物品数量', type: 'input' },
@@ -145,7 +145,7 @@ export default {
 				物品信息: [
 					// { key: 'trade_type', label: '行业类别', type: 'select', options: mapToArray(MAP.trade_type2) },
 					// { key: 'enterprise', label: '企业名称', type: 'input' },
-					// { key: 'enterprise_code', label: '企业编码', type: 'input' },
+					// { key: 'enterprise_id', label: '企业编码', type: 'input' },
 					{ key: 'type', label: '物品类型', type: 'input' },
 					{ key: 'goods_name', label: '物品名称', type: 'input' },
 					{ key: 'total', label: '物品数量', type: 'input' },
@@ -223,10 +223,10 @@ export default {
 			this.$router.go(-1)
 		},
 		onChange(val) {
-			const [enterprise_code, trade_type, enterprise] = val.split('-')
+			const [enterprise_id, trade_type, enterprise] = val.split('-')
 			this.addEditForm = {
 				...this.addEditForm,
-				enterprise_code: +enterprise_code,
+				enterprise_id: +enterprise_id,
 				trade_type: +trade_type,
 				enterprise
 			}
@@ -254,8 +254,8 @@ export default {
 		handleDetail(index, row) {
 			this.addEditForm = { ...row }
 			this.flag = 'detail'
-			const { enterprise_code, trade_type, enterprise } = row
-			const enterpriseName = `${enterprise_code}-${trade_type}-${enterprise}`
+			const { enterprise_id, trade_type, enterprise } = row
+			const enterpriseName = `${enterprise_id}-${trade_type}-${enterprise}`
 			this.options = [
 				{
 					label: enterprise,
@@ -273,8 +273,8 @@ export default {
 		handleEdit(index, row) {
 			this.flag = 'edit'
 			this.addEditForm = { ...row }
-			const { enterprise_code, trade_type, enterprise } = row
-			const enterpriseName = `${enterprise_code}-${trade_type}-${enterprise}`
+			const { enterprise_id, trade_type, enterprise } = row
+			const enterpriseName = `${enterprise_id}-${trade_type}-${enterprise}`
 			this.options = [
 				{
 					label: enterprise,

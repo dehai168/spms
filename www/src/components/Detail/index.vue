@@ -1,7 +1,7 @@
 <template>
 	<el-dialog class="hotel-base-add" :title="dialogTittle" :visible="dialogVisible" @close="onClose" width="70%" top="4vh" :close-on-click-modal="false">
 		<el-tabs v-model="activeName" stretch @tab-click="handleTab">
-			<el-tab-pane label="基础信息" name="1" :class="{isAdd: flag === 'add'}">
+			<el-tab-pane label="基础信息" name="1" :class="{ isAdd: flag === 'add' }">
 				<el-form v-if="isSimple" ref="addEditForm" :model="addEditForm" label-width="160px" :inline="true" :disabled="flag == 'detail'">
 					<el-form-item v-for="formItem in addEditformItems" :key="formItem.key" :label="formItem.label">
 						<el-select v-if="formItem.type == 'select'" v-model="addEditForm[formItem.key]" style="width: 200px" placeholder="请选择">
@@ -102,6 +102,7 @@ import MAP from '../../const/map'
 import domesticAPI from '../../views/employees/domestic/api'
 import overseasAPI from '../../views/employees/overseas/api'
 import API from './api'
+import { getDynamicMap } from '@/const/map'
 
 const mapTypeId = {
 	hotelid: 1,
@@ -130,6 +131,9 @@ export default {
 			default: false
 		},
 		enterprise_id_key: String
+	},
+	created() {
+		this.getEnum()
 	},
 	watch: {
 		employeeType() {
@@ -195,7 +199,13 @@ export default {
 				{ prop: 'danger_desc', label: '危险描述', type: 'input', },
 				{ prop: 'input_time', label: '时间', type: 'datePicker' },
 			],
-			caseCols: [
+			caseCols: []
+		}
+	},
+	methods: {
+		getEnum() {
+			getDynamicMap().then(res => {
+				this.caseCols = [
 				{ prop: 'trade_type', label: '行业类别', formatter: (row, col, cell) => MAP.trade_type2[cell], width: 100 },
 				{ prop: 'enterprise_code', label: '企业编码', type: 'input', width: 150 },
 				{ prop: 'case_code', label: '案件编号', type: 'input', width: 150 },
@@ -210,9 +220,8 @@ export default {
 				{ prop: 'enterprise_blame', label: '企业责任', type: 'select', formatter: (row, col, cell) => res.enterprise_blame[cell], width: 150 },
 				{ prop: 'enterprise_persion', label: '企业人员/角色', type: 'input', formatter: (row, col, cell) => MAP.employee_type[cell], width: 150 },
 			]
-		}
-	},
-	methods: {
+			})
+		},
 		handleSubmit() {
 			this.$emit('update:dialogVisible', false)
 			this.$emit('submit', this.addEditForm)
@@ -290,6 +299,7 @@ export default {
 			}
 			const { data } = await API.caseList(params)
 			this.caseData = data
+			console.log(this.caseData)
 		},
 		async getGoodsData() {
 
