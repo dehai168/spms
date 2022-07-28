@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { getToken } from '@/utils/auth'
 
 export function exist(params) {
   return request({
@@ -10,7 +9,7 @@ export function exist(params) {
 }
 export function items(data) {
   return request({
-    url: '/police/important/fence/list?index=' + data.index + '&size=' + data.size + '&token=' + getToken(),
+    url: '/police/important/fence/list?index=' + data.index + '&size=' + data.size,
     method: 'post',
     data
   })
@@ -24,21 +23,21 @@ export function item(params) {
 }
 export function create(data) {
   return request({
-    url: '/police/important/fence/add?token='+getToken(),
+    url: '/police/important/fence/add',
     method: 'post',
     data
   })
 }
 export function update(data) {
   return request({
-    url: '/police/important/fence/update?token=' + getToken(),
+    url: '/police/important/fence/update',
     method: 'post',
     data
   })
 }
 export function remove(params) {
   return request({
-    url: '/police/important/fence/delete?token=' + getToken(),
+    url: '/police/important/fence/delete',
     method: 'get',
     params
   })
@@ -72,11 +71,11 @@ export function importexcel(params) {
   })
 }
 export function templeteUrl() {
-  return process.env.VUE_APP_BASE_API + '/file/download?type=template&name=vehicle.xlsx&token=' + getToken()
+  return process.env.VUE_APP_BASE_API + '/file/download?type=template&name=vehicle.xlsx&token='
 }
 export function uploadUrl() {
   return process.env.VUE_APP_BASE_API + '/file/upload?type=temp'
 }
 export function download(filename) {
-  window.open(process.env.VUE_APP_BASE_API + '/file/download?type=temp&name=' + filename + '&token=' + getToken())
+  window.open(process.env.VUE_APP_BASE_API + '/file/download?type=temp&name=' + filename)
 }

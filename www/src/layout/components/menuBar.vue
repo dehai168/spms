@@ -7,7 +7,7 @@
     </el-col>
     <el-col :span="15">
       <ul>
-        <li style="width:100px;" :class="{ active: activeMenu.indexOf('/home/') > -1 }">
+        <li style="width: 100px" :class="{ active: activeMenu.indexOf('/home/') > -1 }">
           <app-link to="/home"> <i class="el-icon-s-platform"></i> 首页 </app-link>
         </li>
         <li :class="{ active: activeMenu.indexOf('/basicinfo/') > -1 }">
@@ -42,7 +42,8 @@ import { logout, pwdvalid, changepwd } from '@/api/auth'
 import { userinfo } from '@/api/home'
 import { mapGetters } from 'vuex'
 import AppLink from './Sidebar/Link'
-import logoSrc from "@/assets/logo.png";
+import logoSrc from '@/assets/logo.png'
+import { setToken } from '@/utils/auth'
 export default {
   components: { AppLink },
   data() {
@@ -122,14 +123,15 @@ export default {
     }
   },
   created() {
-    this.initUser();
+    this.initUser()
   },
   methods: {
     initUser() {
       userinfo({})
         .then(res => {
           if (res.code === 200) {
-            this.username = res.data.name + '(' + res.data.code + ')';
+            this.username = res.data.name + '(' + res.data.code + ')'
+            setToken(res.data.code)
           }
         })
         .catch(e => {
@@ -148,7 +150,7 @@ export default {
             this.$router.push(`/login?redirect=${this.$route.fullPath}`)
           })
         })
-        .catch(() => { })
+        .catch(() => {})
     },
     changePwd() {
       this.dialogFormVisible = true
@@ -180,7 +182,7 @@ export default {
                 }
               }
             })
-            .catch(e => { })
+            .catch(e => {})
         }
       })
     }

@@ -1,11 +1,16 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import {
+  MessageBox,
+  Message
+} from 'element-ui'
 import store from '@/store'
 import Cookies from 'js-cookie'
 import defaultSetting from '@/settings'
-import { getToken } from '@/utils/auth'
+import {
+  getToken
+} from '@/utils/auth'
 
-if(process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development") {
   document.cookie = `JSESSIONID=66601ECAFD6280CB38023B9DD0594DA7`
 }
 // create an axios instance
@@ -19,13 +24,12 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
-    config.headers[defaultSetting.csrfTokenName] = Cookies.get('csrfToken')
-    if (store.getters.token) {
+    const token = getToken();
+    if (token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['u-token'] = getToken()
+      config.url += '&token=' + token;
     }
 
     return config

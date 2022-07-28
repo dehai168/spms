@@ -1,8 +1,11 @@
 import request from '@/utils/request'
 
-
 export function items(params) {
-  const { pagesize: size, pageindex: index, ...data } = params;
+  const {
+    pagesize: size,
+    pageindex: index,
+    ...data
+  } = params;
   return request({
     url: '/police/hotel/domestic/list',
     method: 'post',
@@ -13,4 +16,19 @@ export function items(params) {
     data
   })
 }
-
+export function homoclinicsitems(params) {
+  const {
+    pagesize: size,
+    pageindex: index,
+    alarmid,
+  } = params;
+  return request({
+    url: '/police/hotel/domestic/homoclinics',
+    method: 'get',
+    params: {
+      size,
+      index,
+      alarmid,
+    }
+  })
+}

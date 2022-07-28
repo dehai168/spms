@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { getToken } from '@/utils/auth'
 
 export function exist(params) {
   return request({
@@ -10,7 +9,7 @@ export function exist(params) {
 }
 export function items(data) {
   return request({
-    url: '/police/alarm/list?index=' + data.pageindex + '&size=' + data.pagesize + '&token=' + getToken(),
+    url: '/police/alarm/list?index=' + data.pageindex + '&size=' + data.pagesize,
     method: 'post',
     data
   })
@@ -38,7 +37,7 @@ export function create(data) {
 }
 export function update(data) {
   return request({
-    url: '/police/alarm/dispose?token=' + getToken(),
+    url: '/police/alarm/dispose',
     method: 'post',
     data
   })
@@ -79,11 +78,11 @@ export function importexcel(params) {
   })
 }
 export function templeteUrl() {
-  return process.env.VUE_APP_BASE_API + '/file/download?type=template&name=vehicle.xlsx&token=' + getToken()
+  return process.env.VUE_APP_BASE_API + '/file/download?type=template&name=vehicle.xlsx&token='
 }
 export function uploadUrl() {
   return process.env.VUE_APP_BASE_API + '/file/upload?type=temp'
 }
 export function download(filename) {
-  window.open(process.env.VUE_APP_BASE_API + '/file/download?type=temp&name=' + filename + '&token=' + getToken())
+  window.open(process.env.VUE_APP_BASE_API + '/file/download?type=temp&name=' + filename)
 }

@@ -1,9 +1,8 @@
 import request from '@/utils/request'
-import { getToken } from '@/utils/auth'
 
 export function systemlist(params) {
   return request({
-    url: '/police/outline/system/list?token=' + getToken(),
+    url: '/police/outline/system/list',
     method: 'get',
     params
   })
@@ -11,7 +10,7 @@ export function systemlist(params) {
 
 export function enterpriselist(params) {
   return request({
-    url: '/police/outline/enterprise/list?token=' + getToken(),
+    url: '/police/outline/enterprise/list',
     method: 'get',
     params
   })
@@ -19,7 +18,7 @@ export function enterpriselist(params) {
 
 export function travellerlist(params) {
   return request({
-    url: '/police/outline/traveller/list?token=' + getToken(),
+    url: '/police/outline/traveller/list',
     method: 'get',
     params
   })
@@ -27,15 +26,14 @@ export function travellerlist(params) {
 
 export function travellerdomesticregion(params) {
   return request({
-    url: '/police/outline/traveller/domestic/region?token=' + getToken(),
-    method: 'get',
+    url: '/police/outline/traveller/domestic/region',
     params
   })
 }
 
 export function travellerabroadnationality(params) {
   return request({
-    url: '/police/outline/traveller/abroad/nationality?token=' + getToken(),
+    url: '/police/outline/traveller/abroad/nationality',
     method: 'get',
     params
   })
@@ -43,7 +41,7 @@ export function travellerabroadnationality(params) {
 
 export function alarmlist(params) {
   return request({
-    url: '/police/outline/alarm/list?token=' + getToken(),
+    url: '/police/outline/alarm/list',
     method: 'get',
     params
   })
@@ -51,7 +49,7 @@ export function alarmlist(params) {
 
 export function importantlist(params) {
   return request({
-    url: '/police/outline/important/list?token=' + getToken(),
+    url: '/police/outline/important/list',
     method: 'get',
     params
   })
@@ -59,7 +57,7 @@ export function importantlist(params) {
 
 export function systemlog(data) {
   return request({
-    url: '/police/systemlog/list?token='+getToken(),
+    url: '/police/systemlog/list',
     method: 'post',
     data
   })
@@ -67,7 +65,7 @@ export function systemlog(data) {
 
 export function userlog(data) {
   return request({
-    url: '/police/log/list?token='+getToken(),
+    url: '/police/log/list',
     method: 'post',
     data
   })
@@ -75,7 +73,7 @@ export function userlog(data) {
 
 export function downloadUserLog(params) {
   return request({
-    url: '/police/log/download?token='+getToken(),
+    url: '/police/log/download',
     method: 'get',
     params
   })
@@ -83,7 +81,7 @@ export function downloadUserLog(params) {
 
 export function downloadSystemLog(params) {
   return request({
-    url: '/police/systemlog/download?token='+getToken(),
+    url: '/police/systemlog/download',
     method: 'get',
     params
   })

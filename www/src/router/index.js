@@ -300,6 +300,12 @@ export const constantRoutes = [
         name: 'earlywarn',
         component: () => import('@/views/analysis/earlyWarn/index'),
         meta: { title: '预警查询', icon: 'el-icon-search' }
+      },
+      {
+        path: 'vice',
+        name: 'vice',
+        component: () => import('@/views/analysis/vice/index'),
+        meta: { title: '卖淫人员入住酒店模型', icon: 'el-icon-office-building' }
       }
     ]
   },
