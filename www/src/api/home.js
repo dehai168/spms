@@ -49,3 +49,10 @@ export function userinfo(params) {
         params
     })
 }
+export function userlogout(params) {
+    return request({
+        url: '/police/logout/user',
+        method: 'get',
+        params
+    })
+}

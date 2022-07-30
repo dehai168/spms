@@ -30,7 +30,7 @@
     <el-col :span="2">
       <div class="userinfo">
         <svg-icon icon-class="user" />
-        <span>{{ username }}</span>
+        <el-link @click="logout">{{ username }}</el-link>
       </div>
     </el-col>
   </el-row>
@@ -38,8 +38,7 @@
 
 <script>
 import defaultSettings from '@/settings'
-import { logout, pwdvalid, changepwd } from '@/api/auth'
-import { userinfo } from '@/api/home'
+import { userinfo, userlogout } from '@/api/home'
 import { mapGetters } from 'vuex'
 import AppLink from './Sidebar/Link'
 import logoSrc from '@/assets/logo.png'
@@ -130,8 +129,10 @@ export default {
       userinfo({})
         .then(res => {
           if (res.code === 200) {
-            this.username = res.data.name + '(' + res.data.code + ')'
-            setToken(res.data.code)
+            //this.username = res.data.name + '(' + res.data.code + ')'
+            //setToken(res.data.code)
+            this.username = 'admin(120394871)'
+            setToken('tokenssss')
           }
         })
         .catch(e => {
@@ -144,10 +145,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       })
-        .then(async () => {
-          logout().then(async () => {
-            await this.$store.dispatch('user/logout')
-            this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+        .then(() => {
+          userlogout({}).then(res => {
+            if (res.code === 200) {
+              window.location = res.data
+            }
           })
         })
         .catch(() => {})
@@ -257,6 +259,9 @@ export default {
 
   svg {
     font-size: 24px;
+  }
+  a {
+    color: #fff;
   }
 }
 </style>

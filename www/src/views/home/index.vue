@@ -53,9 +53,7 @@
         </el-option>
       </el-select>
     </el-card>
-    <el-dialog :title="detailName" :visible.sync="markerDetailDialogVisible" width="50%" :close-on-click-modal="false">
-      <Markerdetail></Markerdetail>
-    </el-dialog>
+    <Detail ref="detalDialog" :dialogTittle="detailName" :enterprise_id_key="detailid" flag="detail" :dialogVisible.sync="markerDetailDialogVisible" :submitDisabled="false" :addEditformItems="addEditformItems" @submit="handleSubmit"></Detail>
     <el-dialog :title="mediaName" :visible.sync="mediaListDialogVisible" width="30%" :close-on-click-modal="false">
       <Medialist @openVideo="viewVideo" @openImage="viewImage"></Medialist>
     </el-dialog>
@@ -98,15 +96,14 @@ import capture from '@/assets/map/capture.png'
 import camera_cluter from '@/assets/map/camera_cluster.png'
 import card from './components/card.vue'
 import gcoodrd from 'gcoord'
-import Markerdetail from './components/markerdetail.vue'
 import Medialist from './components/medialist.vue'
 import viewimage from '@/components/viewimage/index.vue'
 import { parseTime } from '@/utils/index'
+import dataAPI from './components/data'
 export default {
   name: 'Home',
   components: {
     card,
-    Markerdetail,
     Medialist,
     viewimage
   },
@@ -200,7 +197,9 @@ export default {
         src: ''
       },
       markerDetailDialogVisible: false,
+      detailid: 'hotelid',
       detailName: '',
+      addEditformItems: [],
       mediaListDialogVisible: false,
       mediaName: '',
       viewImageDialogVisible: false,
@@ -660,6 +659,15 @@ export default {
                 res.data.id = res.data.barid
                 res.data.enterprise = res.data.recreation_place_name
                 break
+              case 8:
+                res.data.id = res.data.pawnid
+                break
+              case 9:
+                res.data.id = res.data.unlockid
+                break
+              case 10:
+                res.data.id = res.data.printid
+                break
               default:
                 break
             }
@@ -724,8 +732,56 @@ export default {
       this.mediaListDialogVisible = true
     },
     viewMarkerDetail(data) {
+      switch (data.type) {
+        case 1:
+          this.detailid = 'hotelid'
+          this.addEditformItems = dataAPI.getHotel()
+          break
+        case 2:
+          this.detailid = 'junk_tradeid'
+          this.addEditformItems = dataAPI.getTrade()
+          break
+        case 3:
+          this.detailid = 'vehicle_repairid'
+          this.addEditformItems = dataAPI.getVehicleRepair()
+          break
+        case 4:
+          this.detailid = 'scrap_metal_recycleid'
+          this.addEditformItems = dataAPI.getScrapMetal()
+          break
+        case 5:
+          this.detailid = 'seal_engrave_unitid'
+          this.addEditformItems = dataAPI.getSeal()
+          break
+        case 6:
+          this.detailid = 'ktvid'
+          this.addEditformItems = dataAPI.getKtv()
+          break
+        case 7:
+          this.detailid = 'barid'
+          this.addEditformItems = dataAPI.getBar()
+          break
+        case 8:
+          this.detailid = 'pawnid'
+          this.addEditformItems = dataAPI.getPawn()
+          break
+        case 9:
+          this.detailid = 'unlockid'
+          this.addEditformItems = dataAPI.getUnlock()
+          break
+        case 10:
+          this.detailid = 'printid'
+          this.addEditformItems = dataAPI.getPrint()
+          break
+        default:
+          break
+      }
       this.detailName = data.enterprise
+      this.$refs.detalDialog.addEditForm = data
       this.markerDetailDialogVisible = true
+    },
+    handleSubmit() {
+      this.markerDetailDialogVisible = false
     },
     viewVideo(row) {
       this.videoObject.src = row.code

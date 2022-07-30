@@ -29,7 +29,11 @@ service.interceptors.request.use(
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.url += '&token=' + token;
+      if (config.url.indexOf('?') > -1) {
+        config.url += '&token=' + token;
+      } else {
+        config.url += '?token=' + token;
+      }
     }
 
     return config
