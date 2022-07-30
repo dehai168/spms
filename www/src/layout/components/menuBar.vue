@@ -42,7 +42,7 @@ import { userinfo, userlogout } from '@/api/home'
 import { mapGetters } from 'vuex'
 import AppLink from './Sidebar/Link'
 import logoSrc from '@/assets/logo.png'
-import { setToken } from '@/utils/auth'
+import { setToken,removeToken } from '@/utils/auth'
 export default {
   components: { AppLink },
   data() {
@@ -129,10 +129,8 @@ export default {
       userinfo({})
         .then(res => {
           if (res.code === 200) {
-            //this.username = res.data.name + '(' + res.data.code + ')'
-            //setToken(res.data.code)
-            this.username = 'admin(120394871)'
-            setToken('tokenssss')
+            this.username = res.data.name + '(' + res.data.code + ')'
+            setToken(res.data.code)
           }
         })
         .catch(e => {
@@ -148,6 +146,7 @@ export default {
         .then(() => {
           userlogout({}).then(res => {
             if (res.code === 200) {
+              removeToken();
               window.location = res.data
             }
           })
