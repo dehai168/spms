@@ -416,14 +416,24 @@ export default {
       const unclusterPointName = 'unclustered-point_' + index
       const that = this
       if (checked) {
+        // this.map.addLayer({
+        //   id: clustersName,
+        //   type: 'circle',
+        //   source: sourceName,
+        //   filter: ['has', 'point_count'],
+        //   paint: {
+        //     'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
+        //     'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+        //   }
+        // })
         this.map.addLayer({
           id: clustersName,
-          type: 'circle',
+          type: 'symbol',
           source: sourceName,
           filter: ['has', 'point_count'],
-          paint: {
-            'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+          layout: {
+            'icon-image': 'location_' + index,
+            'icon-size': 1
           }
         })
         this.map.addLayer({
@@ -446,6 +456,10 @@ export default {
             'icon-image': 'location_' + index,
             'icon-size': 1
           }
+        })
+        this.map.on('mouseenter', clustersName, function (e) {
+          let features = e.features
+          console.log(features)
         })
         this.map.on('click', unclusterPointName, function (e) {
           let features = e.features[0].properties
@@ -479,26 +493,48 @@ export default {
       const unclusterPointName = 'unclustered-point_camera'
       const that = this
       if (this.cameraVisable) {
-        this.map.addLayer({
-          id: clustersName,
-          type: 'circle',
-          source: sourceName,
-          filter: ['has', 'point_count'],
-          paint: {
-            'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
-            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
-          }
-        })
         // this.map.addLayer({
         //   id: clustersName,
+        //   type: 'circle',
+        //   source: sourceName,
+        //   filter: ['has', 'point_count'],
+        //   paint: {
+        //     'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
+        //     'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+        //   }
+        // })
+        // this.map.addLayer({
+        //   id: clustersCountName,
         //   type: 'symbol',
         //   source: sourceName,
         //   filter: ['has', 'point_count'],
         //   layout: {
-        //     'icon-image': 'camera_cluter',
-        //     'icon-size': 1
+        //     'text-field': '{point_count_abbreviated}',
+        //     'text-font': ['sourcehansanscn-normal'],
+        //     'text-size': 12
         //   }
         // })
+        this.map.addLayer({
+          id: clustersName,
+          type: 'symbol',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          layout: {
+            'icon-image': 'camera_cluter',
+            'icon-size': 1
+          }
+        })
+        this.map.addLayer({
+          id: clustersName + '_circle',
+          type: 'circle',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': '#409EFF',
+            'circle-radius': 15,
+            'circle-translate': [25, -14]
+          }
+        })
         this.map.addLayer({
           id: clustersCountName,
           type: 'symbol',
@@ -507,9 +543,11 @@ export default {
           layout: {
             'text-field': '{point_count_abbreviated}',
             'text-font': ['sourcehansanscn-normal'],
-            'text-size': 12
+            'text-size': 12,
+            'text-transform': [14,14]
           }
         })
+        console.log(this.map.getLayer(clustersCountName))
         this.map.addLayer({
           id: unclusterPointName,
           type: 'symbol',
@@ -518,11 +556,10 @@ export default {
           layout: {
             'icon-image': 'camera',
             'icon-size': 1,
-            'icon-anchor': 'bottom'
           }
         })
-        this.map.on('click', clustersName, function (e) {
-          console.log(e)
+        this.map.on('mouseover', clustersName, function (e) {
+          console.log(e.features)
         })
         this.map.on('click', unclusterPointName, function (e) {
           let features = e.features[0].properties
