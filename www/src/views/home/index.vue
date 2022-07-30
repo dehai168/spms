@@ -1,27 +1,58 @@
 <template>
   <div class="container map-container" id="spms_map">
     <el-card class="top-card">
-      <card v-for="item in countList" v-bind:key="item.id" :id="item.id" :to="item.to" :enterprise="item.enterprise" :count="item.count" :abroad_persons="item.abroad_persons" :domestic_persons="item.domestic_persons" />
+      <card v-for="item in countList" v-bind:key="item.id" :id="item.id" :to="item.to" :enterprise="item.enterprise"
+        :count="item.count" :abroad_persons="item.abroad_persons" :domestic_persons="item.domestic_persons" />
     </el-card>
     <el-card class="right-card">
       <fieldset>
         <legend>特殊行业</legend>
         <ul>
-          <li><el-checkbox v-model="checkList[0]" @change="handleCheck(0)" class="marginRight">旅馆业</el-checkbox><img :src="imgList[0]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[4]" @change="handleCheck(4)" class="marginRight">公章刻制业</el-checkbox><img :src="imgList[1]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[1]" @change="handleCheck(1)" class="marginRight">旧货交易</el-checkbox><img :src="imgList[2]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[2]" @change="handleCheck(2)" class="marginRight">机动车维修</el-checkbox><img :src="imgList[3]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[3]" @change="handleCheck(3)" class="marginRight">废旧金属回收</el-checkbox><img :src="imgList[4]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[7]" @change="handleCheck(7)" class="marginRight">典当业</el-checkbox><img :src="imgList[7]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[9]" @change="handleCheck(9)" class="marginRight">印刷业</el-checkbox><img :src="imgList[8]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[8]" @change="handleCheck(8)" class="marginRight">开锁业</el-checkbox><img :src="imgList[9]" alt="" srcset="" /></li>
+          <li>
+            <el-checkbox v-model="checkList[0]" @change="handleCheck(0)" class="marginRight">旅馆业</el-checkbox><img
+              :src="imgList[0]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[4]" @change="handleCheck(4)" class="marginRight">公章刻制业</el-checkbox><img
+              :src="imgList[1]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[1]" @change="handleCheck(1)" class="marginRight">旧货交易</el-checkbox><img
+              :src="imgList[2]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[2]" @change="handleCheck(2)" class="marginRight">机动车维修</el-checkbox><img
+              :src="imgList[3]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[3]" @change="handleCheck(3)" class="marginRight">废旧金属回收</el-checkbox><img
+              :src="imgList[4]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[7]" @change="handleCheck(7)" class="marginRight">典当业</el-checkbox><img
+              :src="imgList[7]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[9]" @change="handleCheck(9)" class="marginRight">印刷业</el-checkbox><img
+              :src="imgList[8]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[8]" @change="handleCheck(8)" class="marginRight">开锁业</el-checkbox><img
+              :src="imgList[9]" alt="" srcset="" />
+          </li>
         </ul>
       </fieldset>
       <fieldset>
         <legend>娱乐场所</legend>
         <ul>
-          <li><el-checkbox v-model="checkList[6]" @change="handleCheck(6)" class="marginRight">酒吧</el-checkbox><img :src="imgList[5]" alt="" srcset="" /></li>
-          <li><el-checkbox v-model="checkList[5]" @change="handleCheck(5)" class="marginRight">KTV</el-checkbox><img :src="imgList[6]" alt="" srcset="" /></li>
+          <li>
+            <el-checkbox v-model="checkList[6]" @change="handleCheck(6)" class="marginRight">酒吧</el-checkbox><img
+              :src="imgList[5]" alt="" srcset="" />
+          </li>
+          <li>
+            <el-checkbox v-model="checkList[5]" @change="handleCheck(5)" class="marginRight">KTV</el-checkbox><img
+              :src="imgList[6]" alt="" srcset="" />
+          </li>
         </ul>
       </fieldset>
       <fieldset>
@@ -32,7 +63,8 @@
             <img :src="cameraImg" alt="" srcset="" />
           </li>
           <li>
-            <el-checkbox v-model="captureVisable" @change="handleCaptureVisable()" class="marginRight">抓拍设备 </el-checkbox>
+            <el-checkbox v-model="captureVisable" @change="handleCaptureVisable()" class="marginRight">抓拍设备
+            </el-checkbox>
             <img :src="captureImg" alt="" srcset="" />
           </li>
         </ul>
@@ -42,8 +74,10 @@
       <!-- <el-input placeholder="搜索场所(企业)名称" v-model="keywords" style="width: 280px">
         <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
       </el-input> -->
-      <el-select v-model="keywords" filterable remote placeholder="搜索场所(企业)名称" :remote-method="remoteMethod" :loading="loading" clearable @change="handleSelect" style="width: 280px; z-index: 999999">
-        <el-option v-for="item in searchResultList" :key="item.systemid" :label="item.enterprise" :value="item.systemid">
+      <el-select v-model="keywords" filterable remote placeholder="搜索场所(企业)名称" :remote-method="remoteMethod"
+        :loading="loading" clearable @change="handleSelect" style="width: 280px; z-index: 999999">
+        <el-option v-for="item in searchResultList" :key="item.systemid" :label="item.enterprise"
+          :value="item.systemid">
           <div>
             <div>{{ item.enterprise }}</div>
             <div style="color: #8492a6; font-size: 12px">负责人:{{ item.chief_person }}</div>
@@ -53,7 +87,9 @@
         </el-option>
       </el-select>
     </el-card>
-    <Detail ref="detalDialog" :dialogTittle="detailName" :enterprise_id_key="detailid" flag="detail" :dialogVisible.sync="markerDetailDialogVisible" :submitDisabled="false" :addEditformItems="addEditformItems" @submit="handleSubmit"></Detail>
+    <Detail ref="detalDialog" :dialogTittle="detailName" :enterprise_id_key="detailid" flag="detail"
+      :dialogVisible.sync="markerDetailDialogVisible" :submitDisabled="false" :addEditformItems="addEditformItems"
+      @submit="handleSubmit"></Detail>
     <el-dialog :title="mediaName" :visible.sync="mediaListDialogVisible" width="30%" :close-on-click-modal="false">
       <Medialist @openVideo="viewVideo" @openImage="viewImage"></Medialist>
     </el-dialog>
@@ -63,14 +99,18 @@
     <el-dialog :title="captureName" :visible.sync="viewCaptureDialogVisible" width="50%" :close-on-click-modal="false">
       <el-container>
         <el-header height="42px" style="border-bottom: 1px solid #dcdfe6">
-          <el-date-picker v-model="queryForm_capture.daterange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="width: 230px" @change="handleQueryImage"> </el-date-picker>
+          <el-date-picker v-model="queryForm_capture.daterange" value-format="yyyy-MM-dd" type="daterange"
+            range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="false" style="width: 230px"
+            @change="handleQueryImage"> </el-date-picker>
           抓拍图片共计:{{ tableDataCount_capture }}张
         </el-header>
         <el-main v-loading="viewimageLoading">
           <viewimage ref="viewcapture" />
         </el-main>
         <el-footer style="padding: 5px; border-top: 1px solid #dcdfe6; height: 42px">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes" :page-size="queryForm_capture.size" background layout="total, sizes, prev, pager, next, jumper" :total="tableDataCount_capture"> </el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="pagesizes"
+            :page-size="queryForm_capture.size" background layout="total, sizes, prev, pager, next, jumper"
+            :total="tableDataCount_capture"> </el-pagination>
         </el-footer>
       </el-container>
     </el-dialog>
@@ -92,8 +132,9 @@ import location_8 from '@/assets/map/location_8.png'
 import location_9 from '@/assets/map/location_9.png'
 import location_10 from '@/assets/map/location_10.png'
 import camera from '@/assets/map/camera.png'
-import capture from '@/assets/map/capture.png'
 import camera_cluter from '@/assets/map/camera_cluster.png'
+import capture from '@/assets/map/capture.png'
+import capture_cluter from '@/assets/map/capture_cluster.png'
 import card from './components/card.vue'
 import gcoodrd from 'gcoord'
 import Medialist from './components/medialist.vue'
@@ -122,10 +163,12 @@ export default {
     return {
       map: null,
       popup: null,
+      clusterPopup: null,
       imgList: [location_1, location_2, location_3, location_4, location_5, location_6, location_7, location_8, location_9, location_10],
       cameraImg: camera,
       captureImg: capture,
       camera_cluterImg: camera_cluter,
+      capture_cluterImg: capture_cluter,
       cameraVisable: true,
       captureVisable: true,
       checkList: [true, true, true, true, true, true, true, true, true, true],
@@ -227,7 +270,7 @@ export default {
     const that = this
   },
   methods: {
-    init() {},
+    init() { },
     initMap() {
       mapabcgl.accessToken = defaultSettings.mapabcToken
       if (!mapabcgl.supported()) {
@@ -255,7 +298,7 @@ export default {
     loadMarkerImage() {
       const that = this
       for (let index = 0; index < 9; index++) {
-        ;(function (index) {
+        ; (function (index) {
           that.map.loadImage(that.imgList[index], function (error, image) {
             that.map.addImage('location_' + index, image)
           })
@@ -269,6 +312,9 @@ export default {
       })
       that.map.loadImage(this.camera_cluterImg, function (error, image) {
         that.map.addImage('camera_cluter', image)
+      })
+      that.map.loadImage(this.capture_cluterImg, function (error, image) {
+        that.map.addImage('capture_cluter', image)
       })
     },
     loadDataAndCount() {
@@ -416,26 +462,26 @@ export default {
       const unclusterPointName = 'unclustered-point_' + index
       const that = this
       if (checked) {
-        // this.map.addLayer({
-        //   id: clustersName,
-        //   type: 'circle',
-        //   source: sourceName,
-        //   filter: ['has', 'point_count'],
-        //   paint: {
-        //     'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-        //     'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
-        //   }
-        // })
         this.map.addLayer({
           id: clustersName,
-          type: 'symbol',
+          type: 'circle',
           source: sourceName,
           filter: ['has', 'point_count'],
-          layout: {
-            'icon-image': 'location_' + index,
-            'icon-size': 1
+          paint: {
+            'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
+            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
           }
         })
+        // this.map.addLayer({
+        //   id: clustersName,
+        //   type: 'symbol',
+        //   source: sourceName,
+        //   filter: ['has', 'point_count'],
+        //   layout: {
+        //     'icon-image': 'location_' + index,
+        //     'icon-size': 1
+        //   }
+        // })
         this.map.addLayer({
           id: clustersCountName,
           type: 'symbol',
@@ -459,7 +505,6 @@ export default {
         })
         this.map.on('mouseenter', clustersName, function (e) {
           let features = e.features
-          console.log(features)
         })
         this.map.on('click', unclusterPointName, function (e) {
           let features = e.features[0].properties
@@ -475,6 +520,9 @@ export default {
         if (this.popup) {
           this.popup.remove()
         }
+        if (this.clusterPopup) {
+          this.clusterPopup.remove();
+        }
         if (this.map.getLayer(unclusterPointName)) {
           this.map.removeLayer(unclusterPointName)
         }
@@ -489,31 +537,11 @@ export default {
     refreshCameraCluster() {
       const sourceName = 'earthquakes_camera'
       const clustersName = 'clusters_camera'
+      const clustersCircleName='clusters_camera_circle'
       const clustersCountName = 'cluster-count_camera'
       const unclusterPointName = 'unclustered-point_camera'
       const that = this
       if (this.cameraVisable) {
-        // this.map.addLayer({
-        //   id: clustersName,
-        //   type: 'circle',
-        //   source: sourceName,
-        //   filter: ['has', 'point_count'],
-        //   paint: {
-        //     'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
-        //     'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
-        //   }
-        // })
-        // this.map.addLayer({
-        //   id: clustersCountName,
-        //   type: 'symbol',
-        //   source: sourceName,
-        //   filter: ['has', 'point_count'],
-        //   layout: {
-        //     'text-field': '{point_count_abbreviated}',
-        //     'text-font': ['sourcehansanscn-normal'],
-        //     'text-size': 12
-        //   }
-        // })
         this.map.addLayer({
           id: clustersName,
           type: 'symbol',
@@ -525,7 +553,7 @@ export default {
           }
         })
         this.map.addLayer({
-          id: clustersName + '_circle',
+          id: clustersCircleName,
           type: 'circle',
           source: sourceName,
           filter: ['has', 'point_count'],
@@ -535,19 +563,18 @@ export default {
             'circle-translate': [25, -14]
           }
         })
+        // TODO 文字显示有问题
         this.map.addLayer({
           id: clustersCountName,
           type: 'symbol',
           source: sourceName,
           filter: ['has', 'point_count'],
-          layout: {
+          paint: {
             'text-field': '{point_count_abbreviated}',
             'text-font': ['sourcehansanscn-normal'],
             'text-size': 12,
-            'text-transform': [14,14]
           }
         })
-        console.log(this.map.getLayer(clustersCountName))
         this.map.addLayer({
           id: unclusterPointName,
           type: 'symbol',
@@ -559,7 +586,13 @@ export default {
           }
         })
         this.map.on('mouseover', clustersName, function (e) {
-          console.log(e.features)
+          const features = e.features[0].properties
+          const lnglat = e.lngLat;
+          that.map.getSource(sourceName).getClusterLeaves(features.cluster_id, 1000000, 0, function (err, leaves) {
+            if (err)
+              return;
+            that.loadAndOpenCameraCapturePopup('camera', lnglat, leaves)
+          });
         })
         this.map.on('click', unclusterPointName, function (e) {
           let features = e.features[0].properties
@@ -579,37 +612,96 @@ export default {
         if (this.map.getLayer(clustersCountName)) {
           this.map.removeLayer(clustersCountName)
         }
+        if (this.map.getLayer(clustersCircleName)) {
+          this.map.removeLayer(clustersCircleName)
+        }
         if (this.map.getLayer(clustersName)) {
           this.map.removeLayer(clustersName)
         }
       }
     },
+    editCameraCaptureHtml() {
+      const htmlArray = []
+      htmlArray.push("<div style='width:400px;'>")
+      htmlArray.push("<ul style='list-style: none;line-height: 20px;padding: 0;margin: 0;'>")
+      htmlArray.push("<li v-for='(item,i) in list' :key='i'><a style='font-weight:bold' @click='clickHandlerOpenInfo(item.properties.name)'>{{item.properties.name}}</a></li>")
+      htmlArray.push('</ul>')
+      htmlArray.push('</div>')
+      return htmlArray.join('')
+    },
+    loadAndOpenCameraCapturePopup(type, lnglat, array) {
+      const that = this
+      const infoWindow = Vue.extend({
+        template: this.editCameraCaptureHtml(),
+        data() {
+          return {
+            list: array
+          }
+        },
+        methods: {
+          clickHandlerOpenInfo(name) {
+            const item = this.list.find(v => { return v.properties.name === name; })
+            if (type === 'camera') {
+              that.videoObject.src = item.properties.code
+              that.play()
+            }
+            if (type === 'capture') {
+              that.viewCapture(item.properties)
+            }
+          },
+        }
+      })
+      const component = new infoWindow().$mount()
+      if (that.clusterPopup) {
+        that.clusterPopup.remove()
+      }
+      var popupOption = {
+        closeOnClick: true,
+        closeButton: true,
+        anchor: 'top-left',
+        offset: [0, 0]
+      }
+      that.clusterPopup = new mapabcgl.Popup(popupOption).setLngLat(lnglat).setDOMContent(component.$el).setMaxWidth('300px').addTo(that.map)
+    },
     refreshCaptureCluster() {
       const sourceName = 'earthquakes_capture'
       const clustersName = 'clusters_capture'
+      const clustersCircleName='clusters_capture_circle'
       const clustersCountName = 'cluster-count_capture'
       const unclusterPointName = 'unclustered-point_capture'
       const that = this
       if (this.captureVisable) {
         this.map.addLayer({
           id: clustersName,
+          type: 'symbol',
+          source: sourceName,
+          filter: ['has', 'point_count'],
+          layout: {
+            'icon-image': 'capture_cluter',
+            'icon-size': 1
+          }
+        })
+        this.map.addLayer({
+          id: clustersCircleName,
           type: 'circle',
           source: sourceName,
           filter: ['has', 'point_count'],
           paint: {
-            'circle-color': ['step', ['get', 'point_count'], '#1E90FF', 100, '#f1f075', 750, '#f28cb1'],
-            'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40]
+            'circle-color': '#409EFF',
+            'circle-radius': 15,
+            'circle-translate': [25, -14]
           }
         })
+        // TODO 文字显示有问题
         this.map.addLayer({
           id: clustersCountName,
           type: 'symbol',
           source: sourceName,
           filter: ['has', 'point_count'],
-          layout: {
+          paint: {
             'text-field': '{point_count_abbreviated}',
             'text-font': ['sourcehansanscn-normal'],
-            'text-size': 12
+            'text-size': 12,
           }
         })
         this.map.addLayer({
@@ -619,11 +711,17 @@ export default {
           filter: ['!has', 'point_count'],
           layout: {
             'icon-image': 'capture',
-            'icon-size': 1
+            'icon-size': 1,
           }
         })
-        this.map.on('click', clustersName, function (e) {
-          console.log(e)
+        this.map.on('mouseover', clustersName, function (e) {
+          const features = e.features[0].properties
+          const lnglat = e.lngLat;
+          that.map.getSource(sourceName).getClusterLeaves(features.cluster_id, 1000000, 0, function (err, leaves) {
+            if (err)
+              return;
+            that.loadAndOpenCameraCapturePopup('capture', lnglat, leaves)
+          });
         })
         this.map.on('click', unclusterPointName, function (e) {
           let features = e.features[0].properties
@@ -641,6 +739,9 @@ export default {
         }
         if (this.map.getLayer(clustersCountName)) {
           this.map.removeLayer(clustersCountName)
+        }
+        if (this.map.getLayer(clustersCircleName)) {
+          this.map.removeLayer(clustersCircleName)
         }
         if (this.map.getLayer(clustersName)) {
           this.map.removeLayer(clustersName)
@@ -1003,7 +1104,7 @@ export default {
   height: 100px;
 }
 
-.el-card >>> .el-card__body {
+.el-card>>>.el-card__body {
   padding: 5px;
 }
 

@@ -1,5 +1,6 @@
 import mapToArray from '@/utils/mapToArray'
 import map from '@/const/map'
+import MAP from '@/const/map'
 import handleEnum from '@/utils/handleEnum';
 import {
     enumsItems
